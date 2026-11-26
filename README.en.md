@@ -1,6 +1,6 @@
-# Modot
+# Modot — Windows Coding Agent
 
-[简体中文](README.md) · Windows x64 developer preview · [Source-available license](LICENSE)
+[Download Windows x64 Preview .13](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [Release notes](https://github.com/lq755467102-art/modot/releases/tag/v0.2.0-preview.13) · [简体中文](README.md) · [Source-available license](LICENSE)
 
 **Modot is a compact, customizable desktop AI agent with a built-in code workroom.** Open a local project and bring your own model to read code, edit files and run checks. Workrooms and chats share project scope, permissions and action receipts. Choose a memory provider and pick a specialist model when a task needs one.
 
@@ -16,7 +16,7 @@
 
 ## Quickstart
 
-1. **Start Modot on Windows.** Run the Windows x64 preview installer, or launch a source checkout with CPython 3.13 and Node.js 24. [Install or run from source](docs/install.md)
+1. **Start Modot on Windows.** Download the .13 installer above or launch a source checkout with CPython 3.13 and Node.js 24. [Install or run from source](docs/install.md)
 2. **Connect your model.** In **Settings → Models**, enter the provider endpoint, model name and API key. Requests use the service and account you configure.
 3. **Open a project and give it a task.** Create a project from an existing folder. Replace the test command below with one that reproduces a failure in your project, then send it in chat.
 
@@ -85,6 +85,10 @@ In an earlier engineering comparison, Modot Pilot + DeepSeek Flash and Codex CLI
 ## Contribute from source
 
 Start in `desktop/renderer-v2` for UI changes, `loop` for agent behavior, tools and results, and `tools` for tests. When reporting a reproducible issue, include your version, model, approval mode, the command you ran and what happened. [Run, test and package from source](docs/install.md) · [Module entry points](docs/modules.md)
+
+## Platform roadmap
+
+The current preview supports Windows x64. Future targets are Linux x64 and macOS on Apple Silicon. The first milestone on each platform covers native startup, controlled command execution and task recovery, followed by distributable packages.
 
 ## License
 

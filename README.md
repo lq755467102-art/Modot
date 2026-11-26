@@ -1,6 +1,6 @@
-# Modot
+# Modot · Windows 编程 Agent
 
-[English](README.en.md) · Windows x64 开发预览 · [源码可用许可](LICENSE.zh-CN.md)
+[下载 Windows x64 预览版 .13](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [发行说明](https://github.com/lq755467102-art/modot/releases/tag/v0.2.0-preview.13) · [English](README.en.md) · [源码可用许可](LICENSE.zh-CN.md)
 
 **Modot 是一款中轻量级、可自定义的桌面 AI Agent，自带代码工作间。** 打开本地工程，用自己的模型读代码、改文件、跑检查。工作间和会话共用项目、权限与操作记录。你可以更换记忆实现，按需为专项任务选模型。
 
@@ -16,7 +16,7 @@
 
 ## 快速开始
 
-1. **在 Windows 上启动。** 运行 Windows x64 预览安装器，或用 CPython 3.13 和 Node.js 24 从源码启动。[安装与源码运行](docs/install.md)
+1. **在 Windows 上启动。** 下载上方的 .13 安装包，或用 CPython 3.13 和 Node.js 24 从源码启动。[安装与源码运行](docs/install.md)
 2. **连接自己的模型。** 在「设置 → 模型」填写服务地址、模型名和 API key。模型调用走你配置的服务和账号。
 3. **打开项目并发起任务。** 新建项目，选一个已有文件夹。把下面的测试命令换成你项目里可以复现问题的命令，再发给 Agent。
 
@@ -85,6 +85,10 @@ Electron 通过受限桥接访问本机 HTTP 服务，服务负责项目、会�
 ## 从源码贡献
 
 改界面从 `desktop/renderer-v2` 开始。查 Agent 决策、工具和回执从 `loop` 开始，测试入口主要在 `tools`。报告工程问题时，附上版本、模型、审批模式、复现命令和观测结果，方便把故障定位到对应环节。[源码启动、测试与打包](docs/install.md) · [模块入口](docs/modules.md)
+
+## 平台路线
+
+当前提供 Windows x64 预览版。Linux x64 和 macOS Apple Silicon 是后续支持目标，先验证原生启动、受管命令和任务续接，再准备各自的安装包。
 
 ## 许可
 
