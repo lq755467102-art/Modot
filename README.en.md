@@ -2,7 +2,9 @@
 
 [Download Windows x64 Preview .13](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [Release notes](https://github.com/lq755467102-art/modot/releases/tag/v0.2.0-preview.13) · [简体中文](README.md) · [Source-available license](LICENSE)
 
-**Modot is a compact, customizable desktop AI agent with a built-in code workroom.** Open a local project and bring your own model to read code, edit files and run checks. Workrooms and chats share project scope, permissions and action receipts. Choose a memory provider and pick a specialist model when a task needs one.
+**Modot is a lightweight, customizable desktop AI agent with a built-in code workroom.** Open a local project and bring your own model to read code, edit files and run checks. Workrooms and chats share project scope, permissions and action receipts. Choose a memory provider and pick a specialist model when a task needs one.
+
+The Windows x64 `.13` installer is about **142 MiB**. In one matched desktop test, Modot Preview `.1` ran the task with a **249.1 MiB median** and **275.2 MiB sampled peak** private working set across its process tree. [Three-phase comparison and measurement method](#install-size-and-desktop-memory)
 
 [Quickstart](#quickstart) · [Workrooms, task cores and memory](#workrooms-task-cores-and-memory) · [Build an extension](#build-an-extension) · [Design notes and measurements](#design-notes-and-measurements) · [License](#license)
 
@@ -68,13 +70,13 @@ Electron uses a restricted bridge to a local HTTP service that owns projects, co
 
 ### Install size and desktop memory
 
-The first Windows x64 preview installer measured about **136 MiB**, with about **597 MiB** installed. Those figures describe the first preview's dependencies and installation process. Later previews bundle the verified LGPL video runtime, and setup still checks the pinned MinGit digest. The memory comparison below also refers to the versions listed in its report. [First preview validation](docs/benchmarks/preview-validation.json) · [Current installation process](docs/install.md)
+The first preview occupied about **597 MiB** after a full install. Preview `.13` bundles the verified LGPL video runtime, and setup checks the pinned MinGit digest. [First preview validation](docs/benchmarks/preview-validation.json) · [Current installation process](docs/install.md)
 
 On one Windows 11 machine, three desktop clients fixed the same generated file in identical copies of a 626-file project. An independent check confirmed the same single-file fix and command exits of **1 → 0** for all three.
 
 | Desktop client | Fresh launch | Project open | Running the task |
 | --- | ---: | ---: | ---: |
-| Modot | 143.1 / 146.2 | 166.9 / 170.3 | **249.1 / 275.2** |
+| Modot Preview `.1` | 143.1 / 146.2 | 166.9 / 170.3 | **249.1 / 275.2** |
 | Codex | 558.2 / 1,628.4 | 1,105.4 / 1,110.0 | 1,340.0 / 1,481.2 |
 | WorkBuddy | 1,184.6 / 1,189.5 | 822.3 / 825.8 | 1,405.8 / 1,518.3 |
 
