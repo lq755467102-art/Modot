@@ -2,7 +2,7 @@
 
 ## Windows x64 预览 .13
 
-安装包来自 `460eff56dae4ab2ae278d9d27b13de4f4d943c97`，通过 Windows 覆盖升级和 213 项相关回归。发布候选以同一源码树建立独立历史，后续提交补上双语下载说明和平台路线。安装包、SHA256、许可证和对应源码随 .13 维护。[Windows 预发布](https://github.com/lq755467102-art/modot/releases/tag/v0.2.0-preview.13)
+`.13` 发布源码快照为 `6e6fb8437c7cf9827c001ec66473aee55fee5d0d`，与验收安装包采用同一源码树。安装包通过 Windows 覆盖升级和 213 项相关回归。安装包、SHA256、许可证和对应源码随 .13 维护。[Windows 预发布](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13)
 
 ## 早期工作间候选审查
 

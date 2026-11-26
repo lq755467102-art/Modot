@@ -1,10 +1,12 @@
 # Modot · Windows 编程 Agent
 
-[下载 Windows x64 预览版 .13](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [发行说明](https://github.com/lq755467102-art/modot/releases/tag/v0.2.0-preview.13) · [English](README.en.md) · [源码可用许可](LICENSE.zh-CN.md)
+[下载 Windows x64 预览版 .13](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [发行说明](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13) · [English](README.en.md) · [源码可用许可](LICENSE.zh-CN.md)
 
 **Modot 是一款中轻量级、可自定义的桌面 AI Agent，自带代码工作间。** 打开本地工程，用自己的模型读代码、改文件、跑检查。工作间和会话共用项目、权限与操作记录。你可以更换记忆实现，按需为专项任务选模型。
 
 Windows x64 `.13` 安装包约 **142 MiB**。同机同工程的单次同题实测中，Modot Preview `.1` 执行任务的进程树私有工作集为 **249.1 MiB 中位数 / 275.2 MiB 采样峰值**。[三阶段内存对照与测量口径](#安装体积与桌面内存)
+
+本仓库收录已验收的发布源码、发行说明和安装包。开发与测试构建在独立开发仓库进行。
 
 [快速开始](#快速开始) · [工作间、任务核心与记忆](#工作间任务核心与记忆) · [扩展开发](#扩展开发) · [设计与实测](#设计与实测) · [许可](#许可)
 
@@ -84,7 +86,7 @@ Electron 通过受限桥接访问本机 HTTP 服务，服务负责项目、会�
 
 历史工程题另有一组对照。Modot Pilot + DeepSeek Flash 与 Codex CLI + GPT-6.2 Sol 各通过 9/10 个评分项。双方均完成的九项，Modot 合计用时少 21.3%，用了约两倍 token。[逐题对照与条件](docs/benchmarks/modot-engineering-scorecard.md) · [成绩数据](docs/benchmarks/modot-2026-11-23-results.json)
 
-## 从源码贡献
+## 源码与问题反馈
 
 改界面从 `desktop/renderer-v2` 开始。查 Agent 决策、工具和回执从 `loop` 开始，测试入口主要在 `tools`。报告工程问题时，附上版本、模型、审批模式、复现命令和观测结果，方便把故障定位到对应环节。[源码启动、测试与打包](docs/install.md) · [模块入口](docs/modules.md)
 

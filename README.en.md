@@ -1,10 +1,12 @@
 # Modot — Windows Coding Agent
 
-[Download Windows x64 Preview .13](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [Release notes](https://github.com/lq755467102-art/modot/releases/tag/v0.2.0-preview.13) · [简体中文](README.md) · [Source-available license](LICENSE)
+[Download Windows x64 Preview .13](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [Release notes](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13) · [简体中文](README.md) · [Source-available license](LICENSE)
 
 **Modot is a lightweight, customizable desktop AI agent with a built-in code workroom.** Open a local project and bring your own model to read code, edit files and run checks. Workrooms and chats share project scope, permissions and action receipts. Choose a memory provider and pick a specialist model when a task needs one.
 
 The Windows x64 `.13` installer is about **142 MiB**. In one matched desktop test, Modot Preview `.1` ran the task with a **249.1 MiB median** and **275.2 MiB sampled peak** private working set across its process tree. [Three-phase comparison and measurement method](#install-size-and-desktop-memory)
+
+This repository contains validated release source, release notes and installers. Development and test builds use a separate repository.
 
 [Quickstart](#quickstart) · [Workrooms, task cores and memory](#workrooms-task-cores-and-memory) · [Build an extension](#build-an-extension) · [Design notes and measurements](#design-notes-and-measurements) · [License](#license)
 
@@ -84,7 +86,7 @@ Figures are **median / sampled peak** private working set for the whole app proc
 
 In an earlier engineering comparison, Modot Pilot + DeepSeek Flash and Codex CLI + GPT-6.2 Sol each passed 9/10 scoring entries. Across the nine entries both completed, Modot took 21.3% less total time and used about twice the tokens. [Per-case scores and conditions](docs/benchmarks/modot-engineering-scorecard.md) · [Score data](docs/benchmarks/modot-2026-11-23-results.json)
 
-## Contribute from source
+## Source and issue reports
 
 Start in `desktop/renderer-v2` for UI changes, `loop` for agent behavior, tools and results, and `tools` for tests. When reporting a reproducible issue, include your version, model, approval mode, the command you ran and what happened. [Run, test and package from source](docs/install.md) · [Module entry points](docs/modules.md)
 
