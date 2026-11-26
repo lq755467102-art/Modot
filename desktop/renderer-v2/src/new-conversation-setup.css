@@ -1,0 +1,106 @@
+.restored-legacy[data-chat-setup="true"] :is(.legacy-composer,#cresize,.conversation-header) { display:none; }
+.restored-legacy[data-chat-setup="true"] #feed { display:flex; flex-direction:column; padding:0; }
+
+.restored-legacy .new-conversation-home {
+  position:relative;
+  display:flex;
+  flex:1 0 auto;
+  flex-direction:column;
+  align-items:center;
+  min-inline-size:0;
+  color:var(--ink);
+  padding:clamp(14px,4vw,30px) var(--reading-gutter);
+}
+.restored-legacy .new-conversation-welcome {
+  display:grid;
+  flex:1 0 auto;
+  place-items:center;
+  min-block-size:clamp(108px,27dvh,290px);
+  text-align:center;
+  padding-block:32px;
+}
+.restored-legacy .new-conversation-welcome h1 { margin:0; font-size:clamp(25px,4vw,38px); font-weight:600; }
+.restored-legacy .new-conversation-welcome[data-sending] {
+  width:min(100%,880px);align-items:end;justify-items:stretch;text-align:start;
+}
+.restored-legacy .new-conversation-return {
+  position:absolute;
+  inset-block-start:10px;
+  inset-inline-start:var(--reading-gutter);
+  display:grid;
+  place-items:center;
+  min-inline-size:32px;
+  min-block-size:32px;
+  border:1px solid var(--app-divider);
+  border-radius:var(--app-control-radius);
+  background:transparent;
+  color:var(--conversation-secondary);
+}
+.restored-legacy .new-conversation-setup { width:min(100%,880px); min-width:0; margin:0; }
+.restored-legacy .new-conversation-destination {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:4px 14px;
+  padding:0 4px 8px;
+  min-inline-size:0;
+  border:0;
+  margin:0;
+  color:var(--conversation-secondary);
+}
+.new-conversation-destination-item {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-inline-size:0;
+  max-inline-size:100%;
+  font-size:12px;
+}
+.new-conversation-destination-item svg { flex:none; inline-size:15px; block-size:15px; }
+.restored-legacy .new-conversation-destination select {
+  min-inline-size:0;
+  max-inline-size:min(240px,100%);
+  min-block-size:30px;
+  padding:3px;
+  border:1px solid transparent;
+  border-radius:var(--app-control-radius);
+  color:var(--ink);
+  background:var(--bg);
+  font:inherit;
+  text-overflow:ellipsis;
+}
+.restored-legacy .new-conversation-destination select:hover:enabled { border-color:var(--app-divider); }
+.restored-legacy .new-conversation-destination .new-conversation-project {
+  min-block-size:30px;
+  padding:3px 7px;
+  border:1px solid var(--app-divider);
+  border-radius:var(--app-control-radius);
+  background:transparent;
+  color:var(--ink);
+}
+.restored-legacy .new-conversation-destination .new-conversation-project:hover:enabled { background:var(--app-selected); }
+.new-conversation-composer {
+  border:1px solid var(--app-divider);
+  border-radius:var(--app-popover-radius);
+  background:var(--panel);
+  box-shadow:var(--sh-2);
+}
+.new-conversation-composer:focus-within { border-color:var(--app-accent); }
+.restored-legacy .new-conversation-composer #agent-composer {
+  display:block;
+  min-height:78px;
+  max-height:min(230px,35dvh);
+  field-sizing:content;
+  resize:none;
+  font:inherit;
+}
+.restored-legacy .new-conversation-toolbar { justify-content:flex-end; flex-wrap:wrap; }
+.restored-legacy .new-conversation-toolbar .composer-model { margin-inline-end:auto; }
+.restored-legacy .new-conversation-toolbar .new-conversation-confirm { padding-inline:8px; }
+.new-conversation-feedback { margin:0; padding:0 12px 8px; color:var(--conversation-secondary); overflow-wrap:anywhere; }
+.new-conversation-feedback:empty { display:none; }
+.new-conversation-feedback[role="alert"] { color:var(--conversation-failed); }
+.restored-legacy .new-conversation-home :is(select,button):focus-visible { outline:2px solid var(--conversation-focus); outline-offset:1px; }
+.conversation-worktree-choice { display:flex; align-items:center; flex-wrap:wrap; gap:4px 8px; padding:4px 11px; color:var(--conversation-secondary); }
+.conversation-worktree-choice span { overflow-wrap:anywhere; }
+.conversation-worktree-choice button { font-size:inherit; }

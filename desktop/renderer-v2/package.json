@@ -1,0 +1,40 @@
+{
+  "name": "harness-workbench",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "6.20.4",
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/lang-javascript": "6.2.3",
+    "@codemirror/lang-python": "6.2.1",
+    "@codemirror/search": "6.7.2",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.15",
+    "@tanstack/react-query": "5.76.1",
+    "@uiw/react-codemirror": "4.23.12",
+    "@xterm/addon-fit": "0.10.0",
+    "@xterm/xterm": "5.5.0",
+    "@zip.js/zip.js": "2.25.0",
+    "jsonc-parser": "3.3.1",
+    "mermaid": "12.3.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "remark-parse": "11.0.0",
+    "shiki": "4.6.0",
+    "unified": "11.0.5"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.4",
+    "@types/react-dom": "19.1.5",
+    "postcss": "8.5.32",
+    "typescript": "5.8.3",
+    "vite": "6.4.5"
+  }
+}

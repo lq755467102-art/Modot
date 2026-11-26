@@ -1,0 +1,257 @@
+{
+  "_说明": [
+    "沙箱规则（2026-10-26 照 WorkBuddy 的 tsbx_rules.json 的结构复刻）。",
+    "为什么照搬结构：他们踩过的坑比我们多，规则的**形状**本身就是经验 ——",
+    "  路径 glob + 四类动作（read/write/delete/exec）+ default_action=ask + 进程白名单。",
+    "我们不搬它的引擎（那是闭源二进制），引擎自己写；规则格式照抄，这样以后能对着改。",
+    "★ action 的三种值：allow / ask / deny。**默认是 ask**：不认识的不是放行，是问人。",
+    "★ `<work>` 会被替换成当前工作区根，`~` 会被替换成用户目录。"
+  ],
+  "version": 1,
+  "default_action": "ask",
+  "file_rules": [
+    {
+      "path": "<work>/**",
+      "action": "read=allow|write=allow|delete=ask",
+      "_comment": "工作区内随便读；删除要问 —— 删除不可逆，而写有镜像和四道门"
+    },
+    {
+      "path": "~/.harness/grants*",
+      "action": "read=deny|write=deny|delete=deny",
+      "_comment": "一次性许可表（2026-10-26）。能读就能伪造授权，能写就等于自己给自己批条子"
+    },
+    {
+      "path": "~/.ssh/**",
+      "action": "read=deny|write=deny|delete=deny",
+      "_comment": "凭据，碰都不碰"
+    },
+    {
+      "path": "~/.gnupg/**",
+      "action": "read=deny|write=deny|delete=deny",
+      "_comment": "凭据"
+    },
+    {
+      "path": "~/.config/**",
+      "action": "read=ask|write=ask|delete=deny"
+    },
+    {
+      "path": "~/AppData/Roaming/**",
+      "action": "read=ask|write=ask|delete=deny",
+      "_comment": "这里装的是各类客户端的数据（含登录态）"
+    },
+    {
+      "path": "~/AppData/Local/**",
+      "action": "read=ask|write=ask|delete=deny"
+    },
+    {
+      "path": "~/AppData/Local/Temp/**",
+      "action": "read=allow|write=allow|delete=allow",
+      "_comment": "临时目录，放开，否则工具链到处卡"
+    },
+    {
+      "path": "~/.workbuddy/**",
+      "action": "read=deny|write=deny|delete=deny",
+      "_comment": "宿主自己的数据（含凭据、审计），不许碰"
+    },
+    {
+      "path": "C:/Windows/**",
+      "action": "read=ask|write=deny|delete=deny",
+      "_comment": "看可以问，改不行"
+    },
+    {
+      "path": "C:/Program Files*/**",
+      "action": "read=ask|write=deny|delete=deny"
+    },
+    {
+      "path": "**/*.token",
+      "action": "read=deny|write=deny|delete=deny"
+    },
+    {
+      "path": "**/api-token",
+      "action": "read=deny|write=deny|delete=deny"
+    },
+    {
+      "path": "**/credentials*",
+      "action": "read=deny|write=deny|delete=deny"
+    },
+    {
+      "path": "**/*.env",
+      "action": "read=ask|write=deny|delete=deny"
+    }
+  ],
+  "process_rules": [
+    {
+      "name": "*alipay*",
+      "action": "ask",
+      "_comment": "支付：一律问人"
+    },
+    {
+      "name": "*支付宝*",
+      "action": "ask"
+    },
+    {
+      "name": "*wechat*",
+      "action": "ask",
+      "_comment": "支付/社交：一律问人"
+    },
+    {
+      "name": "*微信*",
+      "action": "ask"
+    },
+    {
+      "name": "*wxpay*",
+      "action": "ask"
+    },
+    {
+      "name": "*unionpay*",
+      "action": "ask"
+    },
+    {
+      "name": "*paypal*",
+      "action": "ask"
+    },
+    {
+      "name": "*dingtalk*",
+      "action": "ask"
+    },
+    {
+      "name": "*feishu*",
+      "action": "ask"
+    },
+    {
+      "name": "*lark*",
+      "action": "ask"
+    },
+    {
+      "name": "*telegram*",
+      "action": "ask"
+    },
+    {
+      "name": "*discord*",
+      "action": "ask"
+    },
+    {
+      "name": "*outlook*",
+      "action": "ask"
+    },
+    {
+      "name": "msedge.exe",
+      "action": "ask",
+      "_comment": "浏览器 = 能登录任何网站 = 能付款"
+    },
+    {
+      "name": "chrome.exe",
+      "action": "ask"
+    },
+    {
+      "name": "firefox.exe",
+      "action": "ask"
+    },
+    {
+      "name": "explorer.exe",
+      "action": "ask",
+      "_comment": "起资源管理器 = 能打开任何东西"
+    }
+  ],
+  "network": {
+    "_comment": [
+      "★ 这一层我们目前只做**内容闸**：脚本里出现网络调用就停下来问人。",
+      "真出站收口（LocalProxy 那种）要配合下一轮的降权，光靠名字白名单挡不住。"
+    ],
+    "default": "ask",
+    "allow_hosts": [
+      "127.0.0.1",
+      "localhost"
+    ]
+  },
+  "script_scan": {
+    "_说明": "跑脚本之前扫它的源码：命中就停下来问人。这不是猜意图，是看**具体调用**。",
+    "rules": [
+      {
+        "kind": "net",
+        "pattern": "\\b(socket|urllib|requests|httpx|aiohttp|http\\.client|websocket|smtplib|ftplib|telnetlib|paramiko)\\b",
+        "_comment": "联网：外发和下载都在这一类"
+      },
+      {
+        "kind": "net",
+        "pattern": "\\b(curl|wget|Invoke-WebRequest|Invoke-RestMethod|Test-NetConnection)\\b"
+      },
+      {
+        "kind": "exec",
+        "pattern": "\\b(subprocess|os\\.system|os\\.popen|os\\.exec\\w*|os\\.spawn\\w*|pty\\.spawn)\\b",
+        "_comment": "起别的程序：支付软件、浏览器、命令行工具都从这儿走"
+      },
+      {
+        "kind": "exec",
+        "pattern": "os\\.startfile|ShellExecute|Start-Process|\\bstart\\s+/"
+      },
+      {
+        "kind": "ui",
+        "pattern": "\\b(pyautogui|pywinauto|uiautomation|pynput|keyboard|mouse|pyperclip|win32clipboard|SendKeys)\\b",
+        "_comment": "模拟点击 / 读剪贴板：绕过一切文件检查去操作支付界面"
+      },
+      {
+        "kind": "secret",
+        "pattern": "(?i)(credentials|\\.ssh|id_rsa|id_ed25519|Login Data|Cookies|History|\\.env)\\b",
+        "_comment": "读凭据/浏览器数据"
+      },
+      {
+        "kind": "money",
+        "pattern": "(?i)(alipay|支付宝|微信支付|wxpay|wechatpay|unionpay|paypal|收款|付款|转账|二维码支付)"
+      },
+      {
+        "kind": "upload",
+        "pattern": "(?i)(multipart/form-data|form-data|upload|attach|webhook|bot[0-9]+:[A-Za-z0-9_-]{10,})"
+      }
+    ]
+  },
+  "script_allow": {
+    "_说明": [
+      "这些脚本**跳过内容扫描**（路径规则照查）。为什么必须留这个口子：bin/accept.py 本来就",
+      "大量用 subprocess —— 不豁免的话，验收自己都跑不了，而「子 agent 说这事我做不到」",
+      "正是权限收窄最典型的翻车形态。",
+      "★ 每条带 sha256（2026-10-26 补）：内容一变，免扫**自动失效**，退回扫描并在拦截理由里",
+      "  说「这份内容和签过的不一样」。免扫是「这份内容我核过」的意思，不是「这个文件名我放心」。",
+      "★ 重签用 `python bin/rules.py sign bin/accept.py`（人跑；agent 的文件工具碰不到这个文件）。",
+      "★ 这个文件本身也不给 agent 改：能改规则就等于能给自己开免死金牌。"
+    ],
+    "items": [
+      {
+        "path": "<work>/bin/accept.py",
+        "sha256": "74391182a02a31c000f63e4746859cd9bb255fb3a1edece10bbbd9c4974b14d1"
+      },
+      {
+        "path": "<work>/bin/residue.py",
+        "sha256": "1dc611e8727aa2230890542ffc35e962cea81476fab5c5f2bc2a4a611481f8a6"
+      },
+      {
+        "path": "<work>/bin/probe_judge.py",
+        "sha256": "6b974d645a4f40652afcfe759681838874995f177933a43c0e4006f5d3a224c6"
+      },
+      {
+        "path": "<work>/bin/health.py",
+        "sha256": "86bd7c6dfe79c382763fef0c595aba970f8577af8b23a0f4128d0a060ef95de0"
+      },
+      {
+        "path": "<work>/bin/audit.py",
+        "sha256": "292bf08efc801c0ef982fcab4a7b2ec0b42234ecb728ce7daf2289b92e81b60f"
+      },
+      {
+        "path": "<work>/bin/bench.py",
+        "sha256": "7dfd9be2f39ce6cc315bbdf3378c0068fd1d2e5a83b05668aff8b8568154bc95"
+      },
+      {
+        "path": "<work>/bin/distill.py",
+        "sha256": "ee4b93c2e50d7b9ae6fa39371014ee7915c1c120c5736e6dce346043ed9f307a"
+      },
+      {
+        "path": "<work>/bin/render.py",
+        "sha256": "3b502af22c1d0bb9250273f6708a830b7a238c73e3aa9d38790d245bef1f3247"
+      },
+      {
+        "path": "<work>/bin/board.py",
+        "sha256": "60042932f3e90b028fe9952a2938917a8e1f48749ba2b9432d1cb9ba9de4f623"
+      }
+    ]
+  }
+}

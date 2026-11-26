@@ -1,0 +1,2830 @@
+{
+  "date": "2026-11-23",
+  "platform": "Windows 11 x64 build 26300.9711",
+  "osVisibleRamBytes": 34025414656,
+  "units": "MiB = 1048576 bytes",
+  "repetitionsPerApp": 1,
+  "cadenceTargetMs": 1000,
+  "phaseWindows": {
+    "startup": "First 20 s from fresh desktop process launch, OS cache left warm",
+    "project": "First 20 s from confirmed selection of the checkout, before sending",
+    "task": "Desktop send to final persisted assistant answer"
+  },
+  "sourceCommit": "ec8d6d5dbcc51f8bb71b6533d58909405471e37d",
+  "fixtureCommit": "6aef671bfdba14817a9bd1f6d578ba0bb3944cdf",
+  "inputFiles": 626,
+  "trackedInputTreeSha256": "29dfd4b4987e539f1965cda5f0696f327b731bee111a171258fdef4858181a9e",
+  "prompt": "这个工程的工作间协议生成物有一处与定义不一致。请先在项目根目录实际运行 verify.cmd 复现，找出并修复漂移，只改需要修的生成文件，再运行同一个 verify.cmd。最后告诉我改了哪个相对路径、两次退出码和测试结论。不要安装依赖，不要提交。",
+  "promptSha256": "aef6f6a5c991de9bb810a87d004661f500300769035cb09dd48aafa0e2d6d684",
+  "target": "desktop/renderer-v2/src/generated.ts",
+  "expectedBeforeSha256": "814b5f9ad7deda43123fc69ef3640f11b7ef4715880792db86638467692597c9",
+  "expectedAfterSha256": "4cea7e744e2440be8273b5849981cd6d0a77e9d6074094ea902ccf0ac6bbc9d6",
+  "runtime": "CPython 3.13.17, in each project; no network installation during tasks",
+  "baselineScore": {
+    "originalCommandExit": 1,
+    "knownCorrectExit": 0
+  },
+  "apps": [
+    {
+      "app": "Modot Preview",
+      "version": "0.2.0-preview.1",
+      "model": "DeepSeek Flash",
+      "displayedOrEffectiveAccess": "Project read/write with approval when leaving scope",
+      "grade": {
+        "changedTrackedFiles": [
+          "desktop/renderer-v2/src/generated.ts"
+        ],
+        "fixtureCommitUnchanged": true,
+        "commandExitCodes": [
+          1,
+          0
+        ],
+        "receiptSource": "project shell tool outputs",
+        "independentGeneratorExitCode": 0
+      },
+      "phases": {
+        "startup": {
+          "durationMs": 20000,
+          "sampleCount": 20,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 143.1,
+              "sampledPeakMiB": 146.2
+            },
+            "totalWorkingSet": {
+              "medianMiB": 449.6,
+              "sampledPeakMiB": 452.4
+            },
+            "privateCommit": {
+              "medianMiB": 287.2,
+              "sampledPeakMiB": 290.1
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 625,
+              "snapshotDurationMs": 789,
+              "processes": 6,
+              "privateWorkingSetBytes": 78270464,
+              "totalWorkingSetBytes": 262782976,
+              "privateCommitBytes": 144363520
+            },
+            {
+              "offsetMs": 1610,
+              "snapshotDurationMs": 696,
+              "processes": 7,
+              "privateWorkingSetBytes": 145539072,
+              "totalWorkingSetBytes": 460283904,
+              "privateCommitBytes": 290168832
+            },
+            {
+              "offsetMs": 2617,
+              "snapshotDurationMs": 665,
+              "processes": 7,
+              "privateWorkingSetBytes": 148717568,
+              "totalWorkingSetBytes": 465043456,
+              "privateCommitBytes": 300486656
+            },
+            {
+              "offsetMs": 3579,
+              "snapshotDurationMs": 547,
+              "processes": 7,
+              "privateWorkingSetBytes": 149561344,
+              "totalWorkingSetBytes": 465707008,
+              "privateCommitBytes": 301207552
+            },
+            {
+              "offsetMs": 4665,
+              "snapshotDurationMs": 687,
+              "processes": 7,
+              "privateWorkingSetBytes": 149577728,
+              "totalWorkingSetBytes": 465870848,
+              "privateCommitBytes": 300744704
+            },
+            {
+              "offsetMs": 5634,
+              "snapshotDurationMs": 564,
+              "processes": 7,
+              "privateWorkingSetBytes": 149831680,
+              "totalWorkingSetBytes": 467980288,
+              "privateCommitBytes": 300834816
+            },
+            {
+              "offsetMs": 6643,
+              "snapshotDurationMs": 548,
+              "processes": 7,
+              "privateWorkingSetBytes": 150958080,
+              "totalWorkingSetBytes": 471822336,
+              "privateCommitBytes": 301867008
+            },
+            {
+              "offsetMs": 7695,
+              "snapshotDurationMs": 632,
+              "processes": 7,
+              "privateWorkingSetBytes": 151875584,
+              "totalWorkingSetBytes": 472752128,
+              "privateCommitBytes": 302972928
+            },
+            {
+              "offsetMs": 8685,
+              "snapshotDurationMs": 583,
+              "processes": 7,
+              "privateWorkingSetBytes": 152911872,
+              "totalWorkingSetBytes": 473792512,
+              "privateCommitBytes": 304189440
+            },
+            {
+              "offsetMs": 9708,
+              "snapshotDurationMs": 596,
+              "processes": 7,
+              "privateWorkingSetBytes": 153022464,
+              "totalWorkingSetBytes": 474030080,
+              "privateCommitBytes": 304201728
+            },
+            {
+              "offsetMs": 10691,
+              "snapshotDurationMs": 537,
+              "processes": 7,
+              "privateWorkingSetBytes": 153280512,
+              "totalWorkingSetBytes": 474427392,
+              "privateCommitBytes": 304222208
+            },
+            {
+              "offsetMs": 11732,
+              "snapshotDurationMs": 594,
+              "processes": 7,
+              "privateWorkingSetBytes": 151056384,
+              "totalWorkingSetBytes": 472309760,
+              "privateCommitBytes": 301740032
+            },
+            {
+              "offsetMs": 12777,
+              "snapshotDurationMs": 637,
+              "processes": 7,
+              "privateWorkingSetBytes": 151166976,
+              "totalWorkingSetBytes": 472420352,
+              "privateCommitBytes": 302006272
+            },
+            {
+              "offsetMs": 13749,
+              "snapshotDurationMs": 546,
+              "processes": 7,
+              "privateWorkingSetBytes": 151568384,
+              "totalWorkingSetBytes": 472862720,
+              "privateCommitBytes": 302596096
+            },
+            {
+              "offsetMs": 14779,
+              "snapshotDurationMs": 573,
+              "processes": 7,
+              "privateWorkingSetBytes": 149250048,
+              "totalWorkingSetBytes": 470601728,
+              "privateCommitBytes": 300253184
+            },
+            {
+              "offsetMs": 15840,
+              "snapshotDurationMs": 664,
+              "processes": 7,
+              "privateWorkingSetBytes": 149450752,
+              "totalWorkingSetBytes": 470810624,
+              "privateCommitBytes": 300519424
+            },
+            {
+              "offsetMs": 16883,
+              "snapshotDurationMs": 725,
+              "processes": 7,
+              "privateWorkingSetBytes": 149946368,
+              "totalWorkingSetBytes": 471326720,
+              "privateCommitBytes": 301080576
+            },
+            {
+              "offsetMs": 17801,
+              "snapshotDurationMs": 532,
+              "processes": 7,
+              "privateWorkingSetBytes": 149958656,
+              "totalWorkingSetBytes": 471343104,
+              "privateCommitBytes": 301088768
+            },
+            {
+              "offsetMs": 18912,
+              "snapshotDurationMs": 724,
+              "processes": 7,
+              "privateWorkingSetBytes": 150077440,
+              "totalWorkingSetBytes": 471519232,
+              "privateCommitBytes": 301191168
+            },
+            {
+              "offsetMs": 19879,
+              "snapshotDurationMs": 614,
+              "processes": 7,
+              "privateWorkingSetBytes": 150106112,
+              "totalWorkingSetBytes": 471719936,
+              "privateCommitBytes": 301211648
+            }
+          ]
+        },
+        "project": {
+          "durationMs": 20000,
+          "sampleCount": 20,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 166.9,
+              "sampledPeakMiB": 170.3
+            },
+            "totalWorkingSet": {
+              "medianMiB": 477.2,
+              "sampledPeakMiB": 479.9
+            },
+            "privateCommit": {
+              "medianMiB": 321.0,
+              "sampledPeakMiB": 337.2
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 57,
+              "snapshotDurationMs": 771,
+              "processes": 7,
+              "privateWorkingSetBytes": 175685632,
+              "totalWorkingSetBytes": 500015104,
+              "privateCommitBytes": 351412224
+            },
+            {
+              "offsetMs": 1041,
+              "snapshotDurationMs": 693,
+              "processes": 7,
+              "privateWorkingSetBytes": 175726592,
+              "totalWorkingSetBytes": 500195328,
+              "privateCommitBytes": 351428608
+            },
+            {
+              "offsetMs": 2047,
+              "snapshotDurationMs": 676,
+              "processes": 7,
+              "privateWorkingSetBytes": 175792128,
+              "totalWorkingSetBytes": 500150272,
+              "privateCommitBytes": 351379456
+            },
+            {
+              "offsetMs": 3073,
+              "snapshotDurationMs": 700,
+              "processes": 7,
+              "privateWorkingSetBytes": 175882240,
+              "totalWorkingSetBytes": 500457472,
+              "privateCommitBytes": 351428608
+            },
+            {
+              "offsetMs": 4071,
+              "snapshotDurationMs": 661,
+              "processes": 7,
+              "privateWorkingSetBytes": 176578560,
+              "totalWorkingSetBytes": 501153792,
+              "privateCommitBytes": 351969280
+            },
+            {
+              "offsetMs": 5114,
+              "snapshotDurationMs": 718,
+              "processes": 7,
+              "privateWorkingSetBytes": 177029120,
+              "totalWorkingSetBytes": 501628928,
+              "privateCommitBytes": 352247808
+            },
+            {
+              "offsetMs": 6148,
+              "snapshotDurationMs": 748,
+              "processes": 7,
+              "privateWorkingSetBytes": 177598464,
+              "totalWorkingSetBytes": 502198272,
+              "privateCommitBytes": 353538048
+            },
+            {
+              "offsetMs": 7142,
+              "snapshotDurationMs": 714,
+              "processes": 7,
+              "privateWorkingSetBytes": 177737728,
+              "totalWorkingSetBytes": 502358016,
+              "privateCommitBytes": 339988480
+            },
+            {
+              "offsetMs": 8155,
+              "snapshotDurationMs": 703,
+              "processes": 7,
+              "privateWorkingSetBytes": 178622464,
+              "totalWorkingSetBytes": 503242752,
+              "privateCommitBytes": 340783104
+            },
+            {
+              "offsetMs": 9181,
+              "snapshotDurationMs": 723,
+              "processes": 7,
+              "privateWorkingSetBytes": 176906240,
+              "totalWorkingSetBytes": 502112256,
+              "privateCommitBytes": 339107840
+            },
+            {
+              "offsetMs": 10201,
+              "snapshotDurationMs": 713,
+              "processes": 7,
+              "privateWorkingSetBytes": 168636416,
+              "totalWorkingSetBytes": 494850048,
+              "privateCommitBytes": 328855552
+            },
+            {
+              "offsetMs": 11163,
+              "snapshotDurationMs": 578,
+              "processes": 7,
+              "privateWorkingSetBytes": 169508864,
+              "totalWorkingSetBytes": 495816704,
+              "privateCommitBytes": 329740288
+            },
+            {
+              "offsetMs": 12183,
+              "snapshotDurationMs": 592,
+              "processes": 7,
+              "privateWorkingSetBytes": 171945984,
+              "totalWorkingSetBytes": 498262016,
+              "privateCommitBytes": 332173312
+            },
+            {
+              "offsetMs": 13224,
+              "snapshotDurationMs": 648,
+              "processes": 7,
+              "privateWorkingSetBytes": 172314624,
+              "totalWorkingSetBytes": 498671616,
+              "privateCommitBytes": 332443648
+            },
+            {
+              "offsetMs": 14223,
+              "snapshotDurationMs": 599,
+              "processes": 7,
+              "privateWorkingSetBytes": 172724224,
+              "totalWorkingSetBytes": 499101696,
+              "privateCommitBytes": 332976128
+            },
+            {
+              "offsetMs": 15259,
+              "snapshotDurationMs": 635,
+              "processes": 7,
+              "privateWorkingSetBytes": 173608960,
+              "totalWorkingSetBytes": 500035584,
+              "privateCommitBytes": 333471744
+            },
+            {
+              "offsetMs": 16311,
+              "snapshotDurationMs": 699,
+              "processes": 7,
+              "privateWorkingSetBytes": 173924352,
+              "totalWorkingSetBytes": 500375552,
+              "privateCommitBytes": 333766656
+            },
+            {
+              "offsetMs": 17341,
+              "snapshotDurationMs": 711,
+              "processes": 7,
+              "privateWorkingSetBytes": 173924352,
+              "totalWorkingSetBytes": 500375552,
+              "privateCommitBytes": 333766656
+            },
+            {
+              "offsetMs": 18345,
+              "snapshotDurationMs": 690,
+              "processes": 7,
+              "privateWorkingSetBytes": 174419968,
+              "totalWorkingSetBytes": 500887552,
+              "privateCommitBytes": 334155776
+            },
+            {
+              "offsetMs": 19325,
+              "snapshotDurationMs": 605,
+              "processes": 7,
+              "privateWorkingSetBytes": 174424064,
+              "totalWorkingSetBytes": 500891648,
+              "privateCommitBytes": 334155776
+            }
+          ]
+        },
+        "task": {
+          "durationMs": 41121,
+          "sampleCount": 41,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 249.1,
+              "sampledPeakMiB": 275.2
+            },
+            "totalWorkingSet": {
+              "medianMiB": 597.9,
+              "sampledPeakMiB": 626.1
+            },
+            "privateCommit": {
+              "medianMiB": 413.4,
+              "sampledPeakMiB": 440.1
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 330,
+              "snapshotDurationMs": 667,
+              "processes": 8,
+              "privateWorkingSetBytes": 200437760,
+              "totalWorkingSetBytes": 548204544,
+              "privateCommitBytes": 374149120
+            },
+            {
+              "offsetMs": 1358,
+              "snapshotDurationMs": 694,
+              "processes": 9,
+              "privateWorkingSetBytes": 215015424,
+              "totalWorkingSetBytes": 575250432,
+              "privateCommitBytes": 389550080
+            },
+            {
+              "offsetMs": 2354,
+              "snapshotDurationMs": 651,
+              "processes": 9,
+              "privateWorkingSetBytes": 221749248,
+              "totalWorkingSetBytes": 582705152,
+              "privateCommitBytes": 396349440
+            },
+            {
+              "offsetMs": 3384,
+              "snapshotDurationMs": 663,
+              "processes": 9,
+              "privateWorkingSetBytes": 236470272,
+              "totalWorkingSetBytes": 598159360,
+              "privateCommitBytes": 410886144
+            },
+            {
+              "offsetMs": 4402,
+              "snapshotDurationMs": 665,
+              "processes": 9,
+              "privateWorkingSetBytes": 240046080,
+              "totalWorkingSetBytes": 602198016,
+              "privateCommitBytes": 414937088
+            },
+            {
+              "offsetMs": 5434,
+              "snapshotDurationMs": 694,
+              "processes": 9,
+              "privateWorkingSetBytes": 242237440,
+              "totalWorkingSetBytes": 604585984,
+              "privateCommitBytes": 419446784
+            },
+            {
+              "offsetMs": 6416,
+              "snapshotDurationMs": 623,
+              "processes": 9,
+              "privateWorkingSetBytes": 244355072,
+              "totalWorkingSetBytes": 606736384,
+              "privateCommitBytes": 418287616
+            },
+            {
+              "offsetMs": 7472,
+              "snapshotDurationMs": 706,
+              "processes": 9,
+              "privateWorkingSetBytes": 250159104,
+              "totalWorkingSetBytes": 614379520,
+              "privateCommitBytes": 423829504
+            },
+            {
+              "offsetMs": 8492,
+              "snapshotDurationMs": 703,
+              "processes": 9,
+              "privateWorkingSetBytes": 250937344,
+              "totalWorkingSetBytes": 615182336,
+              "privateCommitBytes": 423886848
+            },
+            {
+              "offsetMs": 9510,
+              "snapshotDurationMs": 702,
+              "processes": 9,
+              "privateWorkingSetBytes": 252067840,
+              "totalWorkingSetBytes": 616423424,
+              "privateCommitBytes": 424882176
+            },
+            {
+              "offsetMs": 10524,
+              "snapshotDurationMs": 663,
+              "processes": 9,
+              "privateWorkingSetBytes": 255221760,
+              "totalWorkingSetBytes": 619786240,
+              "privateCommitBytes": 434601984
+            },
+            {
+              "offsetMs": 11561,
+              "snapshotDurationMs": 714,
+              "processes": 9,
+              "privateWorkingSetBytes": 258949120,
+              "totalWorkingSetBytes": 623566848,
+              "privateCommitBytes": 437395456
+            },
+            {
+              "offsetMs": 12576,
+              "snapshotDurationMs": 715,
+              "processes": 9,
+              "privateWorkingSetBytes": 261177344,
+              "totalWorkingSetBytes": 625958912,
+              "privateCommitBytes": 439529472
+            },
+            {
+              "offsetMs": 13580,
+              "snapshotDurationMs": 707,
+              "processes": 9,
+              "privateWorkingSetBytes": 262090752,
+              "totalWorkingSetBytes": 626921472,
+              "privateCommitBytes": 439980032
+            },
+            {
+              "offsetMs": 14596,
+              "snapshotDurationMs": 703,
+              "processes": 9,
+              "privateWorkingSetBytes": 262639616,
+              "totalWorkingSetBytes": 627511296,
+              "privateCommitBytes": 440590336
+            },
+            {
+              "offsetMs": 15619,
+              "snapshotDurationMs": 716,
+              "processes": 9,
+              "privateWorkingSetBytes": 262107136,
+              "totalWorkingSetBytes": 628617216,
+              "privateCommitBytes": 433250304
+            },
+            {
+              "offsetMs": 16653,
+              "snapshotDurationMs": 744,
+              "processes": 9,
+              "privateWorkingSetBytes": 263323648,
+              "totalWorkingSetBytes": 629907456,
+              "privateCommitBytes": 434257920
+            },
+            {
+              "offsetMs": 17656,
+              "snapshotDurationMs": 714,
+              "processes": 9,
+              "privateWorkingSetBytes": 265150464,
+              "totalWorkingSetBytes": 631738368,
+              "privateCommitBytes": 436723712
+            },
+            {
+              "offsetMs": 18679,
+              "snapshotDurationMs": 720,
+              "processes": 9,
+              "privateWorkingSetBytes": 262451200,
+              "totalWorkingSetBytes": 629334016,
+              "privateCommitBytes": 433360896
+            },
+            {
+              "offsetMs": 19696,
+              "snapshotDurationMs": 713,
+              "processes": 9,
+              "privateWorkingSetBytes": 255320064,
+              "totalWorkingSetBytes": 622252032,
+              "privateCommitBytes": 425250816
+            },
+            {
+              "offsetMs": 20729,
+              "snapshotDurationMs": 740,
+              "processes": 9,
+              "privateWorkingSetBytes": 255975424,
+              "totalWorkingSetBytes": 622956544,
+              "privateCommitBytes": 426639360
+            },
+            {
+              "offsetMs": 21714,
+              "snapshotDurationMs": 687,
+              "processes": 9,
+              "privateWorkingSetBytes": 255361024,
+              "totalWorkingSetBytes": 622432256,
+              "privateCommitBytes": 428933120
+            },
+            {
+              "offsetMs": 22732,
+              "snapshotDurationMs": 691,
+              "processes": 9,
+              "privateWorkingSetBytes": 255602688,
+              "totalWorkingSetBytes": 622678016,
+              "privateCommitBytes": 428781568
+            },
+            {
+              "offsetMs": 23757,
+              "snapshotDurationMs": 686,
+              "processes": 9,
+              "privateWorkingSetBytes": 254533632,
+              "totalWorkingSetBytes": 621637632,
+              "privateCommitBytes": 427245568
+            },
+            {
+              "offsetMs": 24791,
+              "snapshotDurationMs": 712,
+              "processes": 9,
+              "privateWorkingSetBytes": 263016448,
+              "totalWorkingSetBytes": 630263808,
+              "privateCommitBytes": 434425856
+            },
+            {
+              "offsetMs": 25798,
+              "snapshotDurationMs": 690,
+              "processes": 9,
+              "privateWorkingSetBytes": 262115328,
+              "totalWorkingSetBytes": 629411840,
+              "privateCommitBytes": 433483776
+            },
+            {
+              "offsetMs": 26810,
+              "snapshotDurationMs": 681,
+              "processes": 9,
+              "privateWorkingSetBytes": 260263936,
+              "totalWorkingSetBytes": 627585024,
+              "privateCommitBytes": 432193536
+            },
+            {
+              "offsetMs": 27850,
+              "snapshotDurationMs": 713,
+              "processes": 9,
+              "privateWorkingSetBytes": 258068480,
+              "totalWorkingSetBytes": 625410048,
+              "privateCommitBytes": 430166016
+            },
+            {
+              "offsetMs": 28878,
+              "snapshotDurationMs": 732,
+              "processes": 9,
+              "privateWorkingSetBytes": 269340672,
+              "totalWorkingSetBytes": 636710912,
+              "privateCommitBytes": 443154432
+            },
+            {
+              "offsetMs": 29880,
+              "snapshotDurationMs": 699,
+              "processes": 9,
+              "privateWorkingSetBytes": 276209664,
+              "totalWorkingSetBytes": 643579904,
+              "privateCommitBytes": 451567616
+            },
+            {
+              "offsetMs": 30911,
+              "snapshotDurationMs": 722,
+              "processes": 9,
+              "privateWorkingSetBytes": 274333696,
+              "totalWorkingSetBytes": 641757184,
+              "privateCommitBytes": 449310720
+            },
+            {
+              "offsetMs": 31921,
+              "snapshotDurationMs": 700,
+              "processes": 9,
+              "privateWorkingSetBytes": 257183744,
+              "totalWorkingSetBytes": 624656384,
+              "privateCommitBytes": 428859392
+            },
+            {
+              "offsetMs": 32926,
+              "snapshotDurationMs": 662,
+              "processes": 9,
+              "privateWorkingSetBytes": 262389760,
+              "totalWorkingSetBytes": 629903360,
+              "privateCommitBytes": 443314176
+            },
+            {
+              "offsetMs": 33984,
+              "snapshotDurationMs": 742,
+              "processes": 9,
+              "privateWorkingSetBytes": 272957440,
+              "totalWorkingSetBytes": 640512000,
+              "privateCommitBytes": 454348800
+            },
+            {
+              "offsetMs": 34967,
+              "snapshotDurationMs": 670,
+              "processes": 9,
+              "privateWorkingSetBytes": 273264640,
+              "totalWorkingSetBytes": 640856064,
+              "privateCommitBytes": 455372800
+            },
+            {
+              "offsetMs": 36006,
+              "snapshotDurationMs": 681,
+              "processes": 9,
+              "privateWorkingSetBytes": 269504512,
+              "totalWorkingSetBytes": 637173760,
+              "privateCommitBytes": 449449984
+            },
+            {
+              "offsetMs": 37033,
+              "snapshotDurationMs": 684,
+              "processes": 9,
+              "privateWorkingSetBytes": 274669568,
+              "totalWorkingSetBytes": 642363392,
+              "privateCommitBytes": 453210112
+            },
+            {
+              "offsetMs": 38038,
+              "snapshotDurationMs": 637,
+              "processes": 9,
+              "privateWorkingSetBytes": 277843968,
+              "totalWorkingSetBytes": 645541888,
+              "privateCommitBytes": 450293760
+            },
+            {
+              "offsetMs": 39074,
+              "snapshotDurationMs": 681,
+              "processes": 9,
+              "privateWorkingSetBytes": 278921216,
+              "totalWorkingSetBytes": 646643712,
+              "privateCommitBytes": 451739648
+            },
+            {
+              "offsetMs": 40068,
+              "snapshotDurationMs": 644,
+              "processes": 9,
+              "privateWorkingSetBytes": 280285184,
+              "totalWorkingSetBytes": 648146944,
+              "privateCommitBytes": 453177344
+            },
+            {
+              "offsetMs": 41096,
+              "snapshotDurationMs": 673,
+              "processes": 9,
+              "privateWorkingSetBytes": 288559104,
+              "totalWorkingSetBytes": 656560128,
+              "privateCommitBytes": 461516800
+            }
+          ]
+        }
+      }
+    },
+    {
+      "app": "Codex desktop",
+      "version": "26.1117.4957.0",
+      "model": "GPT-6.2 Sol Max",
+      "displayedOrEffectiveAccess": "Full access (existing desktop selection)",
+      "grade": {
+        "changedTrackedFiles": [
+          "desktop/renderer-v2/src/generated.ts"
+        ],
+        "fixtureCommitUnchanged": true,
+        "commandExitCodes": [
+          1,
+          0
+        ],
+        "receiptSource": "command wrapper log and final answer",
+        "independentGeneratorExitCode": 0
+      },
+      "phases": {
+        "startup": {
+          "durationMs": 20000,
+          "sampleCount": 19,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 558.2,
+              "sampledPeakMiB": 1628.4
+            },
+            "totalWorkingSet": {
+              "medianMiB": 1002.5,
+              "sampledPeakMiB": 2608.2
+            },
+            "privateCommit": {
+              "medianMiB": 920.5,
+              "sampledPeakMiB": 2445.0
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 681,
+              "snapshotDurationMs": 721,
+              "processes": 5,
+              "privateWorkingSetBytes": 137252864,
+              "totalWorkingSetBytes": 356581376,
+              "privateCommitBytes": 261570560
+            },
+            {
+              "offsetMs": 1637,
+              "snapshotDurationMs": 589,
+              "processes": 5,
+              "privateWorkingSetBytes": 185270272,
+              "totalWorkingSetBytes": 411553792,
+              "privateCommitBytes": 312664064
+            },
+            {
+              "offsetMs": 2643,
+              "snapshotDurationMs": 564,
+              "processes": 5,
+              "privateWorkingSetBytes": 188649472,
+              "totalWorkingSetBytes": 414937088,
+              "privateCommitBytes": 315437056
+            },
+            {
+              "offsetMs": 3645,
+              "snapshotDurationMs": 547,
+              "processes": 5,
+              "privateWorkingSetBytes": 193933312,
+              "totalWorkingSetBytes": 420241408,
+              "privateCommitBytes": 320737280
+            },
+            {
+              "offsetMs": 4658,
+              "snapshotDurationMs": 546,
+              "processes": 5,
+              "privateWorkingSetBytes": 193990656,
+              "totalWorkingSetBytes": 420409344,
+              "privateCommitBytes": 320782336
+            },
+            {
+              "offsetMs": 5666,
+              "snapshotDurationMs": 518,
+              "processes": 5,
+              "privateWorkingSetBytes": 194416640,
+              "totalWorkingSetBytes": 420888576,
+              "privateCommitBytes": 321228800
+            },
+            {
+              "offsetMs": 6725,
+              "snapshotDurationMs": 613,
+              "processes": 5,
+              "privateWorkingSetBytes": 212619264,
+              "totalWorkingSetBytes": 469909504,
+              "privateCommitBytes": 351244288
+            },
+            {
+              "offsetMs": 7709,
+              "snapshotDurationMs": 555,
+              "processes": 8,
+              "privateWorkingSetBytes": 557334528,
+              "totalWorkingSetBytes": 973250560,
+              "privateCommitBytes": 921407488
+            },
+            {
+              "offsetMs": 8791,
+              "snapshotDurationMs": 669,
+              "processes": 10,
+              "privateWorkingSetBytes": 573108224,
+              "totalWorkingSetBytes": 1023455232,
+              "privateCommitBytes": 940126208
+            },
+            {
+              "offsetMs": 9791,
+              "snapshotDurationMs": 589,
+              "processes": 10,
+              "privateWorkingSetBytes": 585359360,
+              "totalWorkingSetBytes": 1051164672,
+              "privateCommitBytes": 965189632
+            },
+            {
+              "offsetMs": 10812,
+              "snapshotDurationMs": 592,
+              "processes": 11,
+              "privateWorkingSetBytes": 715902976,
+              "totalWorkingSetBytes": 1251328000,
+              "privateCommitBytes": 1145749504
+            },
+            {
+              "offsetMs": 11889,
+              "snapshotDurationMs": 680,
+              "processes": 11,
+              "privateWorkingSetBytes": 763617280,
+              "totalWorkingSetBytes": 1319292928,
+              "privateCommitBytes": 1158787072
+            },
+            {
+              "offsetMs": 12938,
+              "snapshotDurationMs": 694,
+              "processes": 24,
+              "privateWorkingSetBytes": 1083396096,
+              "totalWorkingSetBytes": 1902137344,
+              "privateCommitBytes": 1623855104
+            },
+            {
+              "offsetMs": 13961,
+              "snapshotDurationMs": 702,
+              "processes": 26,
+              "privateWorkingSetBytes": 1235357696,
+              "totalWorkingSetBytes": 2122604544,
+              "privateCommitBytes": 2021351424
+            },
+            {
+              "offsetMs": 14929,
+              "snapshotDurationMs": 614,
+              "processes": 19,
+              "privateWorkingSetBytes": 1189699584,
+              "totalWorkingSetBytes": 1961877504,
+              "privateCommitBytes": 1939808256
+            },
+            {
+              "offsetMs": 15939,
+              "snapshotDurationMs": 600,
+              "processes": 16,
+              "privateWorkingSetBytes": 1192779776,
+              "totalWorkingSetBytes": 1945423872,
+              "privateCommitBytes": 1933602816
+            },
+            {
+              "offsetMs": 16928,
+              "snapshotDurationMs": 548,
+              "processes": 19,
+              "privateWorkingSetBytes": 1203798016,
+              "totalWorkingSetBytes": 1978941440,
+              "privateCommitBytes": 1939881984
+            },
+            {
+              "offsetMs": 17993,
+              "snapshotDurationMs": 626,
+              "processes": 17,
+              "privateWorkingSetBytes": 1271685120,
+              "totalWorkingSetBytes": 2029420544,
+              "privateCommitBytes": 2008563712
+            },
+            {
+              "offsetMs": 19063,
+              "snapshotDurationMs": 740,
+              "processes": 28,
+              "privateWorkingSetBytes": 1707520000,
+              "totalWorkingSetBytes": 2734911488,
+              "privateCommitBytes": 2563731456
+            }
+          ]
+        },
+        "project": {
+          "durationMs": 20000,
+          "sampleCount": 20,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 1105.4,
+              "sampledPeakMiB": 1110.0
+            },
+            "totalWorkingSet": {
+              "medianMiB": 2106.5,
+              "sampledPeakMiB": 2111.1
+            },
+            "privateCommit": {
+              "medianMiB": 1668.1,
+              "sampledPeakMiB": 1672.2
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 141,
+              "snapshotDurationMs": 658,
+              "processes": 21,
+              "privateWorkingSetBytes": 1157779456,
+              "totalWorkingSetBytes": 2207318016,
+              "privateCommitBytes": 1749708800
+            },
+            {
+              "offsetMs": 1080,
+              "snapshotDurationMs": 508,
+              "processes": 21,
+              "privateWorkingSetBytes": 1158225920,
+              "totalWorkingSetBytes": 2207764480,
+              "privateCommitBytes": 1750118400
+            },
+            {
+              "offsetMs": 2118,
+              "snapshotDurationMs": 539,
+              "processes": 21,
+              "privateWorkingSetBytes": 1158238208,
+              "totalWorkingSetBytes": 2207760384,
+              "privateCommitBytes": 1750118400
+            },
+            {
+              "offsetMs": 3116,
+              "snapshotDurationMs": 513,
+              "processes": 21,
+              "privateWorkingSetBytes": 1158238208,
+              "totalWorkingSetBytes": 2207760384,
+              "privateCommitBytes": 1750118400
+            },
+            {
+              "offsetMs": 4136,
+              "snapshotDurationMs": 507,
+              "processes": 21,
+              "privateWorkingSetBytes": 1156984832,
+              "totalWorkingSetBytes": 2206507008,
+              "privateCommitBytes": 1746620416
+            },
+            {
+              "offsetMs": 5172,
+              "snapshotDurationMs": 544,
+              "processes": 21,
+              "privateWorkingSetBytes": 1156743168,
+              "totalWorkingSetBytes": 2206265344,
+              "privateCommitBytes": 1746247680
+            },
+            {
+              "offsetMs": 6171,
+              "snapshotDurationMs": 502,
+              "processes": 21,
+              "privateWorkingSetBytes": 1156747264,
+              "totalWorkingSetBytes": 2206269440,
+              "privateCommitBytes": 1746247680
+            },
+            {
+              "offsetMs": 7183,
+              "snapshotDurationMs": 490,
+              "processes": 21,
+              "privateWorkingSetBytes": 1156775936,
+              "totalWorkingSetBytes": 2206298112,
+              "privateCommitBytes": 1746276352
+            },
+            {
+              "offsetMs": 8228,
+              "snapshotDurationMs": 541,
+              "processes": 21,
+              "privateWorkingSetBytes": 1160163328,
+              "totalWorkingSetBytes": 2209693696,
+              "privateCommitBytes": 1749082112
+            },
+            {
+              "offsetMs": 9309,
+              "snapshotDurationMs": 660,
+              "processes": 21,
+              "privateWorkingSetBytes": 1160196096,
+              "totalWorkingSetBytes": 2209726464,
+              "privateCommitBytes": 1749110784
+            },
+            {
+              "offsetMs": 10270,
+              "snapshotDurationMs": 539,
+              "processes": 21,
+              "privateWorkingSetBytes": 1160224768,
+              "totalWorkingSetBytes": 2209755136,
+              "privateCommitBytes": 1749131264
+            },
+            {
+              "offsetMs": 11304,
+              "snapshotDurationMs": 574,
+              "processes": 21,
+              "privateWorkingSetBytes": 1160310784,
+              "totalWorkingSetBytes": 2209841152,
+              "privateCommitBytes": 1749200896
+            },
+            {
+              "offsetMs": 12379,
+              "snapshotDurationMs": 660,
+              "processes": 21,
+              "privateWorkingSetBytes": 1159102464,
+              "totalWorkingSetBytes": 2208804864,
+              "privateCommitBytes": 1748185088
+            },
+            {
+              "offsetMs": 13390,
+              "snapshotDurationMs": 627,
+              "processes": 21,
+              "privateWorkingSetBytes": 1159118848,
+              "totalWorkingSetBytes": 2208829440,
+              "privateCommitBytes": 1748185088
+            },
+            {
+              "offsetMs": 14405,
+              "snapshotDurationMs": 612,
+              "processes": 21,
+              "privateWorkingSetBytes": 1159118848,
+              "totalWorkingSetBytes": 2208829440,
+              "privateCommitBytes": 1748185088
+            },
+            {
+              "offsetMs": 15452,
+              "snapshotDurationMs": 649,
+              "processes": 21,
+              "privateWorkingSetBytes": 1159118848,
+              "totalWorkingSetBytes": 2208829440,
+              "privateCommitBytes": 1748185088
+            },
+            {
+              "offsetMs": 16430,
+              "snapshotDurationMs": 562,
+              "processes": 21,
+              "privateWorkingSetBytes": 1163436032,
+              "totalWorkingSetBytes": 2213163008,
+              "privateCommitBytes": 1753055232
+            },
+            {
+              "offsetMs": 17473,
+              "snapshotDurationMs": 600,
+              "processes": 21,
+              "privateWorkingSetBytes": 1163894784,
+              "totalWorkingSetBytes": 2213625856,
+              "privateCommitBytes": 1753395200
+            },
+            {
+              "offsetMs": 18512,
+              "snapshotDurationMs": 641,
+              "processes": 21,
+              "privateWorkingSetBytes": 1163558912,
+              "totalWorkingSetBytes": 2213289984,
+              "privateCommitBytes": 1752743936
+            },
+            {
+              "offsetMs": 19484,
+              "snapshotDurationMs": 561,
+              "processes": 21,
+              "privateWorkingSetBytes": 1163558912,
+              "totalWorkingSetBytes": 2213289984,
+              "privateCommitBytes": 1752743936
+            }
+          ]
+        },
+        "task": {
+          "durationMs": 104245,
+          "sampleCount": 102,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 1340.0,
+              "sampledPeakMiB": 1481.2
+            },
+            "totalWorkingSet": {
+              "medianMiB": 2580.3,
+              "sampledPeakMiB": 2852.2
+            },
+            "privateCommit": {
+              "medianMiB": 2093.1,
+              "sampledPeakMiB": 2530.9
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 602,
+              "snapshotDurationMs": 691,
+              "processes": 33,
+              "privateWorkingSetBytes": 1321988096,
+              "totalWorkingSetBytes": 2547490816,
+              "privateCommitBytes": 2357215232
+            },
+            {
+              "offsetMs": 1668,
+              "snapshotDurationMs": 747,
+              "processes": 47,
+              "privateWorkingSetBytes": 1553190912,
+              "totalWorkingSetBytes": 2963275776,
+              "privateCommitBytes": 2653831168
+            },
+            {
+              "offsetMs": 2630,
+              "snapshotDurationMs": 624,
+              "processes": 37,
+              "privateWorkingSetBytes": 1503551488,
+              "totalWorkingSetBytes": 2775703552,
+              "privateCommitBytes": 2566393856
+            },
+            {
+              "offsetMs": 3672,
+              "snapshotDurationMs": 665,
+              "processes": 37,
+              "privateWorkingSetBytes": 1505153024,
+              "totalWorkingSetBytes": 2780971008,
+              "privateCommitBytes": 2539089920
+            },
+            {
+              "offsetMs": 4670,
+              "snapshotDurationMs": 603,
+              "processes": 37,
+              "privateWorkingSetBytes": 1508225024,
+              "totalWorkingSetBytes": 2784239616,
+              "privateCommitBytes": 2541891584
+            },
+            {
+              "offsetMs": 5730,
+              "snapshotDurationMs": 673,
+              "processes": 37,
+              "privateWorkingSetBytes": 1537515520,
+              "totalWorkingSetBytes": 2825424896,
+              "privateCommitBytes": 2573250560
+            },
+            {
+              "offsetMs": 6717,
+              "snapshotDurationMs": 598,
+              "processes": 37,
+              "privateWorkingSetBytes": 1536851968,
+              "totalWorkingSetBytes": 2824957952,
+              "privateCommitBytes": 2395004928
+            },
+            {
+              "offsetMs": 7720,
+              "snapshotDurationMs": 552,
+              "processes": 37,
+              "privateWorkingSetBytes": 1539690496,
+              "totalWorkingSetBytes": 2827833344,
+              "privateCommitBytes": 2397679616
+            },
+            {
+              "offsetMs": 8755,
+              "snapshotDurationMs": 600,
+              "processes": 37,
+              "privateWorkingSetBytes": 1541406720,
+              "totalWorkingSetBytes": 2829582336,
+              "privateCommitBytes": 2351779840
+            },
+            {
+              "offsetMs": 9784,
+              "snapshotDurationMs": 602,
+              "processes": 41,
+              "privateWorkingSetBytes": 1552539648,
+              "totalWorkingSetBytes": 2990764032,
+              "privateCommitBytes": 2376003584
+            },
+            {
+              "offsetMs": 10852,
+              "snapshotDurationMs": 689,
+              "processes": 37,
+              "privateWorkingSetBytes": 1522647040,
+              "totalWorkingSetBytes": 2815815680,
+              "privateCommitBytes": 2334965760
+            },
+            {
+              "offsetMs": 11816,
+              "snapshotDurationMs": 565,
+              "processes": 37,
+              "privateWorkingSetBytes": 1523425280,
+              "totalWorkingSetBytes": 2816638976,
+              "privateCommitBytes": 2335477760
+            },
+            {
+              "offsetMs": 12864,
+              "snapshotDurationMs": 604,
+              "processes": 37,
+              "privateWorkingSetBytes": 1526988800,
+              "totalWorkingSetBytes": 2820218880,
+              "privateCommitBytes": 2339049472
+            },
+            {
+              "offsetMs": 13900,
+              "snapshotDurationMs": 636,
+              "processes": 37,
+              "privateWorkingSetBytes": 1523728384,
+              "totalWorkingSetBytes": 2816958464,
+              "privateCommitBytes": 2291015680
+            },
+            {
+              "offsetMs": 14927,
+              "snapshotDurationMs": 652,
+              "processes": 37,
+              "privateWorkingSetBytes": 1520791552,
+              "totalWorkingSetBytes": 2813997056,
+              "privateCommitBytes": 2286927872
+            },
+            {
+              "offsetMs": 15910,
+              "snapshotDurationMs": 558,
+              "processes": 37,
+              "privateWorkingSetBytes": 1520947200,
+              "totalWorkingSetBytes": 2814177280,
+              "privateCommitBytes": 2286600192
+            },
+            {
+              "offsetMs": 16976,
+              "snapshotDurationMs": 644,
+              "processes": 37,
+              "privateWorkingSetBytes": 1446920192,
+              "totalWorkingSetBytes": 2740187136,
+              "privateCommitBytes": 2205978624
+            },
+            {
+              "offsetMs": 17966,
+              "snapshotDurationMs": 581,
+              "processes": 37,
+              "privateWorkingSetBytes": 1448902656,
+              "totalWorkingSetBytes": 2742235136,
+              "privateCommitBytes": 2201313280
+            },
+            {
+              "offsetMs": 19018,
+              "snapshotDurationMs": 645,
+              "processes": 37,
+              "privateWorkingSetBytes": 1442603008,
+              "totalWorkingSetBytes": 2735935488,
+              "privateCommitBytes": 2195632128
+            },
+            {
+              "offsetMs": 20010,
+              "snapshotDurationMs": 597,
+              "processes": 37,
+              "privateWorkingSetBytes": 1442156544,
+              "totalWorkingSetBytes": 2735456256,
+              "privateCommitBytes": 2191679488
+            },
+            {
+              "offsetMs": 21030,
+              "snapshotDurationMs": 593,
+              "processes": 37,
+              "privateWorkingSetBytes": 1444679680,
+              "totalWorkingSetBytes": 2738020352,
+              "privateCommitBytes": 2196164608
+            },
+            {
+              "offsetMs": 22092,
+              "snapshotDurationMs": 659,
+              "processes": 37,
+              "privateWorkingSetBytes": 1439174656,
+              "totalWorkingSetBytes": 2733084672,
+              "privateCommitBytes": 2189012992
+            },
+            {
+              "offsetMs": 23083,
+              "snapshotDurationMs": 608,
+              "processes": 37,
+              "privateWorkingSetBytes": 1437229056,
+              "totalWorkingSetBytes": 2731622400,
+              "privateCommitBytes": 2178748416
+            },
+            {
+              "offsetMs": 24135,
+              "snapshotDurationMs": 654,
+              "processes": 37,
+              "privateWorkingSetBytes": 1436921856,
+              "totalWorkingSetBytes": 2731315200,
+              "privateCommitBytes": 2178494464
+            },
+            {
+              "offsetMs": 25117,
+              "snapshotDurationMs": 562,
+              "processes": 37,
+              "privateWorkingSetBytes": 1435365376,
+              "totalWorkingSetBytes": 2729758720,
+              "privateCommitBytes": 2176901120
+            },
+            {
+              "offsetMs": 26164,
+              "snapshotDurationMs": 607,
+              "processes": 37,
+              "privateWorkingSetBytes": 1449238528,
+              "totalWorkingSetBytes": 2749792256,
+              "privateCommitBytes": 2227699712
+            },
+            {
+              "offsetMs": 27194,
+              "snapshotDurationMs": 609,
+              "processes": 37,
+              "privateWorkingSetBytes": 1449054208,
+              "totalWorkingSetBytes": 2749607936,
+              "privateCommitBytes": 2228686848
+            },
+            {
+              "offsetMs": 28232,
+              "snapshotDurationMs": 656,
+              "processes": 37,
+              "privateWorkingSetBytes": 1450606592,
+              "totalWorkingSetBytes": 2751176704,
+              "privateCommitBytes": 2231656448
+            },
+            {
+              "offsetMs": 29258,
+              "snapshotDurationMs": 661,
+              "processes": 37,
+              "privateWorkingSetBytes": 1453916160,
+              "totalWorkingSetBytes": 2751553536,
+              "privateCommitBytes": 2233860096
+            },
+            {
+              "offsetMs": 30280,
+              "snapshotDurationMs": 657,
+              "processes": 37,
+              "privateWorkingSetBytes": 1451118592,
+              "totalWorkingSetBytes": 2748755968,
+              "privateCommitBytes": 2230362112
+            },
+            {
+              "offsetMs": 31304,
+              "snapshotDurationMs": 665,
+              "processes": 37,
+              "privateWorkingSetBytes": 1436614656,
+              "totalWorkingSetBytes": 2734489600,
+              "privateCommitBytes": 2221178880
+            },
+            {
+              "offsetMs": 32340,
+              "snapshotDurationMs": 704,
+              "processes": 37,
+              "privateWorkingSetBytes": 1436647424,
+              "totalWorkingSetBytes": 2734604288,
+              "privateCommitBytes": 2207514624
+            },
+            {
+              "offsetMs": 33376,
+              "snapshotDurationMs": 751,
+              "processes": 37,
+              "privateWorkingSetBytes": 1434824704,
+              "totalWorkingSetBytes": 2732806144,
+              "privateCommitBytes": 2205224960
+            },
+            {
+              "offsetMs": 34350,
+              "snapshotDurationMs": 656,
+              "processes": 41,
+              "privateWorkingSetBytes": 1461477376,
+              "totalWorkingSetBytes": 2936885248,
+              "privateCommitBytes": 2243387392
+            },
+            {
+              "offsetMs": 35382,
+              "snapshotDurationMs": 688,
+              "processes": 37,
+              "privateWorkingSetBytes": 1432227840,
+              "totalWorkingSetBytes": 2731003904,
+              "privateCommitBytes": 2197725184
+            },
+            {
+              "offsetMs": 36321,
+              "snapshotDurationMs": 516,
+              "processes": 37,
+              "privateWorkingSetBytes": 1432850432,
+              "totalWorkingSetBytes": 2731655168,
+              "privateCommitBytes": 2196860928
+            },
+            {
+              "offsetMs": 37392,
+              "snapshotDurationMs": 619,
+              "processes": 37,
+              "privateWorkingSetBytes": 1432494080,
+              "totalWorkingSetBytes": 2731323392,
+              "privateCommitBytes": 2196111360
+            },
+            {
+              "offsetMs": 38400,
+              "snapshotDurationMs": 604,
+              "processes": 37,
+              "privateWorkingSetBytes": 1434517504,
+              "totalWorkingSetBytes": 2733355008,
+              "privateCommitBytes": 2192519168
+            },
+            {
+              "offsetMs": 39452,
+              "snapshotDurationMs": 663,
+              "processes": 37,
+              "privateWorkingSetBytes": 1436520448,
+              "totalWorkingSetBytes": 2735349760,
+              "privateCommitBytes": 2193854464
+            },
+            {
+              "offsetMs": 40450,
+              "snapshotDurationMs": 618,
+              "processes": 37,
+              "privateWorkingSetBytes": 1387986944,
+              "totalWorkingSetBytes": 2687143936,
+              "privateCommitBytes": 2152914944
+            },
+            {
+              "offsetMs": 41456,
+              "snapshotDurationMs": 590,
+              "processes": 37,
+              "privateWorkingSetBytes": 1384140800,
+              "totalWorkingSetBytes": 2683412480,
+              "privateCommitBytes": 2148327424
+            },
+            {
+              "offsetMs": 42536,
+              "snapshotDurationMs": 693,
+              "processes": 37,
+              "privateWorkingSetBytes": 1383022592,
+              "totalWorkingSetBytes": 2682605568,
+              "privateCommitBytes": 2157121536
+            },
+            {
+              "offsetMs": 43505,
+              "snapshotDurationMs": 582,
+              "processes": 37,
+              "privateWorkingSetBytes": 1381822464,
+              "totalWorkingSetBytes": 2681405440,
+              "privateCommitBytes": 2155282432
+            },
+            {
+              "offsetMs": 44522,
+              "snapshotDurationMs": 573,
+              "processes": 37,
+              "privateWorkingSetBytes": 1383370752,
+              "totalWorkingSetBytes": 2682961920,
+              "privateCommitBytes": 2156007424
+            },
+            {
+              "offsetMs": 45586,
+              "snapshotDurationMs": 662,
+              "processes": 37,
+              "privateWorkingSetBytes": 1384374272,
+              "totalWorkingSetBytes": 2683973632,
+              "privateCommitBytes": 2156937216
+            },
+            {
+              "offsetMs": 46565,
+              "snapshotDurationMs": 574,
+              "processes": 37,
+              "privateWorkingSetBytes": 1380823040,
+              "totalWorkingSetBytes": 2680389632,
+              "privateCommitBytes": 2154491904
+            },
+            {
+              "offsetMs": 47559,
+              "snapshotDurationMs": 534,
+              "processes": 37,
+              "privateWorkingSetBytes": 1380028416,
+              "totalWorkingSetBytes": 2679595008,
+              "privateCommitBytes": 2153381888
+            },
+            {
+              "offsetMs": 48622,
+              "snapshotDurationMs": 614,
+              "processes": 37,
+              "privateWorkingSetBytes": 1385660416,
+              "totalWorkingSetBytes": 2685255680,
+              "privateCommitBytes": 2161127424
+            },
+            {
+              "offsetMs": 49600,
+              "snapshotDurationMs": 533,
+              "processes": 37,
+              "privateWorkingSetBytes": 1388457984,
+              "totalWorkingSetBytes": 2688282624,
+              "privateCommitBytes": 2165305344
+            },
+            {
+              "offsetMs": 50620,
+              "snapshotDurationMs": 542,
+              "processes": 37,
+              "privateWorkingSetBytes": 1386180608,
+              "totalWorkingSetBytes": 2686005248,
+              "privateCommitBytes": 2160594944
+            },
+            {
+              "offsetMs": 51709,
+              "snapshotDurationMs": 644,
+              "processes": 37,
+              "privateWorkingSetBytes": 1385521152,
+              "totalWorkingSetBytes": 2685353984,
+              "privateCommitBytes": 2159599616
+            },
+            {
+              "offsetMs": 52670,
+              "snapshotDurationMs": 515,
+              "processes": 37,
+              "privateWorkingSetBytes": 1385811968,
+              "totalWorkingSetBytes": 2685644800,
+              "privateCommitBytes": 2159685632
+            },
+            {
+              "offsetMs": 53774,
+              "snapshotDurationMs": 686,
+              "processes": 37,
+              "privateWorkingSetBytes": 1385680896,
+              "totalWorkingSetBytes": 2685489152,
+              "privateCommitBytes": 2159435776
+            },
+            {
+              "offsetMs": 54728,
+              "snapshotDurationMs": 543,
+              "processes": 37,
+              "privateWorkingSetBytes": 1386074112,
+              "totalWorkingSetBytes": 2685890560,
+              "privateCommitBytes": 2159091712
+            },
+            {
+              "offsetMs": 55764,
+              "snapshotDurationMs": 541,
+              "processes": 37,
+              "privateWorkingSetBytes": 1386381312,
+              "totalWorkingSetBytes": 2686230528,
+              "privateCommitBytes": 2159226880
+            },
+            {
+              "offsetMs": 56842,
+              "snapshotDurationMs": 646,
+              "processes": 37,
+              "privateWorkingSetBytes": 1395445760,
+              "totalWorkingSetBytes": 2695467008,
+              "privateCommitBytes": 2204995584
+            },
+            {
+              "offsetMs": 57841,
+              "snapshotDurationMs": 604,
+              "processes": 37,
+              "privateWorkingSetBytes": 1397137408,
+              "totalWorkingSetBytes": 2697203712,
+              "privateCommitBytes": 2206408704
+            },
+            {
+              "offsetMs": 58874,
+              "snapshotDurationMs": 622,
+              "processes": 37,
+              "privateWorkingSetBytes": 1391566848,
+              "totalWorkingSetBytes": 2691633152,
+              "privateCommitBytes": 2200977408
+            },
+            {
+              "offsetMs": 59880,
+              "snapshotDurationMs": 579,
+              "processes": 37,
+              "privateWorkingSetBytes": 1390780416,
+              "totalWorkingSetBytes": 2690850816,
+              "privateCommitBytes": 2198421504
+            },
+            {
+              "offsetMs": 60946,
+              "snapshotDurationMs": 659,
+              "processes": 37,
+              "privateWorkingSetBytes": 1399508992,
+              "totalWorkingSetBytes": 2702872576,
+              "privateCommitBytes": 2229678080
+            },
+            {
+              "offsetMs": 61971,
+              "snapshotDurationMs": 682,
+              "processes": 37,
+              "privateWorkingSetBytes": 1398697984,
+              "totalWorkingSetBytes": 2702110720,
+              "privateCommitBytes": 2229657600
+            },
+            {
+              "offsetMs": 62966,
+              "snapshotDurationMs": 638,
+              "processes": 37,
+              "privateWorkingSetBytes": 1394212864,
+              "totalWorkingSetBytes": 2694283264,
+              "privateCommitBytes": 2224992256
+            },
+            {
+              "offsetMs": 63963,
+              "snapshotDurationMs": 576,
+              "processes": 37,
+              "privateWorkingSetBytes": 1395671040,
+              "totalWorkingSetBytes": 2695749632,
+              "privateCommitBytes": 2226909184
+            },
+            {
+              "offsetMs": 65060,
+              "snapshotDurationMs": 720,
+              "processes": 37,
+              "privateWorkingSetBytes": 1396604928,
+              "totalWorkingSetBytes": 2696691712,
+              "privateCommitBytes": 2227572736
+            },
+            {
+              "offsetMs": 65992,
+              "snapshotDurationMs": 549,
+              "processes": 37,
+              "privateWorkingSetBytes": 1397551104,
+              "totalWorkingSetBytes": 2698260480,
+              "privateCommitBytes": 2179420160
+            },
+            {
+              "offsetMs": 67050,
+              "snapshotDurationMs": 607,
+              "processes": 37,
+              "privateWorkingSetBytes": 1392578560,
+              "totalWorkingSetBytes": 2693263360,
+              "privateCommitBytes": 2173775872
+            },
+            {
+              "offsetMs": 68067,
+              "snapshotDurationMs": 602,
+              "processes": 37,
+              "privateWorkingSetBytes": 1391304704,
+              "totalWorkingSetBytes": 2692022272,
+              "privateCommitBytes": 2172174336
+            },
+            {
+              "offsetMs": 69088,
+              "snapshotDurationMs": 614,
+              "processes": 37,
+              "privateWorkingSetBytes": 1389047808,
+              "totalWorkingSetBytes": 2689781760,
+              "privateCommitBytes": 2170032128
+            },
+            {
+              "offsetMs": 70073,
+              "snapshotDurationMs": 544,
+              "processes": 37,
+              "privateWorkingSetBytes": 1388199936,
+              "totalWorkingSetBytes": 2688933888,
+              "privateCommitBytes": 2153656320
+            },
+            {
+              "offsetMs": 71148,
+              "snapshotDurationMs": 641,
+              "processes": 37,
+              "privateWorkingSetBytes": 1384226816,
+              "totalWorkingSetBytes": 2684928000,
+              "privateCommitBytes": 2144632832
+            },
+            {
+              "offsetMs": 72163,
+              "snapshotDurationMs": 630,
+              "processes": 37,
+              "privateWorkingSetBytes": 1384742912,
+              "totalWorkingSetBytes": 2685468672,
+              "privateCommitBytes": 2145746944
+            },
+            {
+              "offsetMs": 73183,
+              "snapshotDurationMs": 618,
+              "processes": 37,
+              "privateWorkingSetBytes": 1384755200,
+              "totalWorkingSetBytes": 2685480960,
+              "privateCommitBytes": 2145755136
+            },
+            {
+              "offsetMs": 74225,
+              "snapshotDurationMs": 648,
+              "processes": 37,
+              "privateWorkingSetBytes": 1388478464,
+              "totalWorkingSetBytes": 2689257472,
+              "privateCommitBytes": 2173673472
+            },
+            {
+              "offsetMs": 75248,
+              "snapshotDurationMs": 648,
+              "processes": 37,
+              "privateWorkingSetBytes": 1387200512,
+              "totalWorkingSetBytes": 2687991808,
+              "privateCommitBytes": 2174435328
+            },
+            {
+              "offsetMs": 76276,
+              "snapshotDurationMs": 649,
+              "processes": 37,
+              "privateWorkingSetBytes": 1387728896,
+              "totalWorkingSetBytes": 2688520192,
+              "privateCommitBytes": 2178453504
+            },
+            {
+              "offsetMs": 77234,
+              "snapshotDurationMs": 536,
+              "processes": 37,
+              "privateWorkingSetBytes": 1386872832,
+              "totalWorkingSetBytes": 2687623168,
+              "privateCommitBytes": 2177388544
+            },
+            {
+              "offsetMs": 78320,
+              "snapshotDurationMs": 650,
+              "processes": 37,
+              "privateWorkingSetBytes": 1387565056,
+              "totalWorkingSetBytes": 2688348160,
+              "privateCommitBytes": 2176991232
+            },
+            {
+              "offsetMs": 79352,
+              "snapshotDurationMs": 668,
+              "processes": 37,
+              "privateWorkingSetBytes": 1421201408,
+              "totalWorkingSetBytes": 2722803712,
+              "privateCommitBytes": 2227990528
+            },
+            {
+              "offsetMs": 80382,
+              "snapshotDurationMs": 696,
+              "processes": 37,
+              "privateWorkingSetBytes": 1419325440,
+              "totalWorkingSetBytes": 2720964608,
+              "privateCommitBytes": 2224181248
+            },
+            {
+              "offsetMs": 81410,
+              "snapshotDurationMs": 704,
+              "processes": 37,
+              "privateWorkingSetBytes": 1419599872,
+              "totalWorkingSetBytes": 2721243136,
+              "privateCommitBytes": 2211422208
+            },
+            {
+              "offsetMs": 82401,
+              "snapshotDurationMs": 614,
+              "processes": 37,
+              "privateWorkingSetBytes": 1418883072,
+              "totalWorkingSetBytes": 2720550912,
+              "privateCommitBytes": 2209484800
+            },
+            {
+              "offsetMs": 83427,
+              "snapshotDurationMs": 624,
+              "processes": 37,
+              "privateWorkingSetBytes": 1405992960,
+              "totalWorkingSetBytes": 2707644416,
+              "privateCommitBytes": 2195861504
+            },
+            {
+              "offsetMs": 84444,
+              "snapshotDurationMs": 625,
+              "processes": 37,
+              "privateWorkingSetBytes": 1406799872,
+              "totalWorkingSetBytes": 2708451328,
+              "privateCommitBytes": 2196582400
+            },
+            {
+              "offsetMs": 85482,
+              "snapshotDurationMs": 653,
+              "processes": 37,
+              "privateWorkingSetBytes": 1407430656,
+              "totalWorkingSetBytes": 2709114880,
+              "privateCommitBytes": 2196672512
+            },
+            {
+              "offsetMs": 86466,
+              "snapshotDurationMs": 577,
+              "processes": 37,
+              "privateWorkingSetBytes": 1407881216,
+              "totalWorkingSetBytes": 2709565440,
+              "privateCommitBytes": 2188091392
+            },
+            {
+              "offsetMs": 87463,
+              "snapshotDurationMs": 524,
+              "processes": 37,
+              "privateWorkingSetBytes": 1406611456,
+              "totalWorkingSetBytes": 2708295680,
+              "privateCommitBytes": 2178682880
+            },
+            {
+              "offsetMs": 88534,
+              "snapshotDurationMs": 621,
+              "processes": 37,
+              "privateWorkingSetBytes": 1406705664,
+              "totalWorkingSetBytes": 2708398080,
+              "privateCommitBytes": 2177896448
+            },
+            {
+              "offsetMs": 89552,
+              "snapshotDurationMs": 614,
+              "processes": 37,
+              "privateWorkingSetBytes": 1406341120,
+              "totalWorkingSetBytes": 2708054016,
+              "privateCommitBytes": 2175143936
+            },
+            {
+              "offsetMs": 90591,
+              "snapshotDurationMs": 632,
+              "processes": 37,
+              "privateWorkingSetBytes": 1404760064,
+              "totalWorkingSetBytes": 2706472960,
+              "privateCommitBytes": 2173202432
+            },
+            {
+              "offsetMs": 91612,
+              "snapshotDurationMs": 623,
+              "processes": 37,
+              "privateWorkingSetBytes": 1403895808,
+              "totalWorkingSetBytes": 2705608704,
+              "privateCommitBytes": 2167648256
+            },
+            {
+              "offsetMs": 92645,
+              "snapshotDurationMs": 632,
+              "processes": 37,
+              "privateWorkingSetBytes": 1403375616,
+              "totalWorkingSetBytes": 2705092608,
+              "privateCommitBytes": 2164170752
+            },
+            {
+              "offsetMs": 93656,
+              "snapshotDurationMs": 630,
+              "processes": 37,
+              "privateWorkingSetBytes": 1403695104,
+              "totalWorkingSetBytes": 2705395712,
+              "privateCommitBytes": 2164641792
+            },
+            {
+              "offsetMs": 94692,
+              "snapshotDurationMs": 643,
+              "processes": 37,
+              "privateWorkingSetBytes": 1403314176,
+              "totalWorkingSetBytes": 2703380480,
+              "privateCommitBytes": 2171273216
+            },
+            {
+              "offsetMs": 95714,
+              "snapshotDurationMs": 655,
+              "processes": 37,
+              "privateWorkingSetBytes": 1402810368,
+              "totalWorkingSetBytes": 2702901248,
+              "privateCommitBytes": 2170904576
+            },
+            {
+              "offsetMs": 96732,
+              "snapshotDurationMs": 642,
+              "processes": 37,
+              "privateWorkingSetBytes": 1405521920,
+              "totalWorkingSetBytes": 2705612800,
+              "privateCommitBytes": 2165891072
+            },
+            {
+              "offsetMs": 97756,
+              "snapshotDurationMs": 640,
+              "processes": 37,
+              "privateWorkingSetBytes": 1400848384,
+              "totalWorkingSetBytes": 2700959744,
+              "privateCommitBytes": 2177384448
+            },
+            {
+              "offsetMs": 98748,
+              "snapshotDurationMs": 600,
+              "processes": 37,
+              "privateWorkingSetBytes": 1398353920,
+              "totalWorkingSetBytes": 2698465280,
+              "privateCommitBytes": 2174414848
+            },
+            {
+              "offsetMs": 99754,
+              "snapshotDurationMs": 568,
+              "processes": 35,
+              "privateWorkingSetBytes": 1396432896,
+              "totalWorkingSetBytes": 2678894592,
+              "privateCommitBytes": 2169638912
+            },
+            {
+              "offsetMs": 100788,
+              "snapshotDurationMs": 600,
+              "processes": 35,
+              "privateWorkingSetBytes": 1397399552,
+              "totalWorkingSetBytes": 2679861248,
+              "privateCommitBytes": 2169417728
+            },
+            {
+              "offsetMs": 101808,
+              "snapshotDurationMs": 593,
+              "processes": 35,
+              "privateWorkingSetBytes": 1401225216,
+              "totalWorkingSetBytes": 2683867136,
+              "privateCommitBytes": 2306240512
+            },
+            {
+              "offsetMs": 102862,
+              "snapshotDurationMs": 651,
+              "processes": 35,
+              "privateWorkingSetBytes": 1399504896,
+              "totalWorkingSetBytes": 2682335232,
+              "privateCommitBytes": 2304708608
+            },
+            {
+              "offsetMs": 103920,
+              "snapshotDurationMs": 698,
+              "processes": 35,
+              "privateWorkingSetBytes": 1411952640,
+              "totalWorkingSetBytes": 2695098368,
+              "privateCommitBytes": 2327760896
+            }
+          ]
+        }
+      }
+    },
+    {
+      "app": "WorkBuddy",
+      "version": "5.11.3",
+      "model": "Hy4 flash",
+      "displayedOrEffectiveAccess": "Full access (existing desktop selection)",
+      "grade": {
+        "changedTrackedFiles": [
+          "desktop/renderer-v2/src/generated.ts"
+        ],
+        "fixtureCommitUnchanged": true,
+        "commandExitCodes": [
+          1,
+          0
+        ],
+        "receiptSource": "command wrapper log and final answer",
+        "independentGeneratorExitCode": 0
+      },
+      "phases": {
+        "startup": {
+          "durationMs": 20000,
+          "sampleCount": 19,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 1184.6,
+              "sampledPeakMiB": 1189.5
+            },
+            "totalWorkingSet": {
+              "medianMiB": 2098.8,
+              "sampledPeakMiB": 2103.9
+            },
+            "privateCommit": {
+              "medianMiB": 1769.4,
+              "sampledPeakMiB": 1808.7
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 643,
+              "snapshotDurationMs": 757,
+              "processes": 1,
+              "privateWorkingSetBytes": 107077632,
+              "totalWorkingSetBytes": 229539840,
+              "privateCommitBytes": 164925440
+            },
+            {
+              "offsetMs": 1664,
+              "snapshotDurationMs": 712,
+              "processes": 5,
+              "privateWorkingSetBytes": 401235968,
+              "totalWorkingSetBytes": 997916672,
+              "privateCommitBytes": 732647424
+            },
+            {
+              "offsetMs": 2667,
+              "snapshotDurationMs": 668,
+              "processes": 5,
+              "privateWorkingSetBytes": 621727744,
+              "totalWorkingSetBytes": 1224425472,
+              "privateCommitBytes": 988184576
+            },
+            {
+              "offsetMs": 3703,
+              "snapshotDurationMs": 708,
+              "processes": 5,
+              "privateWorkingSetBytes": 793518080,
+              "totalWorkingSetBytes": 1399345152,
+              "privateCommitBytes": 1170239488
+            },
+            {
+              "offsetMs": 4745,
+              "snapshotDurationMs": 717,
+              "processes": 13,
+              "privateWorkingSetBytes": 953016320,
+              "totalWorkingSetBytes": 1890353152,
+              "privateCommitBytes": 1475477504
+            },
+            {
+              "offsetMs": 5795,
+              "snapshotDurationMs": 747,
+              "processes": 15,
+              "privateWorkingSetBytes": 984403968,
+              "totalWorkingSetBytes": 1927311360,
+              "privateCommitBytes": 1576566784
+            },
+            {
+              "offsetMs": 6847,
+              "snapshotDurationMs": 781,
+              "processes": 15,
+              "privateWorkingSetBytes": 1140862976,
+              "totalWorkingSetBytes": 2099240960,
+              "privateCommitBytes": 1780879360
+            },
+            {
+              "offsetMs": 7829,
+              "snapshotDurationMs": 713,
+              "processes": 15,
+              "privateWorkingSetBytes": 1241632768,
+              "totalWorkingSetBytes": 2200797184,
+              "privateCommitBytes": 1893851136
+            },
+            {
+              "offsetMs": 8843,
+              "snapshotDurationMs": 689,
+              "processes": 15,
+              "privateWorkingSetBytes": 1244188672,
+              "totalWorkingSetBytes": 2203365376,
+              "privateCommitBytes": 1896566784
+            },
+            {
+              "offsetMs": 9855,
+              "snapshotDurationMs": 672,
+              "processes": 15,
+              "privateWorkingSetBytes": 1242836992,
+              "totalWorkingSetBytes": 2201260032,
+              "privateCommitBytes": 1894838272
+            },
+            {
+              "offsetMs": 10881,
+              "snapshotDurationMs": 681,
+              "processes": 15,
+              "privateWorkingSetBytes": 1243222016,
+              "totalWorkingSetBytes": 2201653248,
+              "privateCommitBytes": 1889861632
+            },
+            {
+              "offsetMs": 11887,
+              "snapshotDurationMs": 665,
+              "processes": 15,
+              "privateWorkingSetBytes": 1243512832,
+              "totalWorkingSetBytes": 2201944064,
+              "privateCommitBytes": 1888718848
+            },
+            {
+              "offsetMs": 12909,
+              "snapshotDurationMs": 679,
+              "processes": 15,
+              "privateWorkingSetBytes": 1240875008,
+              "totalWorkingSetBytes": 2199306240,
+              "privateCommitBytes": 1879232512
+            },
+            {
+              "offsetMs": 13913,
+              "snapshotDurationMs": 654,
+              "processes": 15,
+              "privateWorkingSetBytes": 1242193920,
+              "totalWorkingSetBytes": 2200625152,
+              "privateCommitBytes": 1861525504
+            },
+            {
+              "offsetMs": 14965,
+              "snapshotDurationMs": 717,
+              "processes": 15,
+              "privateWorkingSetBytes": 1244549120,
+              "totalWorkingSetBytes": 2203389952,
+              "privateCommitBytes": 1855336448
+            },
+            {
+              "offsetMs": 15946,
+              "snapshotDurationMs": 654,
+              "processes": 15,
+              "privateWorkingSetBytes": 1244844032,
+              "totalWorkingSetBytes": 2203684864,
+              "privateCommitBytes": 1855557632
+            },
+            {
+              "offsetMs": 16979,
+              "snapshotDurationMs": 655,
+              "processes": 15,
+              "privateWorkingSetBytes": 1246859264,
+              "totalWorkingSetBytes": 2205622272,
+              "privateCommitBytes": 1856970752
+            },
+            {
+              "offsetMs": 18030,
+              "snapshotDurationMs": 700,
+              "processes": 15,
+              "privateWorkingSetBytes": 1246289920,
+              "totalWorkingSetBytes": 2205052928,
+              "privateCommitBytes": 1834909696
+            },
+            {
+              "offsetMs": 19047,
+              "snapshotDurationMs": 682,
+              "processes": 15,
+              "privateWorkingSetBytes": 1247301632,
+              "totalWorkingSetBytes": 2206064640,
+              "privateCommitBytes": 1838718976
+            }
+          ]
+        },
+        "project": {
+          "durationMs": 20000,
+          "sampleCount": 19,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 822.3,
+              "sampledPeakMiB": 825.8
+            },
+            "totalWorkingSet": {
+              "medianMiB": 1768.3,
+              "sampledPeakMiB": 1771.0
+            },
+            "privateCommit": {
+              "medianMiB": 1353.8,
+              "sampledPeakMiB": 1365.5
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 690,
+              "snapshotDurationMs": 716,
+              "processes": 15,
+              "privateWorkingSetBytes": 865918976,
+              "totalWorkingSetBytes": 1857064960,
+              "privateCommitBytes": 1418190848
+            },
+            {
+              "offsetMs": 1719,
+              "snapshotDurationMs": 732,
+              "processes": 15,
+              "privateWorkingSetBytes": 865918976,
+              "totalWorkingSetBytes": 1857064960,
+              "privateCommitBytes": 1418190848
+            },
+            {
+              "offsetMs": 2748,
+              "snapshotDurationMs": 725,
+              "processes": 15,
+              "privateWorkingSetBytes": 865808384,
+              "totalWorkingSetBytes": 1856954368,
+              "privateCommitBytes": 1417912320
+            },
+            {
+              "offsetMs": 3752,
+              "snapshotDurationMs": 699,
+              "processes": 15,
+              "privateWorkingSetBytes": 865382400,
+              "totalWorkingSetBytes": 1856528384,
+              "privateCommitBytes": 1413169152
+            },
+            {
+              "offsetMs": 4808,
+              "snapshotDurationMs": 759,
+              "processes": 15,
+              "privateWorkingSetBytes": 862601216,
+              "totalWorkingSetBytes": 1853788160,
+              "privateCommitBytes": 1431814144
+            },
+            {
+              "offsetMs": 5816,
+              "snapshotDurationMs": 746,
+              "processes": 15,
+              "privateWorkingSetBytes": 862236672,
+              "totalWorkingSetBytes": 1853435904,
+              "privateCommitBytes": 1431654400
+            },
+            {
+              "offsetMs": 6805,
+              "snapshotDurationMs": 684,
+              "processes": 15,
+              "privateWorkingSetBytes": 862048256,
+              "totalWorkingSetBytes": 1853247488,
+              "privateCommitBytes": 1431420928
+            },
+            {
+              "offsetMs": 7784,
+              "snapshotDurationMs": 573,
+              "processes": 15,
+              "privateWorkingSetBytes": 861290496,
+              "totalWorkingSetBytes": 1852444672,
+              "privateCommitBytes": 1430523904
+            },
+            {
+              "offsetMs": 8860,
+              "snapshotDurationMs": 685,
+              "processes": 15,
+              "privateWorkingSetBytes": 864608256,
+              "totalWorkingSetBytes": 1856819200,
+              "privateCommitBytes": 1421570048
+            },
+            {
+              "offsetMs": 9882,
+              "snapshotDurationMs": 680,
+              "processes": 15,
+              "privateWorkingSetBytes": 862638080,
+              "totalWorkingSetBytes": 1854849024,
+              "privateCommitBytes": 1419575296
+            },
+            {
+              "offsetMs": 10896,
+              "snapshotDurationMs": 687,
+              "processes": 15,
+              "privateWorkingSetBytes": 861777920,
+              "totalWorkingSetBytes": 1853800448,
+              "privateCommitBytes": 1418575872
+            },
+            {
+              "offsetMs": 11924,
+              "snapshotDurationMs": 712,
+              "processes": 15,
+              "privateWorkingSetBytes": 861016064,
+              "totalWorkingSetBytes": 1853067264,
+              "privateCommitBytes": 1404944384
+            },
+            {
+              "offsetMs": 12948,
+              "snapshotDurationMs": 736,
+              "processes": 15,
+              "privateWorkingSetBytes": 862609408,
+              "totalWorkingSetBytes": 1854713856,
+              "privateCommitBytes": 1418862592
+            },
+            {
+              "offsetMs": 13936,
+              "snapshotDurationMs": 677,
+              "processes": 15,
+              "privateWorkingSetBytes": 862601216,
+              "totalWorkingSetBytes": 1854705664,
+              "privateCommitBytes": 1425076224
+            },
+            {
+              "offsetMs": 14997,
+              "snapshotDurationMs": 772,
+              "processes": 15,
+              "privateWorkingSetBytes": 862240768,
+              "totalWorkingSetBytes": 1854296064,
+              "privateCommitBytes": 1424424960
+            },
+            {
+              "offsetMs": 15972,
+              "snapshotDurationMs": 683,
+              "processes": 15,
+              "privateWorkingSetBytes": 862191616,
+              "totalWorkingSetBytes": 1854246912,
+              "privateCommitBytes": 1424109568
+            },
+            {
+              "offsetMs": 16998,
+              "snapshotDurationMs": 713,
+              "processes": 15,
+              "privateWorkingSetBytes": 862146560,
+              "totalWorkingSetBytes": 1854201856,
+              "privateCommitBytes": 1423958016
+            },
+            {
+              "offsetMs": 18001,
+              "snapshotDurationMs": 686,
+              "processes": 15,
+              "privateWorkingSetBytes": 861360128,
+              "totalWorkingSetBytes": 1853415424,
+              "privateCommitBytes": 1418842112
+            },
+            {
+              "offsetMs": 19010,
+              "snapshotDurationMs": 653,
+              "processes": 15,
+              "privateWorkingSetBytes": 860594176,
+              "totalWorkingSetBytes": 1852649472,
+              "privateCommitBytes": 1402445824
+            }
+          ]
+        },
+        "task": {
+          "durationMs": 61148,
+          "sampleCount": 60,
+          "summary": {
+            "privateWorkingSet": {
+              "medianMiB": 1405.8,
+              "sampledPeakMiB": 1518.3
+            },
+            "totalWorkingSet": {
+              "medianMiB": 2728.8,
+              "sampledPeakMiB": 2859.7
+            },
+            "privateCommit": {
+              "medianMiB": 2191.3,
+              "sampledPeakMiB": 2320.5
+            }
+          },
+          "samples": [
+            {
+              "offsetMs": 780,
+              "snapshotDurationMs": 727,
+              "processes": 15,
+              "privateWorkingSetBytes": 921432064,
+              "totalWorkingSetBytes": 1918128128,
+              "privateCommitBytes": 1501728768
+            },
+            {
+              "offsetMs": 1812,
+              "snapshotDurationMs": 755,
+              "processes": 18,
+              "privateWorkingSetBytes": 1074905088,
+              "totalWorkingSetBytes": 2191044608,
+              "privateCommitBytes": 1680748544
+            },
+            {
+              "offsetMs": 2872,
+              "snapshotDurationMs": 825,
+              "processes": 25,
+              "privateWorkingSetBytes": 1294516224,
+              "totalWorkingSetBytes": 2562859008,
+              "privateCommitBytes": 2041700352
+            },
+            {
+              "offsetMs": 3898,
+              "snapshotDurationMs": 785,
+              "processes": 27,
+              "privateWorkingSetBytes": 1344126976,
+              "totalWorkingSetBytes": 2659115008,
+              "privateCommitBytes": 2140639232
+            },
+            {
+              "offsetMs": 4910,
+              "snapshotDurationMs": 776,
+              "processes": 30,
+              "privateWorkingSetBytes": 1365004288,
+              "totalWorkingSetBytes": 2703147008,
+              "privateCommitBytes": 2165567488
+            },
+            {
+              "offsetMs": 5983,
+              "snapshotDurationMs": 874,
+              "processes": 29,
+              "privateWorkingSetBytes": 1420275712,
+              "totalWorkingSetBytes": 2799751168,
+              "privateCommitBytes": 2252681216
+            },
+            {
+              "offsetMs": 6951,
+              "snapshotDurationMs": 756,
+              "processes": 30,
+              "privateWorkingSetBytes": 1431277568,
+              "totalWorkingSetBytes": 2801418240,
+              "privateCommitBytes": 2262810624
+            },
+            {
+              "offsetMs": 7962,
+              "snapshotDurationMs": 724,
+              "processes": 31,
+              "privateWorkingSetBytes": 1496760320,
+              "totalWorkingSetBytes": 2874626048,
+              "privateCommitBytes": 2322006016
+            },
+            {
+              "offsetMs": 8980,
+              "snapshotDurationMs": 711,
+              "processes": 31,
+              "privateWorkingSetBytes": 1521061888,
+              "totalWorkingSetBytes": 2898944000,
+              "privateCommitBytes": 2344796160
+            },
+            {
+              "offsetMs": 10007,
+              "snapshotDurationMs": 720,
+              "processes": 31,
+              "privateWorkingSetBytes": 1530458112,
+              "totalWorkingSetBytes": 2908356608,
+              "privateCommitBytes": 2353844224
+            },
+            {
+              "offsetMs": 10970,
+              "snapshotDurationMs": 611,
+              "processes": 31,
+              "privateWorkingSetBytes": 1482522624,
+              "totalWorkingSetBytes": 2860433408,
+              "privateCommitBytes": 2311131136
+            },
+            {
+              "offsetMs": 12032,
+              "snapshotDurationMs": 687,
+              "processes": 31,
+              "privateWorkingSetBytes": 1473683456,
+              "totalWorkingSetBytes": 2851614720,
+              "privateCommitBytes": 2295123968
+            },
+            {
+              "offsetMs": 13061,
+              "snapshotDurationMs": 722,
+              "processes": 33,
+              "privateWorkingSetBytes": 1470914560,
+              "totalWorkingSetBytes": 2865782784,
+              "privateCommitBytes": 2289717248
+            },
+            {
+              "offsetMs": 14038,
+              "snapshotDurationMs": 653,
+              "processes": 31,
+              "privateWorkingSetBytes": 1465315328,
+              "totalWorkingSetBytes": 2843533312,
+              "privateCommitBytes": 2282622976
+            },
+            {
+              "offsetMs": 15078,
+              "snapshotDurationMs": 685,
+              "processes": 31,
+              "privateWorkingSetBytes": 1472090112,
+              "totalWorkingSetBytes": 2850308096,
+              "privateCommitBytes": 2289557504
+            },
+            {
+              "offsetMs": 16128,
+              "snapshotDurationMs": 724,
+              "processes": 31,
+              "privateWorkingSetBytes": 1434120192,
+              "totalWorkingSetBytes": 2812338176,
+              "privateCommitBytes": 2254356480
+            },
+            {
+              "offsetMs": 17134,
+              "snapshotDurationMs": 707,
+              "processes": 31,
+              "privateWorkingSetBytes": 1414316032,
+              "totalWorkingSetBytes": 2792566784,
+              "privateCommitBytes": 2231525376
+            },
+            {
+              "offsetMs": 18158,
+              "snapshotDurationMs": 713,
+              "processes": 31,
+              "privateWorkingSetBytes": 1404719104,
+              "totalWorkingSetBytes": 2782973952,
+              "privateCommitBytes": 2220490752
+            },
+            {
+              "offsetMs": 19172,
+              "snapshotDurationMs": 677,
+              "processes": 31,
+              "privateWorkingSetBytes": 1406570496,
+              "totalWorkingSetBytes": 2784825344,
+              "privateCommitBytes": 2221940736
+            },
+            {
+              "offsetMs": 20201,
+              "snapshotDurationMs": 690,
+              "processes": 31,
+              "privateWorkingSetBytes": 1409228800,
+              "totalWorkingSetBytes": 2787495936,
+              "privateCommitBytes": 2223271936
+            },
+            {
+              "offsetMs": 21222,
+              "snapshotDurationMs": 703,
+              "processes": 31,
+              "privateWorkingSetBytes": 1413586944,
+              "totalWorkingSetBytes": 2791854080,
+              "privateCommitBytes": 2228191232
+            },
+            {
+              "offsetMs": 22220,
+              "snapshotDurationMs": 667,
+              "processes": 31,
+              "privateWorkingSetBytes": 1416794112,
+              "totalWorkingSetBytes": 2795065344,
+              "privateCommitBytes": 2230976512
+            },
+            {
+              "offsetMs": 23270,
+              "snapshotDurationMs": 726,
+              "processes": 31,
+              "privateWorkingSetBytes": 1427312640,
+              "totalWorkingSetBytes": 2805583872,
+              "privateCommitBytes": 2232029184
+            },
+            {
+              "offsetMs": 24300,
+              "snapshotDurationMs": 740,
+              "processes": 31,
+              "privateWorkingSetBytes": 1425375232,
+              "totalWorkingSetBytes": 2803679232,
+              "privateCommitBytes": 2232713216
+            },
+            {
+              "offsetMs": 25332,
+              "snapshotDurationMs": 731,
+              "processes": 33,
+              "privateWorkingSetBytes": 1466978304,
+              "totalWorkingSetBytes": 2909294592,
+              "privateCommitBytes": 2312265728
+            },
+            {
+              "offsetMs": 26318,
+              "snapshotDurationMs": 653,
+              "processes": 31,
+              "privateWorkingSetBytes": 1418223616,
+              "totalWorkingSetBytes": 2796650496,
+              "privateCommitBytes": 2237300736
+            },
+            {
+              "offsetMs": 27362,
+              "snapshotDurationMs": 681,
+              "processes": 31,
+              "privateWorkingSetBytes": 1427316736,
+              "totalWorkingSetBytes": 2805772288,
+              "privateCommitBytes": 2247778304
+            },
+            {
+              "offsetMs": 28418,
+              "snapshotDurationMs": 739,
+              "processes": 31,
+              "privateWorkingSetBytes": 1430917120,
+              "totalWorkingSetBytes": 2809364480,
+              "privateCommitBytes": 2250055680
+            },
+            {
+              "offsetMs": 29406,
+              "snapshotDurationMs": 691,
+              "processes": 31,
+              "privateWorkingSetBytes": 1438011392,
+              "totalWorkingSetBytes": 2816458752,
+              "privateCommitBytes": 2256588800
+            },
+            {
+              "offsetMs": 30436,
+              "snapshotDurationMs": 705,
+              "processes": 31,
+              "privateWorkingSetBytes": 1474404352,
+              "totalWorkingSetBytes": 2852851712,
+              "privateCommitBytes": 2296438784
+            },
+            {
+              "offsetMs": 31411,
+              "snapshotDurationMs": 634,
+              "processes": 31,
+              "privateWorkingSetBytes": 1468301312,
+              "totalWorkingSetBytes": 2846748672,
+              "privateCommitBytes": 2276229120
+            },
+            {
+              "offsetMs": 32462,
+              "snapshotDurationMs": 680,
+              "processes": 31,
+              "privateWorkingSetBytes": 1461067776,
+              "totalWorkingSetBytes": 2839523328,
+              "privateCommitBytes": 2260807680
+            },
+            {
+              "offsetMs": 33475,
+              "snapshotDurationMs": 684,
+              "processes": 31,
+              "privateWorkingSetBytes": 1462808576,
+              "totalWorkingSetBytes": 2841284608,
+              "privateCommitBytes": 2261975040
+            },
+            {
+              "offsetMs": 34468,
+              "snapshotDurationMs": 642,
+              "processes": 31,
+              "privateWorkingSetBytes": 1460072448,
+              "totalWorkingSetBytes": 2838548480,
+              "privateCommitBytes": 2268045312
+            },
+            {
+              "offsetMs": 35503,
+              "snapshotDurationMs": 662,
+              "processes": 31,
+              "privateWorkingSetBytes": 1468014592,
+              "totalWorkingSetBytes": 2846515200,
+              "privateCommitBytes": 2281476096
+            },
+            {
+              "offsetMs": 36546,
+              "snapshotDurationMs": 688,
+              "processes": 36,
+              "privateWorkingSetBytes": 1489371136,
+              "totalWorkingSetBytes": 2918342656,
+              "privateCommitBytes": 2315243520
+            },
+            {
+              "offsetMs": 37534,
+              "snapshotDurationMs": 625,
+              "processes": 31,
+              "privateWorkingSetBytes": 1483792384,
+              "totalWorkingSetBytes": 2862313472,
+              "privateCommitBytes": 2299129856
+            },
+            {
+              "offsetMs": 38578,
+              "snapshotDurationMs": 685,
+              "processes": 31,
+              "privateWorkingSetBytes": 1506291712,
+              "totalWorkingSetBytes": 2884812800,
+              "privateCommitBytes": 2322055168
+            },
+            {
+              "offsetMs": 39615,
+              "snapshotDurationMs": 700,
+              "processes": 31,
+              "privateWorkingSetBytes": 1537155072,
+              "totalWorkingSetBytes": 2915676160,
+              "privateCommitBytes": 2348982272
+            },
+            {
+              "offsetMs": 40642,
+              "snapshotDurationMs": 693,
+              "processes": 31,
+              "privateWorkingSetBytes": 1543847936,
+              "totalWorkingSetBytes": 2922377216,
+              "privateCommitBytes": 2356187136
+            },
+            {
+              "offsetMs": 41669,
+              "snapshotDurationMs": 694,
+              "processes": 31,
+              "privateWorkingSetBytes": 1545502720,
+              "totalWorkingSetBytes": 2924032000,
+              "privateCommitBytes": 2358075392
+            },
+            {
+              "offsetMs": 42700,
+              "snapshotDurationMs": 711,
+              "processes": 31,
+              "privateWorkingSetBytes": 1544298496,
+              "totalWorkingSetBytes": 2922827776,
+              "privateCommitBytes": 2363813888
+            },
+            {
+              "offsetMs": 43722,
+              "snapshotDurationMs": 725,
+              "processes": 31,
+              "privateWorkingSetBytes": 1534513152,
+              "totalWorkingSetBytes": 2913042432,
+              "privateCommitBytes": 2350280704
+            },
+            {
+              "offsetMs": 44736,
+              "snapshotDurationMs": 733,
+              "processes": 31,
+              "privateWorkingSetBytes": 1538519040,
+              "totalWorkingSetBytes": 2917048320,
+              "privateCommitBytes": 2356277248
+            },
+            {
+              "offsetMs": 45760,
+              "snapshotDurationMs": 749,
+              "processes": 33,
+              "privateWorkingSetBytes": 1561653248,
+              "totalWorkingSetBytes": 2998571008,
+              "privateCommitBytes": 2412425216
+            },
+            {
+              "offsetMs": 46756,
+              "snapshotDurationMs": 703,
+              "processes": 31,
+              "privateWorkingSetBytes": 1541017600,
+              "totalWorkingSetBytes": 2919567360,
+              "privateCommitBytes": 2357628928
+            },
+            {
+              "offsetMs": 47756,
+              "snapshotDurationMs": 675,
+              "processes": 31,
+              "privateWorkingSetBytes": 1540501504,
+              "totalWorkingSetBytes": 2919051264,
+              "privateCommitBytes": 2356842496
+            },
+            {
+              "offsetMs": 48780,
+              "snapshotDurationMs": 691,
+              "processes": 31,
+              "privateWorkingSetBytes": 1544036352,
+              "totalWorkingSetBytes": 2922586112,
+              "privateCommitBytes": 2363293696
+            },
+            {
+              "offsetMs": 49814,
+              "snapshotDurationMs": 713,
+              "processes": 31,
+              "privateWorkingSetBytes": 1549848576,
+              "totalWorkingSetBytes": 2928406528,
+              "privateCommitBytes": 2378448896
+            },
+            {
+              "offsetMs": 50820,
+              "snapshotDurationMs": 665,
+              "processes": 31,
+              "privateWorkingSetBytes": 1547329536,
+              "totalWorkingSetBytes": 2925887488,
+              "privateCommitBytes": 2375700480
+            },
+            {
+              "offsetMs": 51876,
+              "snapshotDurationMs": 721,
+              "processes": 31,
+              "privateWorkingSetBytes": 1552355328,
+              "totalWorkingSetBytes": 2930913280,
+              "privateCommitBytes": 2378956800
+            },
+            {
+              "offsetMs": 52902,
+              "snapshotDurationMs": 724,
+              "processes": 31,
+              "privateWorkingSetBytes": 1558745088,
+              "totalWorkingSetBytes": 2937942016,
+              "privateCommitBytes": 2384928768
+            },
+            {
+              "offsetMs": 53913,
+              "snapshotDurationMs": 706,
+              "processes": 31,
+              "privateWorkingSetBytes": 1549152256,
+              "totalWorkingSetBytes": 2927722496,
+              "privateCommitBytes": 2375913472
+            },
+            {
+              "offsetMs": 54918,
+              "snapshotDurationMs": 691,
+              "processes": 31,
+              "privateWorkingSetBytes": 1546727424,
+              "totalWorkingSetBytes": 2925350912,
+              "privateCommitBytes": 2373636096
+            },
+            {
+              "offsetMs": 55938,
+              "snapshotDurationMs": 702,
+              "processes": 31,
+              "privateWorkingSetBytes": 1556439040,
+              "totalWorkingSetBytes": 2935070720,
+              "privateCommitBytes": 2384441344
+            },
+            {
+              "offsetMs": 56947,
+              "snapshotDurationMs": 692,
+              "processes": 31,
+              "privateWorkingSetBytes": 1561559040,
+              "totalWorkingSetBytes": 2940207104,
+              "privateCommitBytes": 2388426752
+            },
+            {
+              "offsetMs": 57996,
+              "snapshotDurationMs": 730,
+              "processes": 31,
+              "privateWorkingSetBytes": 1564450816,
+              "totalWorkingSetBytes": 2943102976,
+              "privateCommitBytes": 2401038336
+            },
+            {
+              "offsetMs": 59014,
+              "snapshotDurationMs": 723,
+              "processes": 31,
+              "privateWorkingSetBytes": 1565466624,
+              "totalWorkingSetBytes": 2944118784,
+              "privateCommitBytes": 2396700672
+            },
+            {
+              "offsetMs": 60032,
+              "snapshotDurationMs": 725,
+              "processes": 31,
+              "privateWorkingSetBytes": 1571332096,
+              "totalWorkingSetBytes": 2950033408,
+              "privateCommitBytes": 2403213312
+            },
+            {
+              "offsetMs": 61030,
+              "snapshotDurationMs": 697,
+              "processes": 31,
+              "privateWorkingSetBytes": 1592033280,
+              "totalWorkingSetBytes": 2970861568,
+              "privateCommitBytes": 2433179648
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "fixtureRuntimeTreeSha256": "7d1446fc26756963be920f686134debe840594914352b3eed76b485c28258f14"
+}

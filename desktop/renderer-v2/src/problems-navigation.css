@@ -1,0 +1,4 @@
+.problems-pane .problem-filter { display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-block:8px; }
+.problems-pane .problem-filter input { min-width:0;max-width:100%;box-sizing:border-box;flex:1; }
+.problems-pane .problem-location { max-width:100%;overflow-wrap:anywhere; }
+.problems-pane .problem-location small { display:block;white-space:pre-wrap; }

@@ -1,0 +1,281 @@
+{
+  "date": "2026-11-23",
+  "platform": "Windows 11 x64 build 26300",
+  "sampleCount": 9,
+  "intervalSeconds": 3,
+  "units": "bytes",
+  "source": "Win32_PerfRawData_PerfProc_Process per descendant PID; sampler excluded",
+  "matchedWorkloads": false,
+  "samples": [
+    {
+      "application": "Codex desktop",
+      "sample": 1,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1051508736,
+      "privateWorkingSetBytes": 1266561024,
+      "workingSetBytes": 2607144960,
+      "privateBytes": 2866003968
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 1,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 457637888,
+      "privateWorkingSetBytes": 494579712,
+      "workingSetBytes": 1422172160,
+      "privateBytes": 3287859200
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 1,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 228290560,
+      "privateWorkingSetBytes": 236601344,
+      "workingSetBytes": 603561984,
+      "privateBytes": 598429696
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 2,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1058996224,
+      "privateWorkingSetBytes": 1304035328,
+      "workingSetBytes": 2644660224,
+      "privateBytes": 2931359744
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 2,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 457641984,
+      "privateWorkingSetBytes": 494583808,
+      "workingSetBytes": 1422176256,
+      "privateBytes": 3288047616
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 2,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 232148992,
+      "privateWorkingSetBytes": 240459776,
+      "workingSetBytes": 607420416,
+      "privateBytes": 602460160
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 3,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1053978624,
+      "privateWorkingSetBytes": 1277235200,
+      "workingSetBytes": 2617851904,
+      "privateBytes": 2880057344
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 3,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 457695232,
+      "privateWorkingSetBytes": 494637056,
+      "workingSetBytes": 1422229504,
+      "privateBytes": 3288088576
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 3,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 232173568,
+      "privateWorkingSetBytes": 240488448,
+      "workingSetBytes": 607449088,
+      "privateBytes": 601186304
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 4,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1052594176,
+      "privateWorkingSetBytes": 1271853056,
+      "workingSetBytes": 2612469760,
+      "privateBytes": 2871930880
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 4,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 457551872,
+      "privateWorkingSetBytes": 494493696,
+      "workingSetBytes": 1422086144,
+      "privateBytes": 3287732224
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 4,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 231292928,
+      "privateWorkingSetBytes": 239607808,
+      "workingSetBytes": 606568448,
+      "privateBytes": 600334336
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 5,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1052540928,
+      "privateWorkingSetBytes": 1271648256,
+      "workingSetBytes": 2612264960,
+      "privateBytes": 2872074240
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 5,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 457621504,
+      "privateWorkingSetBytes": 494661632,
+      "workingSetBytes": 1422254080,
+      "privateBytes": 3287900160
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 5,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 231915520,
+      "privateWorkingSetBytes": 240230400,
+      "workingSetBytes": 607191040,
+      "privateBytes": 601423872
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 6,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1049313280,
+      "privateWorkingSetBytes": 1268174848,
+      "workingSetBytes": 2608766976,
+      "privateBytes": 2867519488
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 6,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 456777728,
+      "privateWorkingSetBytes": 493817856,
+      "workingSetBytes": 1421410304,
+      "privateBytes": 3286745088
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 6,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 229969920,
+      "privateWorkingSetBytes": 238284800,
+      "workingSetBytes": 605245440,
+      "privateBytes": 598880256
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 7,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1048375296,
+      "privateWorkingSetBytes": 1267249152,
+      "workingSetBytes": 2607874048,
+      "privateBytes": 2866532352
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 7,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 456712192,
+      "privateWorkingSetBytes": 493752320,
+      "workingSetBytes": 1421344768,
+      "privateBytes": 3286675456
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 7,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 231968768,
+      "privateWorkingSetBytes": 240283648,
+      "workingSetBytes": 607252480,
+      "privateBytes": 600977408
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 8,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1048985600,
+      "privateWorkingSetBytes": 1267556352,
+      "workingSetBytes": 2608181248,
+      "privateBytes": 2865332224
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 8,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 456708096,
+      "privateWorkingSetBytes": 493748224,
+      "workingSetBytes": 1421340672,
+      "privateBytes": 3286671360
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 8,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 231866368,
+      "privateWorkingSetBytes": 240181248,
+      "workingSetBytes": 607150080,
+      "privateBytes": 600899584
+    },
+    {
+      "application": "Codex desktop",
+      "sample": 9,
+      "processes": 38,
+      "sameExecutableProcesses": 14,
+      "sameExecutablePrivateWorkingSetBytes": 1054478336,
+      "privateWorkingSetBytes": 1297244160,
+      "workingSetBytes": 2637869056,
+      "privateBytes": 2921250816
+    },
+    {
+      "application": "WorkBuddy",
+      "sample": 9,
+      "processes": 24,
+      "sameExecutableProcesses": 7,
+      "sameExecutablePrivateWorkingSetBytes": 456720384,
+      "privateWorkingSetBytes": 493760512,
+      "workingSetBytes": 1421352960,
+      "privateBytes": 3286671360
+    },
+    {
+      "application": "Modot Pilot",
+      "sample": 9,
+      "processes": 7,
+      "sameExecutableProcesses": 4,
+      "sameExecutablePrivateWorkingSetBytes": 231956480,
+      "privateWorkingSetBytes": 240271360,
+      "workingSetBytes": 607240192,
+      "privateBytes": 600604672
+    }
+  ]
+}

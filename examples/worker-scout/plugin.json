@@ -1,0 +1,37 @@
+{
+  "name": "modot-scout",
+  "version": "0.1.0",
+  "description": "官方探路者样例。把一个可独立查清的未知点交给只读助手，主执行者继续推进其余工作。",
+  "workers": [{
+    "name": "investigate",
+    "protocol": "modot.worker/1-draft",
+    "description": "调查一个能影响父方下一步决定的问题。适用于能与主执行者当前修改分开查证的调用方、兼容行为或前置条件。",
+    "method": "先用 tried 中的已有证据，围绕 question 只读调查 scope 内的获准资源。findings 写清观察、来源和所见版本，版本不明时标为未知。若已查到会影响主方下一步的证据、还有独立调查要继续，可先提交这条证据，之后只补有实质增量的发现。能一次答清时集中提交一次。缺少资料或需要执行探针时，把未验证范围列入 unknowns。成果是否采用由执行者决定，终答简述已交付内容。",
+    "requires": ["native-l0", "independent-history", "read-code", "structured-result"],
+    "optional": ["messages", "resume", "cancel"],
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "question": {"type": "string", "minLength": 1, "description": "一个待查问题，写清答案关联的主方决定。"},
+        "scope": {"type": "string", "minLength": 1, "description": "助手负责的调用方、文件或边界，主执行者可继续处理其余工作。"},
+        "tried": {"type": "array", "items": {"type": "string"}, "description": "已查证据、所见版本与已排除路线。暂无证据可留空。"}
+      },
+      "required": ["question", "scope"], "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "findings": {"type": "array", "items": {
+          "type": "object", "properties": {
+            "observation": {"type": "string", "minLength": 1},
+            "source": {"type": "string", "minLength": 1},
+            "revision": {"type": "string", "minLength": 1}
+          }, "required": ["observation", "source", "revision"], "additionalProperties": false
+        }},
+        "ruledOut": {"type": "array", "items": {"type": "string"}},
+        "unknowns": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["findings", "ruledOut", "unknowns"], "additionalProperties": false
+    }
+  }]
+}

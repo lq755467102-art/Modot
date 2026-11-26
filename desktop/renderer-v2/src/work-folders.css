@@ -1,0 +1,9 @@
+.new-project-backdrop{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:#0006;padding:16px}
+.new-project-dialog{box-sizing:border-box;width:min(390px,100%);border:1px solid var(--app-line);border-radius:var(--app-popover-radius);background:var(--app-panel);color:var(--app-ink);padding:18px;box-shadow:0 12px 40px #0004}
+.new-project-dialog header,.new-project-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.new-project-dialog footer{flex-wrap:wrap;justify-content:flex-end}
+.new-project-dialog h2{margin:0;font-size:17px}.new-project-dialog label{display:grid;gap:8px;margin-top:18px}
+.new-project-dialog input{box-sizing:border-box;min-width:0;width:100%;padding:8px;background:var(--app-bg);border:1px solid var(--app-line);color:inherit;border-radius:var(--app-control-radius);font:inherit}
+.new-project-dialog button{padding:6px 10px;font:inherit;color:inherit;background:var(--app-selected);border:1px solid var(--app-line);border-radius:var(--app-control-radius)}
+.new-project-dialog [role=alert]{color:var(--app-danger,#df7878)}
+.work-folder-location{font-size:12px;color:var(--app-muted);overflow-wrap:anywhere}

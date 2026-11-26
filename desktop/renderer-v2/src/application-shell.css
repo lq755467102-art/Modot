@@ -1,0 +1,32 @@
+.surface-navigation.application-navigation {
+  gap:0;padding:10px 4px;box-sizing:border-box;min-height:0;border-color:var(--app-divider);
+  background:light-dark(color-mix(in srgb,var(--app-sidebar) 90%,var(--app-ink)), color-mix(in srgb,var(--app-sidebar) 65%,#000));
+}
+.application-navigation .builtin-application-navigation,.application-navigation .application-shortcuts,.application-navigation .application-navigation-bottom{display:flex;flex-direction:column;gap:6px;min-width:0}
+.application-navigation .builtin-application-navigation,.application-navigation .application-navigation-bottom{flex:none}
+.application-navigation .application-shortcuts{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-block:5px}
+.application-navigation .application-navigation-divider{height:1px;flex:none;background:var(--app-line);margin:9px 4px}
+.application-navigation button{width:100%;flex-shrink:0;color:var(--app-muted);min-height:46px}
+.application-navigation button[aria-current=page]{color:var(--app-ink);background:var(--app-selected);border-color:var(--app-line)}
+.application-navigation button:disabled{opacity:.55}
+.application-navigation button[data-available=false]{opacity:.55}
+.application-navigation button small{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.application-navigation .application-settings-trigger{margin-top:0}
+.application-navigation-bottom{padding-top:6px}
+.application-icon{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex:none;vertical-align:middle}
+.application-icon :is(svg,img){width:20px;height:20px;object-fit:contain}
+.application-shortcuts [data-plugin-application] .application-icon:only-child,
+.application-shortcuts [data-plugin-application] .application-icon:only-child :is(img,svg){width:27px;height:27px}
+.plugin-package-card{position:relative;min-width:0;display:flex;flex-direction:column}
+.plugin-package-card>.extension-card{height:100%;width:100%;box-sizing:border-box;padding-inline-end:42px}
+.plugin-package-card .extension-card-title{display:flex;align-items:center;gap:9px;min-width:0}
+.plugin-package-card .extension-card-title strong{min-width:0;overflow-wrap:anywhere}
+.plugin-package-card .package-icon-trigger{position:absolute;right:8px;top:9px;width:28px;height:28px;display:grid;place-items:center;padding:4px;border:1px solid var(--app-line);background:var(--app-panel);color:var(--app-muted);border-radius:6px}
+.package-icon-picker{width:min(480px,86vw);max-height:85vh;overflow:auto;padding:20px;background:var(--app-panel);color:var(--app-ink);border:1px solid var(--app-line);border-radius:12px}
+.package-icon-picker header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.package-icon-picker header h3{overflow-wrap:anywhere;margin:0}
+.package-icon-picker p{font-size:.929em;line-height:1.6}
+.package-icon-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:8px;margin-block:16px}
+.package-icon-options button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;padding:10px 6px;border:1px solid var(--app-line);border-radius:8px;background:var(--app-bg);color:var(--app-ink);font-size:.857em}
+.package-icon-options button[aria-pressed=true]{border-color:var(--app-accent);background:var(--app-selected)}
+@media(forced-colors:active){.surface-navigation.application-navigation{background:Canvas;border-color:CanvasText}.application-navigation button{color:ButtonText}.application-navigation button[aria-current=page]{background:Highlight;color:HighlightText}.application-navigation .application-navigation-divider{background:CanvasText}}

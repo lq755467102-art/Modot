@@ -1,0 +1,1772 @@
+[
+  {
+    "module": "test_agent_code",
+    "case": "test_active_conversation_writer_blocks_legacy_and_agent_operations",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_agent_repairs_real_code_and_records_failed_and_successful_checks",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_check_binding_cannot_overwrite_fast_exit_receipt",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_check_timeout_waits_for_real_exit_and_git_hooks_do_not_bypass_execute_grant",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_check_without_sandbox_runtime_records_confirmed_failure",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_deadline_during_history_preparation_prevents_command_launch",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_own_write_restores_only_same_run_and_unchanged_versions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_process_death_after_write_recovers_observation_without_replaying",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_protected_branch_paths_versions_and_live_grants_are_enforced",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_pytest_report_flags_reuse_only_the_same_role_and_environment",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_read_tool_cannot_override_dispatch_and_long_failed_output_can_be_paged",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_scoped_edit_rejects_ambiguous_text_and_whole_file_truncation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_scoped_search_and_paged_line_reads_do_not_prepare_history",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_agent_code",
+    "case": "test_verification_boundary_returns_versioned_receipts",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_app_formatting_slot",
+    "case": "test_ambiguous_windows_and_other_conversations_are_not_selected",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_app_formatting_slot",
+    "case": "test_only_the_live_owner_can_deliver_text_after_approval",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_app_formatting_slot",
+    "case": "test_reordered_or_incomplete_original_cannot_be_installed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_app_formatting_slot",
+    "case": "test_returning_to_the_same_text_cannot_resurrect_a_receipt",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_app_formatting_slot",
+    "case": "test_unified_diff_records_final_newline_changes",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_cancel_before_upload_reserves_import_identity",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_cancel_during_upload_publication_leaves_no_readable_attachment",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_cancelled_attachment_cannot_reactivate_after_cleanup_error",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_import_is_scoped_versioned_and_validated",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_official_deepseek_flash_reads_an_attached_png_without_manual_override",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_read_tool_distinguishes_single_attachment_references_from_directories",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_removing_two_images_names_both_in_the_next_turn",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_send_only_resolves_published_attachments_from_that_conversation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_attachments",
+    "case": "test_upstream_image_rejection_is_reported_without_fallback",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_deep_windows_directory_keeps_atomic_pointer_below_path_limit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_disk_failure_keeps_original_latest_pointer_and_blocks",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_no_gain_unpaired_unknown_output_and_stop_are_deterministic",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_pointer_publish_failure_keeps_previous_pointer_and_never_sends",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_real_chat_boundary_sends_only_durable_candidate_and_never_network_on_failure",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_roles_and_models_have_separate_pointers",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_stream_boundary_uses_same_preparation_and_corrupt_archive_is_explicit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_checkpoints",
+    "case": "test_three_compactions_rebuild_original_and_preserve_authority_and_budget",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_crash_after_single_commit_resumes_the_complete_candidate",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_native_publication_has_one_commit_file_and_failure_keeps_old_view",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_repeated_summary_overflow_is_bounded_and_never_publishes",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_small_model_sends_valid_input_without_sacrificing_output",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_summary_overflow_reduces_real_wire_prefix_then_resumes",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_fact_fields_survive_aggregate_pruning_without_growing",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_large_diagnostics_stay_whole_even_without_pruning_gain",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_requirements_and_formatted_retrieval_keep_exact_pages",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_search_page_cursor_and_failed_selector_remain_exact",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_source_pagination_is_never_pruned_a_second_time",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_tool_declared_pagination_works_for_future_contributors",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_history_fixes",
+    "case": "test_declared_plugin_snapshot_reaches_actual_wire_without_host_override",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_modes",
+    "case": "test_native_l0_and_delegation_retain_budget_and_goal_after_compactions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_context_modes",
+    "case": "test_planner_and_reviewer_adopt_their_own_lists_and_share_existing_calls",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_cannot_route_other_workspace_or_engineering_operations",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_create_without_workspace_and_resume_readonly",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_project_resource_requires_grant_selection_and_matching_project",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_restored_project_picker_associates_without_granting_directories",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_running_conversation_accepts_step_boundary_interjection",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_running_l4_draft_uses_the_same_send_route",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_scope_snapshot_upgrades_inline_records_and_fails_closed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_send_publishes_scope_while_registry_writer_is_busy",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_conversations",
+    "case": "test_waiting_launch_does_not_block_another_conversation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_cancel_owned_parser_and_remove_keeps_no_usable_result",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_csv_and_tsv_rows_remain_addressable_after_import",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_docx_expansion_and_xml_entities_are_rejected",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_docx_locations_and_missing_parts",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_docx_wrappers_notes_and_separators_report_coverage",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_long_source_has_text_and_locator_cursors",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_password_failure_preserves_original_and_can_retry",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_pdf_text_page_and_empty_page_are_distinguished",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_documents",
+    "case": "test_xlsx_selects_the_workbook_sheet_and_range_without_evaluating_formulas",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_evidence_questions",
+    "case": "test_deleted_unrelated_question_does_not_break_tools_and_runner_is_fixed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_evidence_questions",
+    "case": "test_missing_and_oversized_evidence_rejected_before_new_conversation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_evidence_questions",
+    "case": "test_parent_can_append_unrelated_events_while_question_is_created",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_evidence_questions",
+    "case": "test_question_freezes_evidence_without_touching_parent_and_has_no_write_tools",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_evidence_questions",
+    "case": "test_question_suppresses_external_hooks_for_first_and_resumed_turn",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_evidence_questions",
+    "case": "test_subtask_steps_can_be_questioned_without_continuing_child_execution",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_actual_summary_prefix_wire_candidate_and_resume_have_correct_sources",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_auxiliary_prefix_that_fits_can_need_a_second_bounded_summary",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_below_pressure_no_model_call_no_history_rewrite",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_changing_only_the_tool_catalog_preserves_measured_prefix_pressure",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_cold_resume_uses_actual_count_only_for_matching_rows_and_model",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_invalid_or_cancelled_summary_keeps_history_and_committed_pointer",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_legacy_checkpoint_keeps_old_user_and_projection_semantics",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_new_task_reuses_history_but_not_old_task_state_or_changed_scope",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_no_gain_summary_is_not_published",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_returned_usage_anchor_prices_new_history_instead_of_freezing_pressure",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_summary_can_price_a_shorter_previous_wire_prefix_even_after_restart",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_summary_output_is_not_a_completion_gate_or_heading_classifier",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_summary_preflight_prices_the_serialized_authorized_page",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_uncounted_long_history_retires_disjoint_spans_within_the_cap",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_cap_policy_is_input_only_and_api_reservation_is_independent",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_cold_allowance_charges_text_bytes_and_preserves_structured_arguments",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_pruner_unicode_and_exact_dsh_defaults",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_tail_cut_keeps_whole_parallel_call_group_and_all_latest_messages",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_compaction",
+    "case": "test_real_new_checkpoint_allows_retired_original_but_never_system_or_unretired_user",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_command_credentials_in_separate_arguments_are_hidden_from_lookup_and_read",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_complete_pages_require_same_revision_and_do_not_replay",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_dialogue_page_rechecks_scope_and_keeps_original_upper_bound",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_find_previous_action_without_its_ids_and_read_the_original",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_history_search_matches_current_access_before_and_after_removal",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_missing_original_is_distinguished_from_retained_parameters",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_modified_retained_output_is_not_returned",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_ordinary_folder_raw_action_rechecks_live_grants_on_every_page",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_other_owner_legacy_scope_and_recursive_evidence_are_denied",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_public_dialogue_can_page_to_an_old_reference_without_other_scope",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_rebinding_the_same_resource_id_does_not_restore_old_script_access",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_revoked_resource_and_missing_output_are_explicit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_search_matches_original_command_words_without_returning_script_body",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_search_old_action_after_current_stream_and_resolve_quoted_id",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_unscoped_metadata_cannot_quote_a_revoked_run",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_history_retrieval",
+    "case": "test_wrong_run_does_not_reveal_revoked_provenance_or_labels",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_image_event_cards",
+    "case": "test_confirmation_is_by_action_across_resume_and_duplicate_pixels",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_image_event_cards",
+    "case": "test_image_receipt_requires_media_in_the_successful_request",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_image_event_cards",
+    "case": "test_png_needs_valid_container_and_pixel_data",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_index_privacy",
+    "case": "test_git_failure_does_not_fall_back_to_reading_ignored_content",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_index_privacy",
+    "case": "test_plain_project_nested_rules_and_modot_data",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_index_privacy",
+    "case": "test_rebuild_removes_newly_ignored_tracked_and_untracked_files",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_duplicate_local_declarations_rejected_before_publishing",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_equal_count_switch_invalidates_page_two",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_explicit_replace_and_retry_survive_missing_source",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_failed_preview_competing_replacements_and_same_name_neighbor",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_four_samples_skill_draft_and_real_stdio_removal_reinstall",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_icon_read_revalidates_late_listener_and_retained_bytes",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_invalid_optional_icons_do_not_read_unlisted_or_external_resources",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_late_tools_list_cannot_publish_after_uninstall_or_reinstall",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_package_icons_follow_install_identity_and_theme",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_pending_write_and_history_remain_bound_to_old_revision",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_publish_failure_and_concurrent_retry_keep_a_single_receipt",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_installed_contributions",
+    "case": "test_replacement_with_same_service_drops_credentials_and_writes",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_concrete_inputs_and_compatibility_reach_resume_without_becoming_a_pass",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_contract_payload_survives_real_compaction_projection",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_explicit_corrected_contract_replaces_old_without_a_gate",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_explicit_new_observation_has_current_basis_without_forgiving_old_checks",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_missing_legacy_basis_is_unknown_not_implicitly_current",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_new_task_and_changed_scope_do_not_inherit_contracts",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_old_observation_and_new_requirement_survive_compaction_with_recent_failure",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_prior_observations_are_labeled_against_new_demand_without_rewriting_history",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_scoped_roles_can_save_notes_with_the_original_limit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_scout_is_not_an_independent_note_owner",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_contract_notes",
+    "case": "test_snapshot_timestamp_refresh_keeps_contracts_but_revoke_does_not",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_archived_thread_exposes_only_the_history_lookup_before_group_selection",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_explicit_required_evidence_keeps_verification_available",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_optional_group_selection_survives_reinstall",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_unclassified_registration_does_not_enter_model_tools",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_catalog_has_a_callable_read_entry",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_deleted_skill_fails_without_body_and_user_flag_stays_independent",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_empty_or_disabled_catalog_has_no_extra_tool",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_new_names_not_in_this_run_catalog_are_not_readable",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_core_slimming",
+    "case": "test_pages_rejoin_and_invocation_flags_are_checked_at_read",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_final_text_uses_same_pending_projection_as_completion_card",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_l0_summary_survives_retained_history_and_restart_without_helpers",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_native_l0_final_reply_ends_without_forgiving_failed_acceptance",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_native_l0_truncated_response_is_not_normal_completion",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_native_l0_unlimited_calls_has_no_hidden_three_read_stop",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_runtime_completion_keeps_current_required_evidence_missing",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_step_boundary_stop_arriving_with_final_reply_is_persisted",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_unavailable_final_projection_retains_failure_without_interrupting_shutdown",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_changed_work_record_survives_later_runtime_update_compaction",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_error_header_and_exception_are_recorded_without_problem_jobs",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_explicit_continuation_after_normal_end_keeps_task_and_new_instructions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_explicit_new_task_and_pending_answer_still_take_precedence",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_light_edit_invalidates_old_proof_even_without_project_scan",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_pass_before_later_batched_write_cannot_close_issue",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_resolved_claim_without_valid_receipt_stays_unverified",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_foundation",
+    "case": "test_same_task_survives_restart_new_task_does_not_inherit_old_issues",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_code_resource_reader_and_inspect_share_bytes_revision_and_locations",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_coverage_requires_requirement_id_and_empty_tool_view_is_not_pending",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_default_read_window_is_not_spilled_a_second_time",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_full_bounded_code_page_reaches_next_model_input",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_line_offset_conflict_names_both_fields",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_line_read_returns_requested_function_without_character_repagination",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_missing_target_revision_is_not_a_concurrent_edit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_native_prompt_uses_receipts_and_keeps_existing_user_requirements",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_native_tool_surface_is_fixed_and_keeps_engineering_capabilities",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_original_search_limit_and_unknown_field_errors_identify_field",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_oversized_line_range_is_explicit_and_continuation_is_lossless",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_l0_tool_slimming",
+    "case": "test_stale_project_version_is_not_misdiagnosed_as_a_file_hash",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_audit_does_not_change_selection_identity",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_budget_node_can_be_fetched_without_bypassing_off",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_changed_version_and_revoked_use_invalidate_proposal",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_collection_version_check_survives_unrelated_audit_revision",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_cross_project_habit_needs_second_project_and_counterexample_attempt",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_disabled_and_retired_nodes_not_implicitly_reopened",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_distinct_host_tasks_count_but_retried_checks_do_not",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_habit_identity_survives_rename_and_edit_does_not_reuse_old_evidence",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_habit_promotion_requires_habit_proposal_grant",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_ineligible_nodes_do_not_charge_their_layer",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_interrupted_habit_adoption_reuses_the_same_habits_body",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_interrupted_human_adoption_reuses_published_project_node",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_layer_budget_stops_without_skipping_and_branch_conditions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_model_cannot_confirm_resolve_or_claim_another_conversations_use",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_model_collection_is_private_and_duplicate_is_idempotent",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_non_code_use_can_be_human_recorded_without_fabricated_check",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_preview_does_not_create_conversation_or_store",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_project_promotion_preserves_branch_and_inference_scope",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_project_promotion_requires_independent_use_and_preserves_weight",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_promoted_body_is_not_charged_twice_against_layer_budget",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_readonly_discovery_does_not_grant_source_writes",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_readonly_evidence_cannot_maintain_and_source_revocation_blocks_promotion",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_revision_conflict_and_restore",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_same_project_shared_private_paths_not_shared",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_symlink_or_corrupt_store_fails_closed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_default",
+    "case": "test_unreviewed_rule_and_unresolved_counterexample_cannot_promote",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_aba_does_not_revive_old_handle",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_corrupt_notes_remain_on_disk_but_do_not_stop_context_building",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_data_plugin_cannot_choose_paths_or_execute_code",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_default_is_usable_without_install_or_configuration",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_invalid_provider_config_is_not_reset_or_a_reason_to_require_a_memory_loop",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_live_revocation_discards_late_read_body",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_no_provider_strips_memory_and_retains_original_task_and_charter_rules",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_notes_cas_and_unsupported_operation_do_not_fall_back",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_notes_use_owned_session_storage_and_do_not_touch_tree",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_published_adoption_with_failed_source_receipt_is_unknown_and_replay_safe",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_removed_plugin_is_not_reenabled_on_restart_or_reinstall",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_revocation_after_write_does_not_claim_nothing_was_saved",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_stale_configuration_cannot_restore_or_change_provider",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_uninstall_has_no_fallback_and_does_not_remove_data",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_unknown_write_is_not_replayed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_providers",
+    "case": "test_unregister_adapter_revokes_handles_without_deleting_its_data",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_actual_requests_refresh_and_snapshots_remain_versioned",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_age_injection_and_checks_do_not_prove_independent_use",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_all_scoped_roles_receive_current_project_facts",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_child_projection_uses_parent_memory_but_only_assigned_source_ids",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_close_conflict_blocks_actual_write_tool_until_user_selects",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_completed_action_with_receipt_timeout_stays_unknown",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_concurrent_same_revision_has_one_writer",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_cross_tree_conflict_policy_boundary_examples",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_disabled_and_retired_nodes_not_implicitly_reopened",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_ineligible_nodes_do_not_charge_their_layer",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_layer_budget_stops_without_skipping_and_branch_conditions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_legacy_habit_rename_preserves_workspace_weight_and_identity",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_memory_wait_stops_serial_artifact_and_preserves_receipts",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_mode_off_applies_to_real_request_without_deleting_tree",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_model_cannot_forge_human_confirmation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_near_weight_conflict_requires_human_and_does_not_repeat",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_old_version_checks_cannot_qualify_changed_fact",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_preview_does_not_create_conversation_or_store",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_private_registry_exposes_only_authorized_local_memory_outputs",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_repeated_reads_age_and_retries_do_not_establish_habit_eligibility",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_revision_conflict_and_restore",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_same_project_shared_private_paths_not_shared",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_symlink_or_corrupt_store_fails_closed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_runtime",
+    "case": "test_unavailable_choices_do_not_create_or_keep_a_write_block",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_disabled_and_retired_nodes_not_implicitly_reopened",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_ineligible_nodes_do_not_charge_their_layer",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_layer_budget_stops_without_skipping_and_branch_conditions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_preview_does_not_create_conversation_or_store",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_revision_conflict_and_restore",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_same_project_shared_private_paths_not_shared",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_symlink_or_corrupt_store_fails_closed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_disabled_and_retired_nodes_not_implicitly_reopened",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_ineligible_nodes_do_not_charge_their_layer",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_layer_budget_stops_without_skipping_and_branch_conditions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_preview_does_not_create_conversation_or_store",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_revision_conflict_and_restore",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_same_project_shared_private_paths_not_shared",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_memory_trees",
+    "case": "test_symlink_or_corrupt_store_fails_closed",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_child_is_native_and_inherits_real_configuration",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_child_tools_and_history_use_native_core_and_resume",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_explicit_budget_is_respected_without_old_forty_call_cap",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_explicit_cancel_can_close_an_unowned_native_child_after_confirmed_exit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_managed_main_resumes_own_checkpoint_without_legacy_roles",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_native_guard_keeps_write_paths_and_rechecks_parent_lifetime",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_native_recovery_keeps_unknown_reserved_until_matching_exit_and_result",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_omitted_budget_uses_remaining_finite_allocation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_parent_collects_finished_children_once_while_sibling_is_busy",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_children",
+    "case": "test_parent_waits_for_reserved_calls_only_when_its_own_budget_is_unavailable",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_delegation_amendment_does_not_resume_review",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_delegation_planner_direction_stays_before_executor_followup",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_delegation_reviewer_resume_keeps_executor_result_and_plan",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_actual_native_install_and_final_reply_without_legacy_imports",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_boundary_stop_publishes_corrected_status_once",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_explicit_contract_text_survives_new_and_resumed_entry",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_managed_main_does_not_import_legacy_or_restore_its_wait",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_old_flags_and_recovery_never_select_legacy_for_native_l0",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_resume_keeps_required_evidence_notice_with_original_id",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_startup_interruption_preserves_checkpoint_without_role_dispatch",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_native_entry",
+    "case": "test_unreadable_required_ledger_keeps_existing_refresh_instruction",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_legacy_contract_remains_isolated_even_in_full_mode",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_python_temporary_directories_and_native_command_decoding",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_real_python_boundary_and_process_cleanup",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_actual_loop_auto_approval_records_action_reference",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_actual_loop_denial_never_executes_or_retries",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_auto_review_uses_exact_request_once",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_baseline_logging_failure_still_denies",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_broken_permission_profile_denies",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_broken_policy_does_not_remove_restrictions",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_child_inherits_parent_ceiling",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_default_does_not_migrate_legacy_trusted",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_denial_stops_other_tool_workarounds",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_downgrade_cannot_be_undone_inside_old_run",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_expired_approval_stops_without_execution",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_frozen_mixed_legacy_run_stays_in_workspace_after_explicit_raise",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_full_access_downgrade_terminates_owned_family",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_full_requires_confirmation_and_revision",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_human_approval_binds_fingerprint_and_consumes_once",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_legacy_mixed_modes_never_upgrade_and_new_defaults_are_independent",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_no_model_or_memory_can_grant_via_bad_action",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_old_full_approval_never_enables_the_host_terminal",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_permission_change_revokes_automatic_approval",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_raise_applies_next_run_lower_applies_current_run",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_remote_plugin_reviews_before_contact_and_reuses_exact_manual_decision",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_reviewer_has_no_tools_and_consumes_shared_budget",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_terminal_downgrade_survives_a_later_explicit_raise_for_the_same_run",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_unavailable_reviewer_never_auto_allows",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_unisolated_hook_cannot_bypass_controlled_mode",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_permission_safety",
+    "case": "test_unsupported_transport_has_no_host_fallback",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_public_preview",
+    "case": "test_document_directory_authority_checked_before_return",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_public_preview",
+    "case": "test_identical_pixels_keep_the_projected_action",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_explicit_topic_switch_starts_fresh_and_pending_answers_keep_priority",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_followup_after_expired_approval_keeps_goal_and_completed_tool_turn",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_identical_input_obeys_the_actual_question_and_steering_state",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_new_task_and_resume_preserve_the_original_prefix_exactly_once",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_old_checkpoint_with_prepared_user_text_can_find_the_current_goal",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_repeated_legacy_goal_uses_the_run_event_and_its_original_call",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_task_history_boundary",
+    "case": "test_resume_rechecks_read_identity_without_resetting_for_added_resources",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_video_attachments",
+    "case": "test_formats_intervals_and_revoking_original_frames",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_video_attachments",
+    "case": "test_range_validation_and_attachment_identity",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_video_attachments",
+    "case": "test_revocation_while_decoding_discards_result",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_examples",
+    "case": "test_independent_registration_including_renamed_third_party_copy",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_examples",
+    "case": "test_shipped_inputs_results_and_boundaries",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_claim_is_not_replayed_after_crash_before_launch",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_cross_run_idempotence_does_not_allocate_a_second_child",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_finite_quota_keeps_original_allocation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_human_dispatch_already_claimed_has_launch_priority",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_new_parent_deadline_does_not_extend_existing_delegation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_old_version_result_retains_provenance_and_has_no_adoption",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_overview_distinguishes_notice_from_body_delivery",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_lifetime",
+    "case": "test_pending_input_and_permission_change_preserve_manual_result",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_atomic_delegation_dedup_and_independent_histories",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_cancel_after_crash_releases_only_after_confirmed_exit",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_cancel_is_idempotent_and_not_resurrected",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_child_contract_method_and_only_scoped_result_tool",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_contract_schema_file_and_public_example_match_runtime",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_crash_reconciles_result_but_never_replays_side_effect",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_failed_resume_save_does_not_leave_a_new_budget_reservation",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_input_schema_and_identity_reject",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_manifest_negotiation_and_disabled_registration",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_message_boundary_and_duplicate",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_no_plugin_default_tools_and_method_are_unchanged",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_owner_can_cancel_after_resource_read_grant_is_revoked",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_plugin_results_do_not_block_legacy_join_or_default_final",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_result_persistence_delivery_and_disposition_are_separate",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_resume_launch_gap_does_not_inherit_previous_terminal_state",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_resume_reuses_directory_and_history_without_resetting_budget",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_revocation_blocks_old_handles_but_retains_results",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_scope_grants_and_other_task_are_not_inherited",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_worker_plugins",
+    "case": "test_worker_capabilities_do_not_grant_write_or_execution",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_bad_environment_id_is_rejected_before_resource_or_git_access",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_model_receipt_separates_fingerprint_from_reusable_id_without_changing_evidence",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_well_formed_id_still_requires_native_task_scope_and_never_launches",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_bounded_requirement_page_reaches_next_model_without_second_spill",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_explicit_obligations_do_not_implicitly_load_workroom",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_plain_and_verification_tasks_do_not_load_workroom_or_its_check_parameters",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_plain_requirements_roundtrip_and_pagination_preserve_source_and_obligations",
+    "outcome": "passed"
+  },
+  {
+    "module": "test_workroom_loading",
+    "case": "test_workroom_loads_only_its_tools_and_survives_same_task_resume",
+    "outcome": "passed"
+  }
+]

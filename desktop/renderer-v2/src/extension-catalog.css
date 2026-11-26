@@ -1,0 +1,100 @@
+.extension-catalog {
+  display:grid; grid-template-columns:clamp(168px,18vw,238px) minmax(0,1fr); height:100%; min-height:0;
+  color:var(--app-ink); background:var(--app-bg); line-height:1.5;
+}
+.extension-catalog [hidden] {display:none!important}
+.extension-catalog :is(button,input,select) {font:inherit}
+.extension-catalog button {cursor:pointer}
+.extension-catalog button:disabled {cursor:default;opacity:.55}
+.extension-catalog :focus-visible {outline:2px solid var(--app-accent);outline-offset:2px}
+.extension-catalog h1[data-catalog-heading]:focus {outline:0}
+.catalog-nav {min-height:0;display:flex;flex-direction:column;padding:22px 10px 12px;gap:5px;border-right:1px solid var(--app-divider);background:var(--app-sidebar);overflow:auto}
+.catalog-nav h2 {margin:0 10px 13px;font-size:1.35em}
+.catalog-nav h3 {margin:18px 10px 3px;font-size:.85em;color:var(--app-muted);font-weight:550}
+.catalog-nav button,.catalog-mobile-toggle,.catalog-back,.catalog-row,.catalog-link {
+  color:inherit;background:transparent;border:0;box-shadow:none;
+}
+.catalog-nav button {display:flex;align-items:center;text-align:start;gap:10px;width:100%;padding:8px 10px;border-radius:var(--app-control-radius);min-height:36px}
+.catalog-nav button span:not(.application-icon) {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.catalog-nav svg {flex:none;width:17px;height:17px}
+.catalog-nav button[aria-current=page],.catalog-filters button[aria-pressed=true],.catalog-segments button[aria-pressed=true] {background:var(--app-selected);color:var(--app-ink);font-weight:600}
+.catalog-nav button:hover,.catalog-back:hover,.catalog-row:hover,.catalog-link:hover,.catalog-filters button:hover,.catalog-segments button:hover {background:var(--app-hover)}
+.catalog-shortcuts {min-height:32px;overflow:auto;scrollbar-width:thin}
+.catalog-shortcuts>small {display:block;margin:6px 10px;color:var(--app-muted)}
+.catalog-utilities {margin-top:auto;padding-top:16px;color:var(--app-muted);font-size:.94em}
+.catalog-mobile-toggle,.catalog-scrim {display:none}
+.catalog-content {min-width:0;min-height:0;overflow:auto;overscroll-behavior:contain}
+.catalog-page,.catalog-tools {box-sizing:border-box;width:min(1080px,100%);margin:0 auto;padding:clamp(22px,4vw,52px) clamp(18px,4vw,58px) 38px}
+.catalog-page h1,.catalog-tools h1 {font-size:clamp(1.7em,3vw,2.45em);line-height:1.17;letter-spacing:-.025em;margin:0;font-weight:650;overflow-wrap:anywhere}
+.catalog-page h2 {font-size:1.18em;margin:22px 0 10px}
+.catalog-page h2 small,.catalog-page :is(p,dt,small),.catalog-tools small {color:var(--app-muted)}
+.catalog-page :is(p,dd,code,pre) {overflow-wrap:anywhere;line-height:1.7}
+.catalog-page p {margin:8px 0}
+.catalog-page :is(button,select,input[type=password]):not(.catalog-row,.catalog-link,.catalog-back,.catalog-primary,.catalog-filters button,.catalog-segments button,.workroom-unit-owner,.workroom-child,.workroom-unit-manage) {
+  color:var(--app-ink);background:var(--app-panel);border:1px solid var(--app-line);border-radius:var(--app-control-radius);padding:5px 10px;
+}
+.catalog-header,.catalog-actions,.catalog-identity,.catalog-segments,.catalog-filters {display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.catalog-header {justify-content:space-between;gap:16px;margin-bottom:22px}
+.catalog-actions {gap:7px}
+.catalog-search {display:flex;align-items:center;gap:8px;border:1px solid var(--app-line);padding:7px 12px;border-radius:var(--app-pill-radius);color:var(--app-muted)}
+.catalog-search svg {width:16px;height:16px;flex:none}
+.catalog-search input {border:0;background:transparent;color:var(--app-ink);width:clamp(116px,13vw,184px);min-width:0}
+.catalog-search input:focus-visible {outline:0}
+.catalog-search:focus-within {outline:2px solid var(--app-accent)}
+.catalog-primary {background:var(--app-ink);color:var(--app-bg);border:1px solid var(--app-ink);border-radius:var(--app-control-radius);padding:7px 14px;font-weight:600}
+.catalog-install {position:relative}
+.catalog-install>p {max-width:24em}
+.catalog-filters,.catalog-segments {gap:4px;padding-bottom:14px;border-bottom:1px solid var(--app-line)}
+.catalog-filters button,.catalog-segments button {padding:6px 12px;background:transparent;border:0;border-radius:var(--app-pill-radius);color:var(--app-muted)}
+.catalog-segments button {border-radius:var(--app-control-radius)}
+.catalog-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px}
+.catalog-row {display:flex;align-items:center;gap:12px;padding:12px 8px;text-align:start;min-width:0;border-radius:var(--app-control-radius);color:var(--app-ink)}
+.catalog-row-copy {display:grid;gap:3px;min-width:0;flex:1}
+.catalog-row-copy>span,.catalog-row small {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--app-muted)}
+.catalog-row-copy>span {font-size:.94em}
+.catalog-row-copy strong {overflow-wrap:anywhere}
+.catalog-row>svg {opacity:0;width:15px;flex:none}.catalog-row:is(:focus-visible,:hover)>svg {opacity:1}
+.catalog-icon {display:inline-grid;place-items:center;width:42px;height:42px;border-radius:var(--app-card-radius);background:var(--app-selected);flex:none}
+.catalog-icon svg {width:21px;height:21px}
+.extension-catalog [data-skill-source="来自插件"] .catalog-icon {background:color-mix(in srgb,var(--app-selected) 78%, #9175b9);color:color-mix(in srgb,var(--app-ink) 72%, #a889e0)}
+.extension-catalog [data-skill-source="个人"] .catalog-icon {background:color-mix(in srgb,var(--app-selected) 81%, #b17e52);color:color-mix(in srgb,var(--app-ink) 74%, #c88044)}
+.extension-catalog [data-skill-source="项目"] .catalog-icon {background:color-mix(in srgb,var(--app-selected) 80%, #5b9583);color:color-mix(in srgb,var(--app-ink) 74%, #71b39a)}
+.catalog-back,.catalog-link,.catalog-mobile-toggle {display:inline-flex;align-items:center;gap:6px;padding:5px 7px;border-radius:var(--app-control-radius)}
+.catalog-mobile-toggle {display:none}
+.catalog-back {color:var(--app-muted);margin-bottom:18px}
+.catalog-back svg,.catalog-link svg {width:15px;height:15px}
+.catalog-identity {gap:15px;margin-bottom:17px;flex-wrap:nowrap}
+.catalog-identity .catalog-icon {width:56px;height:56px;border-radius:var(--app-card-radius)}
+.catalog-identity .catalog-icon .application-icon,.catalog-identity .application-icon :is(img,svg) {width:34px;height:34px}
+.catalog-identity small {display:block;margin-top:5px}
+.catalog-open-app {margin-inline-start:auto;display:inline-flex;align-items:center;gap:6px;flex:none}
+.catalog-open-app svg {width:15px;height:15px}
+.catalog-description {max-width:70ch}
+.catalog-facts {margin:21px 0;border-top:1px solid var(--app-line)}
+.catalog-facts>div,.catalog-setting {display:flex;align-items:center;gap:15px;border-bottom:1px solid var(--app-line);padding:12px 0}
+.catalog-facts dt {min-width:6em}.catalog-facts dd {margin:0}
+.catalog-replacement dd {min-width:0;overflow-wrap:anywhere}
+.catalog-scope {display:flex;align-items:center;gap:10px;margin-top:14px}
+.catalog-setting {justify-content:space-between}
+.catalog-management section+section,.catalog-intro section+section {margin-top:24px}
+.catalog-page .memory-provider-control {padding:0;border:0}
+.catalog-management details {padding:10px 0}
+.catalog-management summary {cursor:pointer;overflow-wrap:anywhere}
+.catalog-management .catalog-actions {margin:12px 0}
+.catalog-draft,.catalog-management pre {white-space:pre-wrap;word-break:break-word;max-height:42vh;overflow:auto;font:inherit}
+.catalog-tools {display:flex;flex-direction:column;height:100%;min-height:0;gap:10px}
+.catalog-tools .catalog-back {align-self:flex-start;margin:0}.catalog-tools .embedded-management {display:flex;flex:1;flex-direction:column;min-height:0}
+@media(max-width:960px) {.catalog-grid {grid-template-columns:1fr}}
+@media(max-width:720px) {
+  .extension-catalog {position:relative;display:flex;flex-direction:column}
+  .catalog-content {flex:1}
+  .catalog-mobile-toggle {display:inline-flex;align-self:flex-start;margin:8px 12px 0}
+  .catalog-nav {display:none;position:absolute;z-index:4;inset:0 auto 0 0;width:min(235px,80%);box-sizing:border-box}
+  .extension-catalog[data-nav-open] .catalog-nav {display:flex}
+  .extension-catalog[data-nav-open] .catalog-scrim {display:block;position:absolute;inset:0;z-index:3;border:0;background:#0006}
+  .catalog-page,.catalog-tools {padding:16px 15px 30px}.catalog-header {align-items:flex-start}
+}
+@media(forced-colors:active) {
+  .catalog-nav [aria-current],.catalog-filters [aria-pressed=true],.catalog-segments [aria-pressed=true] {outline:1px solid Highlight}
+  .catalog-icon {border:1px solid CanvasText}
+}

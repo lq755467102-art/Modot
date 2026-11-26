@@ -1,0 +1,38 @@
+appId: org.modot.preview.desktop
+productName: Modot Preview
+artifactName: Modot-Preview-${version}-${arch}-Setup.${ext}
+electronDist: node_modules/electron/dist
+asar: true
+# build-release.cjs supplies fresh app/output directories. No broad repo glob.
+files:
+  - '**/*'
+  # The default matcher drops .d.ts files. The TS/JS worker reads these at runtime.
+  - '!workroom-typescript-libs{,/**/*}'
+  - from: workroom-typescript-libs
+    to: workroom-typescript-libs
+    filter:
+      - '**/*.d.ts'
+      - '**/package.json'
+      - '**/LICENSE'
+asarUnpack:
+  - python/**/*
+  - backend/**/*
+  - git/**/*
+  - typescript-language-worker.cjs
+  - workroom-typescript-libs/**/*
+win:
+  target: nsis
+  icon: icons/modot.ico
+  signtoolOptions:
+    signingHashAlgorithms:
+      - sha256
+nsis:
+  oneClick: false
+  allowElevation: false
+  perMachine: false
+  deleteAppDataOnUninstall: false
+  runAfterFinish: false
+  include: installer/public.nsh
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: false
+  createStartMenuShortcut: true

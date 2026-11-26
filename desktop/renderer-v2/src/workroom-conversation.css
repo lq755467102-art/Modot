@@ -1,0 +1,161 @@
+/* 工作间沿用应用外壳的顶部菜单和左侧图标栏，右栏承载主会话，底部留给运行与调试。 */
+.application-shell[data-workroom-open=true]>.application-titlebar {position:relative;z-index:12;gap:12px;padding-inline-start:15px;background:var(--app-panel);border-bottom:1px solid var(--app-line)}
+.application-titlebar .workroom-brand {display:flex;align-items:center;gap:8px;padding:3px;font-size:16px;font-weight:600}
+.workroom-brand b {display:grid;place-items:center;width:22px;height:22px;padding-bottom:2px;border-radius:5px;background:var(--app-ink);color:var(--app-panel);font:650 19px/1 sans-serif}
+.workroom-window-title {min-width:0;overflow:hidden;text-overflow:ellipsis;padding-inline-start:13px;border-inline-start:1px solid var(--app-line);color:var(--app-muted);white-space:nowrap}
+@media(max-width:620px) {.application-titlebar .workroom-window-title {display:none}}
+.project-workroom [hidden] {display:none!important}
+.application-shell[data-workroom-open=true] .project-workroom {
+  --room-paper:light-dark(#fff,#222124);--room-pane:light-dark(#faf9fa,#1e1d20);--room-tree:light-dark(#f5f3f6,#1c1b1e);
+  --room-mark:light-dark(#925c21,#e9c08b);--room-active:light-dark(#245ec2,#94b6fa);
+}
+.project-workroom .project-workroom-binding {min-height:42px;padding:5px 12px;gap:8px;background:var(--room-paper)}
+.project-workroom .workroom-toolbar {display:contents}
+.project-workroom .workroom-tree-toggle {order:-2}
+.project-workroom .workroom-project-picker {order:-1;margin-inline-end:auto}
+.project-workroom .workroom-toolbar>button,.project-workroom .workroom-toolbar>details>summary {background:transparent;border:0;display:inline-flex;align-items:center;gap:5px;color:var(--app-ink)}
+.project-workroom .workroom-chat-toggle {order:1}
+.project-workroom .workroom-chat-toggle[aria-expanded=true] {background:var(--app-selected)}
+.project-workroom .workroom-toolbar>button:hover,.project-workroom summary:hover {background:var(--app-hover)}
+.workroom-workspace .workspace-body {position:relative}
+.workroom-workspace .navigation {width:clamp(158px,17%,275px);min-width:145px;resize:horizontal;background:var(--room-tree)}
+.workroom-workspace .nav-content {padding:9px 8px}
+.workroom-tree-title {display:flex;align-items:center;justify-content:flex-start;gap:4px;padding:3px 4px 9px}
+.workroom-tree-title strong {margin-inline-end:auto}
+.workroom-find-file {display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.workroom-tree-title button,.workroom-file-options>summary {background:transparent;border:0;color:var(--app-muted);cursor:pointer}
+.workroom-tree-title small {font-size:11px;color:var(--app-muted)}
+.workroom-tree,.workroom-tree li {list-style:none;margin:0;padding:0}
+.workroom-tree .workroom-tree {margin-inline-start:13px;padding-inline-start:4px;border-inline-start:1px solid var(--app-line)}
+.workroom-tree .file-row {box-sizing:border-box;width:100%;display:flex;align-items:center;gap:7px;padding:6px;border:0;border-radius:6px;background:none;color:var(--app-ink);font:inherit;font-size:.94em}
+.workroom-tree .file-row[aria-current=page],.workroom-tree .file-row:hover {background:var(--app-selected)}
+.workroom-tree .file-row>.tree-name {min-width:0;overflow:hidden;text-overflow:ellipsis;color:inherit}
+.workroom-tree svg {flex:none;width:16px;height:16px}
+.workroom-file-icon {color:var(--app-muted);flex:none;display:inline-grid;place-items:center;width:17px;font:600 11px/1 Consolas,monospace}
+.workroom-file-icon svg {width:15px;height:15px}
+.workroom-file-icon:is([data-language^=typescript],[data-language^=javascript],[data-language^=json],[data-language=markdown]) {color:var(--room-active)}
+.workroom-file-icon[data-language=python] {color:light-dark(#436845,#a9d8b0)}
+.workroom-tree .tree-chevron {width:9px;text-align:center;font-size:15px;color:var(--app-muted)}
+.workroom-dirty-dot {display:inline-block;flex:none;width:6px;height:6px;border-radius:50%;background:var(--room-mark)}
+.workroom-workspace .editor-area {min-width:0;background:var(--room-paper)}
+.workroom-workspace .editor-tabs {background:var(--room-pane)}
+.workroom-workspace .editor-tab.selected {background:var(--room-paper);box-shadow:inset 0 2px var(--room-active)}
+.workroom-workspace .editor-tab [data-file-select] {display:flex;align-items:center;gap:6px}
+.workroom-workspace .editor-tab [data-file-select]>span:not(.workroom-file-icon) {min-width:0;overflow:hidden;text-overflow:ellipsis}
+.workroom-workspace .editor-tab .file-tab-close {opacity:0;min-width:16px}
+.workroom-workspace .editor-tab:is(:hover,:focus-within) .file-tab-close {opacity:1}
+.workroom-workspace .editor-toolbar {position:relative;z-index:2;gap:7px;background:var(--room-paper);color:var(--app-muted)}
+.workroom-workspace .file-feedback {color:var(--room-mark)}
+.workroom-edit-tools {display:flex;align-items:center;gap:3px;min-width:0}
+.workroom-workspace .editor-toolbar :is(button,summary) {color:var(--app-ink);background:transparent;border:0;cursor:pointer;white-space:nowrap}
+.workroom-workspace .editor-toolbar button:disabled {opacity:.5;cursor:default}
+.workroom-workspace .editor-toolbar .workroom-save {display:flex;align-items:center;gap:4px;font-size:12px}
+.workroom-save svg,.workroom-tree-title button svg,.workroom-file-options svg {width:15px;height:15px}
+.workroom-file-options {position:relative}
+.workroom-file-options summary {list-style:none;display:flex;padding:4px}
+.workroom-file-options>div {position:absolute;right:0;top:100%;display:grid;width:max-content;max-width:220px;padding:6px;border:1px solid var(--app-line);border-radius:8px;background:var(--app-panel)}
+.workroom-edit-tools .workroom-edit-actions {padding:0;background:none;border:0}
+.workroom-workspace .workroom-text-editor :is(.cm-editor,.cm-gutters,.cm-scroller) {background-color:var(--room-paper);border-color:var(--app-line)}
+.workroom-workspace .workroom-text-editor .cm-scroller {
+  font-family:"Cascadia Code",Consolas,"Microsoft YaHei",monospace;
+  line-height:1.52;
+}
+.workroom-workspace .cm-gutters {color:var(--app-muted)}
+.workroom-workspace .cm-content {padding-block:8px}
+.workroom-workspace .cm-activeLine,.workroom-workspace .cm-activeLineGutter {background-color:color-mix(in srgb,var(--app-muted) 7%,transparent)}
+.workroom-workspace .cm-editor .cm-selectionLayer .cm-selectionBackground {background-color:light-dark(#c3d8ed,#3e526c)}
+.workroom-workspace .cm-editor.cm-focused .cm-selectionLayer .cm-selectionBackground {background-color:light-dark(#abd0fa,#365d87)}
+.workroom-workspace .workroom-format section:empty {padding:0}
+.workroom-workspace .workroom-format-review pre {max-height:min(34vh,22rem);margin:6px 0;border-radius:4px;tab-size:2}
+.workroom-format-review .format-add {color:light-dark(#285f39,#a6d4ae);background:light-dark(#e8f5eb,#273b2c)}
+.workroom-format-review .format-remove {color:light-dark(#923646,#efa7b4);background:light-dark(#fae9ed,#422a31)}
+.workroom-workspace .bottom-panel.is-collapsed {min-height:32px;max-height:32px;height:32px!important}
+.workroom-workspace .workroom-run-bar {min-height:32px;background:var(--room-pane)}
+.workroom-chat-toggle small {color:var(--room-mark);font-size:11px}
+.workroom-chat-drawer {position:relative;flex:0 0 clamp(265px,26%,375px);min-width:0;display:flex;flex-direction:column;gap:8px;padding:10px;box-sizing:border-box;border-inline-start:1px solid var(--app-line);background:var(--room-pane);color:var(--app-ink)}
+.workroom-chat-drawer>header {display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 2px 9px;border-bottom:1px solid var(--app-line)}
+.workroom-chat-drawer>header>div {min-width:0;display:grid;gap:3px;margin-inline-end:auto}
+.workroom-chat-drawer>header strong {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.workroom-chat-drawer>header small,.workroom-chat-unbound {color:var(--app-muted);font-size:12px}
+.workroom-chat-drawer button {cursor:pointer;color:var(--app-ink);font:inherit}
+.workroom-chat-drawer>header button,.workroom-attach,.workroom-input-host .composer-toolbar button {display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:4px;border:0;border-radius:6px;background:transparent}
+.workroom-chat-drawer button:disabled {opacity:.5;cursor:default}
+.workroom-chat-drawer button:hover:not(:disabled) {background:var(--app-hover)}
+.workroom-chat-unbound {overflow:auto;min-height:0;flex:1;overscroll-behavior:contain}
+.workroom-conversation-feed {
+  --reading-width:100%;
+  --reading-gutter:5px;
+  flex:1;
+  height:auto;
+  display:flex;
+  min-width:0;
+  background:transparent;
+}
+.workroom-conversation-feed #feed {
+  min-height:0;
+  padding:4px 0;
+  margin:0;
+  overscroll-behavior:contain;
+}
+.workroom-conversation-feed .conversation-message-side {
+  position:static;
+  display:flex;
+  justify-content:flex-end;
+  padding:0;
+}
+.workroom-chat-hint {margin:10px 2px}
+.workroom-approval-host:empty {display:none}
+.workroom-chat-drawer [role=alert] {color:light-dark(#933242,#f2aab4)}
+.workroom-approval-host {padding:8px;max-height:38%;overflow:auto;background:var(--app-selected);border-inline-start:2px solid var(--room-active)}
+.workroom-approval-host .composer-approval {display:grid;gap:4px;font-size:12px}
+.workroom-approval-host .composer-approval :is(p,pre) {margin:3px 0}
+.workroom-approval-host .composer-approval pre {max-height:85px!important}
+.workroom-approval-host .composer-approval-actions {display:flex;gap:7px}
+.workroom-approval-host .composer-approval-actions button {padding:5px 9px;border-radius:6px;border:1px solid var(--app-line);background:var(--room-paper)}
+.workroom-approval-host .composer-approval-actions button:first-child {border-color:var(--app-ink);background:var(--app-ink);color:var(--room-pane)}
+.workroom-command-box {position:relative;flex:none;border:1px solid var(--app-line);border-radius:10px;background:var(--room-paper);padding:6px}
+.workroom-command-box:focus-within {border-color:var(--room-active)}
+.workroom-input-host .legacy-composer,.workroom-input-host .cmain {display:flex;min-width:0;flex-direction:column;gap:4px;margin:0;padding:0;background:transparent;border:0}
+.workroom-input-host .sr-only {position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.workroom-input-host #agent-composer {box-sizing:border-box;width:100%;min-width:0;height:58px;max-height:16vh;resize:vertical;margin:0;padding:5px 6px;outline:0;border:0;background:transparent;color:var(--app-ink);caret-color:var(--app-ink);font:inherit;line-height:1.5}
+.workroom-input-host .composer-toolbar {position:static;display:flex;align-items:center;gap:3px;min-width:0;margin:0;padding:0 0 0 27px}
+.workroom-attach {position:absolute;bottom:11px;left:7px;width:25px;height:25px;color:var(--app-muted)}
+.workroom-attach svg,.workroom-input-host .composer-toolbar svg {width:16px;height:16px}
+.workroom-input-host .composer-toolbar .cspacer {flex:1}
+.workroom-input-host .composer-toolbar #cgatesel>span,.workroom-input-host .composer-key-hint {display:none}
+.workroom-input-host .composer-toolbar .composer-model {min-width:0;max-width:42%}
+.workroom-input-host .composer-toolbar #mset {max-width:100%;font-size:11px}
+.workroom-input-host .composer-toolbar #mset b {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.workroom-input-host .composer-toolbar #go {margin-left:auto;width:29px;height:29px;background:var(--app-ink);color:var(--room-pane)}
+.workroom-input-host .composer-toolbar #stop {color:var(--app-muted)}
+.workroom-input-host .composer-feedback {order:-1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;font-size:11px;color:var(--app-muted)}
+.workroom-input-host .composer-feedback-main {display:flex;gap:4px;flex-wrap:wrap}
+.workroom-input-host .composer-send-feedback[data-notice] {min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.workroom-input-host .composer-feedback:not(:has(.composer-run-status[data-state],.composer-latest)):has(#composer-feedback:empty) {display:none}
+.workroom-input-host .cmain:has(textarea:placeholder-shown) #composer-feedback:not([data-notice]) {display:none}
+.workroom-input-host :is(.composer-model-popover,.composer-permissions-menu,.context-popover) {position:absolute;z-index:5;inset:auto 0 43px auto;box-sizing:border-box;display:grid;gap:5px;width:100%;max-height:min(50vh,390px);overflow:auto;padding:9px;border:1px solid var(--app-line);border-radius:8px;background:var(--room-paper);box-shadow:0 6px 18px #0003}
+.workroom-input-host .cring circle {fill:none;stroke:var(--app-line);stroke-width:2}
+.workroom-input-host .cring .cring-fg {stroke:var(--room-active);transform:rotate(-90deg);transform-origin:center}
+.workroom-input-host .context-popover {font-size:12px}
+.workroom-input-host .context-popover header,.workroom-input-host .context-popover li {display:flex;align-items:center;justify-content:space-between;gap:5px}
+.workroom-input-host .context-popover ul {display:grid;gap:4px;padding:0;margin:4px}
+.workroom-input-host .context-limit-control {display:grid;gap:4px}
+.workroom-input-host .composer-model-popover button,.workroom-input-host .composer-permissions-menu button {justify-content:space-between;font-size:12px}
+.workroom-input-host .composer-model-options {display:grid;max-height:180px;overflow:auto}
+.workroom-input-host .composer-model-popover small {display:block;color:var(--app-muted)}
+.workroom-input-host .composer-question {max-height:18vh;overflow:auto;font-size:12px}
+.workroom-statusbar {display:flex;align-items:center;gap:10px;flex:none;min-height:25px;padding:0 12px;border-top:1px solid var(--app-line);background:var(--room-pane);color:var(--app-muted);font-size:11px}
+.workroom-statusbar>span {display:inline-flex;align-items:center;gap:5px}
+.workroom-statusbar>span:first-child {margin-inline-end:auto}
+.workroom-statusbar svg {width:13px;height:13px}
+@media(max-width:900px){
+  .workroom-workspace .navigation {width:215px}
+  .workroom-chat-drawer {position:absolute;z-index:5;inset:0 0 0 auto;width:min(315px,86%);max-width:100%;min-width:0;box-shadow:-5px 0 20px #0003}
+}
+@media(max-width:560px){
+  .workroom-utilities>div {max-width:80vw}
+  .workroom-edit-tools:has(>button) .workroom-edit-actions {font-size:11px}
+  .workroom-workspace .editor-toolbar {padding-inline:5px;flex-wrap:wrap;height:auto}
+}
+@media(hover:none){.workroom-workspace .editor-tab .file-tab-close {opacity:1}}
+@media(forced-colors:active){.workroom-dirty-dot {background:Highlight}.workroom-tree [aria-current=page],.workroom-chat-drawer [aria-pressed=true] {outline:1px solid Highlight}}

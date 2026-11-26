@@ -1,0 +1,112 @@
+.message-reading { min-width:0;max-width:100%;overflow-wrap:anywhere; }
+@media(prefers-reduced-motion:no-preference) {
+  .message-stream-fade {animation:message-stream-in 240ms cubic-bezier(.35,.05,.45,1) both;}
+  @keyframes message-stream-in {from{opacity:.10;}to{opacity:1;}}
+}
+.message-table-scroll { max-width:100%;min-width:0;overflow:auto;overscroll-behavior-y:auto;overscroll-behavior-x:contain;margin-block:4px 14px; }
+.message-reading .message-table-scroll:focus-visible { outline:2px solid var(--link,#3685ec);outline-offset:2px; }
+.legacy-conversation .message-reading .message-table-scroll>table,
+.message-reading .message-table-scroll>table { display:table;width:max-content;min-width:100%;max-width:none;margin:0; }
+.message-code-toolbar .message-copy-feedback { flex:0 0 auto;white-space:normal;max-width:8em;overflow-wrap:anywhere; }
+.message-reading a.message-resource-link:any-link {
+  color:var(--app-accent);
+  text-decoration:none;
+  border-bottom:0;
+}
+:is(.message-reading,.legacy-conversation .message-reading) a.message-resource-link:any-link code {color:inherit;}
+.message-reading a.message-resource-link:hover {
+  background-color:color-mix(in srgb,currentColor 10%,transparent);
+}
+.message-reading a.message-resource-link:focus-visible {
+  outline:2px solid currentColor;
+  outline-offset:2px;
+  border-radius:2px;
+}
+/* Reserve space on the first fragment so the marker can't wrap by itself. */
+.message-resource-link:has(> .message-file-icon) {
+  --message-file-icon-width:1.12em;
+  position:relative;
+  padding-inline-start:calc(var(--message-file-icon-width) + .28em);
+}
+.message-resource-link:has(> .message-file-icon:is([data-symbol="JSX"],[data-symbol="TSX"])) {
+  --message-file-icon-width:1.55em;
+}
+.message-file-icon {
+  position:absolute;
+  inset-inline-start:0;
+  inset-block-start:.125em;
+  display:grid;
+  place-items:center;
+  inline-size:var(--message-file-icon-width);
+  block-size:1em;
+  box-sizing:border-box;
+  padding-inline:.12em;
+  border-radius:.22em;
+  background:currentColor;
+  line-height:1;
+}
+.message-file-icon[data-symbol]::before {
+  content:attr(data-symbol);
+  color:var(--app-bg);
+  font-size:.64em;
+  font-weight:750;
+  line-height:1;
+}
+.message-file-icon svg {display:block;width:.86em;height:.86em;color:var(--app-bg);}
+
+.message-artifact {display:inline-block;max-width:100%;}
+.message-artifact[data-picture] {display:block;margin-block:.5em;}
+.message-artifact-open {
+  display:inline-block;
+  max-width:100%;
+  border:0;
+  padding:0;
+  background:none;
+  color:var(--app-accent);
+  font:inherit;
+  text-align:start;
+  overflow-wrap:anywhere;
+}
+.message-artifact-open:hover .message-artifact-label {text-decoration:underline;}
+.message-artifact-open:focus-visible {outline:2px solid currentColor;outline-offset:3px;border-radius:4px;}
+.message-artifact img {
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:60vh;
+  object-fit:contain;
+  border-radius:8px;
+  margin-block-end:.35em;
+}
+.message-artifact small {margin-inline-start:.5em;color:var(--app-muted);}
+
+.message-flowchart {min-width:0;max-width:100%;margin-block:.65em;}
+.message-reading .message-flowchart-view {
+  display:block;
+  inline-size:100%;
+  min-inline-size:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:zoom-in;
+}
+.message-flowchart-view:focus-visible {outline:2px solid var(--app-accent);outline-offset:2px;}
+.message-flowchart-view img {
+  display:block;
+  inline-size:auto;
+  block-size:auto;
+  max-inline-size:100%;
+  margin-inline:auto;
+}
+.message-flowchart details {margin-block-start:.5em;}
+.message-flowchart summary {width:fit-content;color:var(--app-muted);cursor:pointer;}
+.message-flowchart-measure {
+  position:fixed;
+  inset:0 auto auto 0;
+  width:0;
+  height:0;
+  overflow:hidden;
+  visibility:hidden;
+  pointer-events:none;
+}

@@ -1,0 +1,5 @@
+/* Codex 26.1029.7803.0 installed default UI stack; see repository evidence. */
+:root {--harness-ui-font:-apple-system-body, ui-sans-serif, -apple-system, system-ui, "Segoe UI", "Helvetica", "Apple Color Emoji", "Arial", sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";font-size:14px}
+body,.legacy-conversation,.application-shell {font-family:var(--harness-ui-font);font-synthesis:none}
+body {font-size:14px}
+button,input,select,textarea {font-family:inherit}

@@ -1,0 +1,25 @@
+{
+  "name": "modot-public-preview",
+  "version": "0.2.0-preview.13",
+  "private": true,
+  "description": "A customizable desktop AI agent with project workrooms, replaceable memory, and specialist task cores.",
+  "main": "main.js",
+  "scripts": {
+    "setup:v2": "npm --prefix renderer-v2 ci",
+    "build:v2": "npm --prefix renderer-v2 run build",
+    "start": "npm run build:v2 && node launch.cjs",
+    "prepare:python": "node scripts/prepare-python.cjs",
+    "pack": "node scripts/build-release.cjs --dir",
+    "dist": "node scripts/build-release.cjs --nsis --signed",
+    "dist:local": "node scripts/build-release.cjs --nsis"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.0.12",
+    "@types/node": "24.19.2",
+    "undici-types": "7.24.6"
+  },
+  "productName": "Modot Preview",
+  "author": "Modot contributors",
+  "license": "SEE LICENSE IN LICENSE"
+}

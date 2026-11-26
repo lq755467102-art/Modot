@@ -1,0 +1,12 @@
+{
+  "input": {
+    "question": "旧 CLI 是否向导出接口显式传入格式？这决定了主方修改接口默认值时是否需要保留 CLI 的独立设置。",
+    "scope": "核对旧调用方 export_cli.py。主执行者负责修改 export_api.py。",
+    "tried": ["已读到 export_api.py 的显式参数优先，尚未核对 CLI 调用实参。"]
+  },
+  "output": {
+    "findings": [{"observation": "旧 CLI 显式传入 legacy。", "source": "export_cli.py 第 4 行", "revision": "example-v1"}],
+    "ruledOut": [],
+    "unknowns": ["其他调用方使用默认值的情况待查。"]
+  }
+}

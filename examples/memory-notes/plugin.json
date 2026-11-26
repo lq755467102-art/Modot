@@ -1,0 +1,6 @@
+{
+  "name": "session-memory-notes",
+  "version": "1.0.0",
+  "description": "轻量会话便签：替换默认记忆落点的最小数据适配器。只保存当前会话，不提供项目升格；不运行插件代码。",
+  "memoryProvider": {"adapter": "session-notes"}
+}

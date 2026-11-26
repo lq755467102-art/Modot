@@ -1,0 +1,84 @@
+.application-shell .settings-page {
+  grid-column:2;grid-row:2;min-width:0;min-height:0;overflow:hidden;
+  background:var(--app-bg);color:var(--app-ink);container-type:inline-size;
+}
+.settings-page .focused-settings {
+  display:grid;grid-template-columns:minmax(170px,218px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);
+  min-height:0;height:100%;width:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;
+  background:var(--app-bg);box-shadow:none;overflow:hidden;
+}
+.settings-page .focused-settings > header {
+  grid-column:1/-1;display:flex;justify-content:flex-start;gap:12px;margin:0;padding:9px 16px;
+  border-bottom:1px solid var(--app-divider);background:var(--app-sidebar);
+}
+.settings-navigation {min-width:0;min-height:0;overflow:auto;padding:14px 12px;background:var(--app-sidebar);border-inline-end:1px solid var(--app-divider);}
+.focused-settings .settings-search {display:flex;gap:7px;margin:0 0 12px;padding:0 9px;border:1px solid var(--app-line);border-radius:var(--app-control-radius);background:var(--app-selected);}
+.settings-search svg,.settings-tabs svg,.settings-content button svg {flex:none;vertical-align:middle;width:16px;height:16px;}
+.focused-settings .settings-search input {min-width:0;width:100%;max-width:none;border:0;background:transparent;padding-inline:0;color:var(--app-ink);}
+.focused-settings .settings-tabs {display:block;border:0;margin:0;padding:0;}
+.settings-tabs section+section {margin-top:14px;}
+.focused-settings .settings-tabs h4 {padding-inline:8px;font-weight:500;color:var(--app-muted);}
+.focused-settings .settings-tabs button,.settings-search-results button {
+  display:flex;align-items:center;gap:7px;text-align:start;width:100%;padding:7px 8px;
+  color:var(--app-ink);background:transparent;border:1px solid transparent;
+}
+.focused-settings .settings-tabs button:hover,.settings-search-results button:hover {background:var(--app-hover);}
+.focused-settings .settings-tabs button[aria-current] {background:var(--app-selected);}
+.settings-search-results button {align-items:flex-start;flex-direction:column;gap:2px;}
+.settings-search-results :is(p,small) {color:var(--app-muted);}
+.settings-search-results p {margin:4px 8px;font-size:.88em;}
+.settings-content {min-width:0;min-height:0;overflow:auto;width:min(100%,790px);margin-inline:auto;padding:25px clamp(15px,4cqi,44px);}
+.settings-content h2 {margin:0 0 12px;font-size:1.85em;font-weight:650;line-height:1.2;}
+.settings-content :is(h3,p) {margin:0 0 7px;}
+.settings-content p:not([role=alert]),.settings-content small {color:var(--app-muted);}
+.settings-content .settings-intro {margin-bottom:21px;}
+.settings-content button {border:1px solid var(--app-line);background:var(--app-panel);border-radius:var(--app-control-radius);}
+.settings-content button:hover {background:var(--app-hover);}
+.settings-content button svg {margin-inline-end:5px;}
+.settings-content .settings-categories-back {display:none;}
+.settings-content :is(input,select,textarea) {max-width:100%;}
+.settings-card {min-width:0;padding:12px 14px;border:1px solid var(--app-divider);border-radius:var(--app-popover-radius);background:var(--app-panel);margin-block:12px;}
+.focused-settings .settings-line {display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:42px;margin:0;padding:8px 0;flex-wrap:wrap;}
+.focused-settings label.settings-card {padding:12px 14px;}
+.settings-line+ .settings-line {border-top:1px solid var(--app-line);}
+.settings-line > span {display:flex;align-items:center;gap:8px;min-width:0;}
+.settings-line output {white-space:nowrap;}
+.settings-code-sample {font-size:var(--app-code-size,12px);background:var(--app-code-bg);padding:5px 8px;overflow-wrap:anywhere;}
+.settings-content [data-highlight=true] {outline:2px solid var(--app-accent);outline-offset:3px;border-radius:var(--app-control-radius);scroll-margin-block:12px;}
+.settings-storage-head,.settings-worktree-link,.settings-storage-actions {
+  display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;
+}
+.settings-storage-head strong {display:block;font-size:1.6em;font-variant-numeric:tabular-nums;line-height:1.4;}
+.settings-storage-summary {margin-bottom:23px;}
+.settings-storage-bar {display:flex;gap:1px;height:16px;border-radius:var(--app-control-radius);overflow:hidden;background:var(--app-selected);margin-block:9px;}
+.settings-storage-bar span {min-width:0;background:var(--storage-color);}
+.settings-storage-legend {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,94px),1fr));gap:4px;}
+.settings-storage-legend button {text-align:start;overflow-wrap:anywhere;background:transparent;border-color:transparent;padding:5px;}
+.settings-storage-legend button[aria-pressed=true] {background:var(--app-selected);border-color:var(--app-line);}
+.settings-storage-legend small {display:block;padding-inline-start:13px;font-variant-numeric:tabular-nums;}
+.settings-storage-dot {display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--storage-color);margin-inline-end:6px;vertical-align:2px;}
+[data-category=conversations] {--storage-color:light-dark(#4e7ed7,#77a3fa);}
+[data-category=agents] {--storage-color:light-dark(#926ace,#ae8fed);}
+[data-category=archives] {--storage-color:light-dark(#c78337,#e9ad67);}
+[data-category=evidence] {--storage-color:light-dark(#419aa0,#73c3c8);}
+[data-category=worktrees] {--storage-color:light-dark(#579b63,#86c88f);}
+[data-category=other] {--storage-color:light-dark(#817d85,#96939a);}
+.settings-storage-meta {display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.87em;margin-top:9px!important;}
+.settings-storage-detail {border-inline-start:2px solid var(--app-accent);padding-inline-start:9px;margin-block:10px;}
+.settings-data-list {list-style:none;padding:0;margin:9px 0 0;}
+.settings-data-list li {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding-block:8px;border-top:1px solid var(--app-line);}
+.settings-data-list :is(strong,small) {display:block;overflow-wrap:anywhere;}
+.settings-data-list button {white-space:nowrap;}
+.settings-archive-actions {display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;}
+.new-project-dialog button.settings-archive-confirm {color:var(--app-danger,#df7878);}
+@container (max-width:680px) {
+  .settings-page .focused-settings {grid-template-columns:minmax(0,1fr);}
+  .settings-navigation {border:0;}
+  .focused-settings[data-list-open=false] .settings-navigation,.focused-settings[data-list-open=true] .settings-content {display:none;}
+  .settings-content .settings-categories-back {display:inline-flex;align-items:center;background:transparent;color:var(--app-accent);border:0;margin-bottom:10px;padding-inline:0;}
+  .settings-content {padding:15px;}
+  .focused-settings label {gap:7px;}
+}
+@media (forced-colors:active) {
+  .settings-storage-bar span,.settings-storage-dot {forced-color-adjust:none;}
+}

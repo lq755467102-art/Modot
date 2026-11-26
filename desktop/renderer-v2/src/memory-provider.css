@@ -1,0 +1,12 @@
+.memory-provider-summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;min-width:0}
+.memory-provider-summary>span{opacity:.75;overflow-wrap:anywhere}
+.management-page-heading:has(.memory-provider-summary){gap:16px;flex-wrap:wrap;align-items:center}
+.management-page-heading:has(.memory-provider-summary)>h1{margin-right:auto}
+.memory-provider-control{padding:16px;margin-bottom:20px;border:1px solid color-mix(in srgb,currentColor 18%,transparent);border-radius:var(--app-card-radius);display:flex;flex-direction:column;gap:10px;min-width:0}
+.memory-provider-control h2,.memory-provider-control p{margin:0}
+.memory-provider-control h2{font-size:18px}
+.memory-provider-control p,.memory-provider-control small{opacity:.75;line-height:1.6;overflow-wrap:anywhere}
+.memory-provider-control label{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.memory-provider-control select{width:min(320px,100%);min-width:0;max-width:100%}
+.memory-provider-control>button{align-self:flex-start}
+@media(max-width:780px){.memory-provider-summary{width:100%;justify-content:space-between}.memory-provider-control{padding:12px}}

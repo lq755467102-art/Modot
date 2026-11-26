@@ -1,0 +1,40 @@
+.workroom-file-context-menu {
+  position:fixed;
+  width:max-content;
+  max-width:min(280px,calc(100vw - 16px));
+  z-index:120;
+  padding:4px;
+  border:1px solid var(--app-divider);
+  border-radius:var(--app-popover-radius);
+  box-shadow:0 5px 18px #0003;
+  background:var(--app-panel);
+  color:var(--app-ink);
+}
+.workroom-file-context-menu button {
+  display:block;
+  width:100%;
+  min-height:30px;
+  padding:5px 8px;
+  border:0;
+  border-radius:var(--app-control-radius);
+  background:none;
+  color:inherit;
+  text-align:start;
+}
+.workroom-file-context-menu button:enabled:hover { background:var(--app-hover); }
+.workroom-file-context-menu button:focus-visible { outline:2px solid var(--app-accent);outline-offset:-2px; }
+.workroom-file-context-menu p { margin:6px 8px;font-size:12px;overflow-wrap:anywhere; }
+.resource-link-feedback {
+  position:fixed;
+  inset-inline-start:50%;
+  inset-block-end:24px;
+  transform:translateX(-50%);
+  z-index:125;
+  margin:0;
+  padding:6px 12px;
+  border:1px solid var(--app-divider);
+  border-radius:8px;
+  background:var(--app-panel);
+  color:var(--app-ink);
+  pointer-events:none;
+}

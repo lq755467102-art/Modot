@@ -1,0 +1,15 @@
+{
+  "name": "review-board",
+  "version": "1.0.0",
+  "description": "另一位作者的展板，使用相同的包名、版本和页名。",
+  "extensions": {
+    "modot.catalog-preview": {
+      "version": 1,
+      "packageKey": "gallery.example.review-board",
+      "pages": [
+        "overview"
+      ],
+      "icons": { "default": "./icons/default.png" }
+    }
+  }
+}

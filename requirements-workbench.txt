@@ -1,0 +1,2 @@
+# Windows x64 desktop and source preview use the same parser and SSH dependencies.
+-r desktop/requirements-release.txt

@@ -1,0 +1,19 @@
+{
+  "name": "review-board",
+  "version": "1.0.0",
+  "description": "工作室的审阅记录，提供概览页声明和便笺工具。",
+  "extensions": {
+    "modot.catalog-preview": {
+      "version": 1,
+      "packageKey": "studio.example.review-board",
+      "pages": [
+        "overview"
+      ],
+      "icons": {
+        "default": "./icons/default.png",
+        "light": "./icons/light.png",
+        "dark": "./icons/dark.png"
+      }
+    }
+  }
+}

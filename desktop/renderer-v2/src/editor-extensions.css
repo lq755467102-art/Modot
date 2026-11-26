@@ -1,0 +1,259 @@
+.workroom-unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 218px), 260px));
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+.workroom-unit {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  min-height: 145px;
+  padding: 16px;
+  border: 1px solid var(--app-line);
+  border-radius:var(--app-card-radius);
+  background: var(--app-panel, var(--app-bg));
+  min-width: 0;
+}
+.workroom-unit-owner,
+.workroom-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-align: start;
+  border: 0;
+  background: transparent;
+  color: var(--app-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.workroom-unit-owner {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 0;
+}
+.workroom-unit-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+.workroom-unit-manage {
+  flex: none;
+  padding: 3px;
+  border: 0;
+  background: transparent;
+  color: var(--app-muted);
+}
+.workroom-unit-manage svg {
+  width: 17px;
+  height: 17px;
+}
+.workroom-unit-owner > span:last-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.workroom-unit small,
+.editor-pack-dialog small {
+  color: var(--app-muted);
+  font-size: 0.84em;
+}
+.workroom-unit-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius:var(--app-control-radius);
+  background: var(--app-selected);
+}
+.workroom-unit-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.workroom-unit-children {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.workroom-child {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8em;
+  padding: 4px;
+  min-width: 38px;
+  max-width: 86px;
+  border: 0;
+  border-radius:var(--app-control-radius);
+}
+.workroom-child span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.workroom-child svg {
+  box-sizing: border-box;
+  width: 29px;
+  height: 29px;
+  padding: 6px;
+  border: 1px solid var(--app-line);
+  border-radius:var(--app-control-radius);
+  flex: none;
+}
+.workroom-child span {
+  max-width: 100%;
+}
+.workroom-child .application-icon,
+.workroom-child .application-icon img {
+  width: 29px;
+  height: 29px;
+  object-fit: contain;
+  border-radius:var(--app-control-radius);
+}
+.workroom-child[data-disabled] {
+  color: var(--app-muted);
+}
+.workroom-child small {
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.workroom-unit-feedback {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.84em;
+}
+.workroom-child-add svg {
+  border-style: dashed;
+}
+.workroom-unit button:hover,
+.workroom-edit-menu button:hover {
+  background: var(--app-hover);
+}
+.workroom-text-editor {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+.workroom-text-editor > [class*='cm-theme'] {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.workroom-edit-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--app-line);
+  color: var(--app-ink);
+}
+.workroom-edit-actions summary {
+  cursor: pointer;
+  font-size: 0.91em;
+  padding: 2px 5px;
+}
+.workroom-edit-menu {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 5px;
+  display: grid;
+  min-width: 145px;
+  padding: 5px;
+  background: var(--app-bg);
+  border: 1px solid var(--app-line);
+  border-radius:var(--app-control-radius);
+  box-shadow: 0 4px 14px #0002;
+}
+.workroom-edit-menu button {
+  text-align: start;
+  min-height: 27px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+.workroom-edit-menu [aria-pressed='true']::after {
+  content: ' ✓';
+}
+.editor-pack-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: #0005;
+}
+.editor-pack-dialog {
+  box-sizing: border-box;
+  width: min(470px, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid var(--app-line);
+  border-radius:var(--app-card-radius);
+  background: var(--app-bg);
+  color: var(--app-ink);
+  text-align: start;
+}
+.editor-pack-dialog header,
+.editor-pack-dialog li {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  justify-content: space-between;
+}
+.editor-pack-dialog h2,
+.editor-pack-dialog h3 {
+  margin: 0;
+  font-size: 1.15em;
+}
+.editor-pack-dialog p {
+  margin: 8px 0 12px;
+  overflow-wrap: anywhere;
+}
+.editor-pack-dialog ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.editor-pack-dialog li,
+.editor-pack-detail,
+.editor-pack-preview {
+  padding: 9px 0;
+  border-top: 1px solid var(--app-line);
+}
+.editor-pack-dialog button + button {
+  margin-inline-start: 6px;
+}
+.workroom-format { flex: none; min-width: 0; }
+.workroom-format section { padding: 2px 8px; }
+.workroom-format-readiness {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.workroom-format-review { padding: 6px 0; }
+.workroom-format-review pre { max-height: min(30vh, 20rem); overflow: auto; white-space: pre; padding: 8px; border: 1px solid var(--app-line); }
+.workroom-format-review button + button { margin-inline-start: 8px; }
+.cm-tooltip .workroom-signature,.cm-tooltip.workroom-signature {max-width:min(68ch,72vw);padding:4px 8px;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}
+.workroom-signature strong {text-decoration:underline;text-underline-offset:3px}
+.cm-tooltip .workroom-symbol-hover {
+  box-sizing:border-box; max-width:min(66ch,75vw); max-height:min(16rem,35vh); overflow:auto;
+  padding:7px 10px; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.45;
+  background:var(--app-panel); color:var(--app-ink); font-family:var(--app-font,system-ui);
+}
+.workroom-symbol-hover code {display:block;font-family:"Cascadia Code",Consolas,monospace}
+.workroom-symbol-hover > * + * {margin-block-start:5px}

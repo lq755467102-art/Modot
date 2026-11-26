@@ -1,0 +1,35 @@
+.restored-legacy .composer-feedback-main:has(.composer-record) {flex-wrap:wrap;column-gap:8px;row-gap:4px}
+.composer-record {display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0;color:var(--conversation-secondary)}
+.composer-record [data-state="blocked"] {color:var(--conversation-failed)}
+.restored-legacy .composer-record button {
+  margin:0;padding:0 4px;border:0;background:transparent;color:light-dark(#1d50b0,var(--app-accent));font:inherit;
+}
+.composer-record button:hover {text-decoration:underline}
+.composer-record button:focus-visible {outline:2px solid var(--conversation-focus);outline-offset:1px}
+
+.workroom-record {flex:1;min-height:0;min-width:0;display:flex;flex-direction:column}
+.workroom-record header {
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;
+  padding:12px 18px;border-bottom:1px solid var(--app-divider);background:var(--app-panel);
+}
+.workroom-record h2 {margin:0;font-size:16px}
+.workroom-record-path {margin:3px 0 0;font-size:12px;color:var(--app-muted);overflow-wrap:anywhere}
+.workroom-record button {
+  padding:5px 9px;border:1px solid var(--app-divider);border-radius:7px;background:var(--app-panel);color:var(--app-ink);font:inherit;
+}
+.workroom-record button:hover:enabled {background:var(--app-hover)}
+.workroom-record :focus-visible {outline:2px solid var(--app-accent);outline-offset:-2px}
+.workroom-record > p,.workroom-record-error,.workroom-record footer {margin:0;padding:8px 18px}
+.workroom-record-error {display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.workroom-record-body {
+  flex:1;min-height:0;margin:0;padding:16px 18px;overflow:auto;overflow-wrap:anywhere;white-space:pre-wrap;
+  font:inherit;font-family:ui-monospace,Consolas,monospace;line-height:1.65;
+}
+.workroom-record footer {border-top:1px solid var(--app-divider)}
+.workroom-file-page {height:100%}
+.workroom-file-page footer {display:flex;align-items:center;gap:12px}
+.workroom-file-page footer span {font-size:12px;color:var(--app-muted)}
+.workroom-file-page footer {flex-wrap:wrap}
+.workroom-image-preview {display:grid;place-items:center;flex:1;min-height:0;min-width:0;overflow:auto;padding:16px}
+.workroom-image-preview img {display:block;max-width:100%;max-height:100%;min-height:0;object-fit:contain}
+.workroom-binary-bytes {white-space:pre;overflow-wrap:normal;font-variant-ligatures:none}

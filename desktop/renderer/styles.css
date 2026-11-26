@@ -1,0 +1,3101 @@
+
+  :root{
+    /* ★ 黑白主题（2026-10-31 用户：「不用淡黄色和深棕色做对比了」）。
+       只留**明度**这一层差异：背景近白、正文近黑、辅助文字灰、分隔线浅灰。
+       成功 / 失败仍是语义色（绿 / 红），不属于"配色对比"，保留。 */
+    --bg:#fafafa; --panel:#ffffff; --line:#e4e4e4; --ink:#1a1a1a;
+    --dim:#666666; --faint:#9a9a9a; --blue:#1a1a1a; --blue-bg:#f0f0f0;
+    --green:#2f6b35; --amber:#666666; --red:#8f2f2f;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);overflow:hidden;
+    /* ★ 字号从 13 提到 13.5，字体优先圆润的那几个。
+       用户：「整体的字体都是偏小的，看起来很费劲，也不够圆润」 */
+    /* ★★ 用 WorkBuddy **原来那一串**（`--cb-font-family`），不是我拼的近似版。
+       关键差别在**谁先命中**：
+         WorkBuddy：-apple-system → BlinkMacSystemFont → **Segoe UI**（Windows 落到这个）
+         我上一版：PingFang SC（Windows 没有）→ -apple-system（无效）→
+                   Helvetica Neue（多半没有）→ **Arial**（有！）
+       所以英文和数字的字形一直是 Arial 而不是 Segoe UI —— 用户说"还是没一模一样"就是这个。
+       中文仍然落到微软雅黑（Segoe UI 不含中文）。 */
+    font:13.5px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+      "Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif}
+  .app{display:flex;flex-direction:column;height:100vh}
+
+  /* 顶栏 */
+  /* ★ 「顶部的空间是否可以缩小一点」：10px→5px，字号和间距一起收。 */
+  .bar{display:flex;align-items:center;gap:9px;padding:5px 13px;
+    background:var(--panel);border-bottom:1px solid var(--line);-webkit-app-region:drag}
+  .bar>*{-webkit-app-region:no-drag}
+  .brand{font-size:13.5px;font-weight:600;letter-spacing:.02em}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;
+    font-size:11.5px;background:#f2f2f2;color:var(--dim)}
+  .pill b{font-weight:600;color:var(--ink)}
+  .pill.warn{background:#f0f0f0;color:var(--amber)}
+  #mdl .spare{color:var(--faint)}
+  /* 换模型横幅（2026-10-26）。它**不进**「过程」那一块折起来 ——
+     换模型不是一次工具调用，是"你看到的答案换了个人写的"，必须一直看得见。 */
+  .mswitch{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+    margin:6px 0 6px 2px;padding:5px 10px;border-left:2px solid var(--amber);
+    background:#f5f5f5;border-radius:0 6px 6px 0;font-size:12px;color:var(--amber)}
+  .mswitch .mk{font-weight:600}
+  .mswitch .mt b{font-weight:600;color:var(--ink)}
+  .mswitch .mkind{font-size:10.5px;padding:0 6px;border-radius:999px;background:#ececec}
+  .mswitch .mwhy{font-size:11px;color:var(--faint);flex:1 1 100%;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* 派工单（2026-10-26）：父 agent 派出去的每一趟立一张卡。
+     它也不是工具行 —— 工具行说"它做了什么"，这张卡说"**另外一个人**在做什么"。
+     卡片默认收着（不占地方），但**派了什么、进行到哪**必须一眼看得见。 */
+  .subcard{margin:7px 0;border:0;border-left:0;border-radius:0;
+    background:transparent;overflow:hidden}
+  .subcard.done,.subcard.bad{border-left-color:transparent}
+  .subcard .sh{display:flex;align-items:baseline;gap:8px;padding:6px 10px;
+    font-size:12px;cursor:pointer;flex-wrap:wrap}
+  .subcard .stag{font-size:10.5px;padding:0 6px;border-radius:999px;
+    background:var(--blue-bg);color:var(--blue)}
+  .subcard .sname{font-weight:600}
+  .subcard .srun{color:var(--amber)}
+  .subcard .srun.ok{color:var(--green)}
+  .subcard .srun.no{color:var(--red)}
+  .subcard .stime{color:var(--faint);font-size:11px;margin-left:auto}
+  .subcard .sbtn{font-size:11px;padding:1px 7px;border-radius:6px;
+    border:1px solid var(--line);background:var(--panel);cursor:pointer}
+  .subcard .sbtn:hover{background:#f2f2f2}
+  .subcard .sbody{display:none;padding:4px 0 9px;border-top:0}
+  .subcard.open .sbody{display:block}
+  .subcard .swhy{font-size:12px;color:var(--dim);margin:3px 0 6px;white-space:pre-wrap}
+  .subcard .sres{font-size:12px;background:transparent;border:0;
+    border-radius:0;padding:6px 0;white-space:pre-wrap;max-height:200px;overflow:auto}
+  .subcard .sline{font-size:11.5px;color:var(--dim);padding:1px 0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .subcard .sline.say{color:var(--ink);white-space:pre-wrap}
+  .subcard .sapply-w{margin-top:7px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .subcard .steerbox{display:none;gap:6px;align-items:center;padding:6px 10px;
+    border-top:0;background:transparent}
+  .subcard .steerbox.on{display:flex}
+  .subcard .steerin{flex:1;min-width:0;font-size:12px;padding:3px 8px;border-radius:6px;
+    border:1px solid var(--line);background:var(--panel)}
+  .subcard .steernote{font-size:11px;color:var(--faint)}
+  /* 习惯开关（2026-10-26）：组一行、每条一个勾。 */
+  .hbgroup{display:flex;align-items:center;gap:8px;margin:6px 0 2px;font-size:12px}
+  .hbgroup .hbname{font-weight:500}
+  .hbleaf{display:flex;align-items:center;gap:7px;font-size:12px;
+    padding:1px 0 1px 14px;cursor:pointer}
+  .hbleaf input{width:13px;height:13px;margin:0}
+  .hbleaf .tlt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* 预算条与改名（2026-10-26）。 */
+  .hbbar{height:4px;border-radius:2px;background:#e8e8e3;overflow:hidden;margin:6px 0 3px}
+  .hbfill{height:100%;background:var(--green);transition:width .18s}
+  .hbfill.over{background:var(--amber)}
+  .hbnote{font-size:11px;color:var(--faint);margin-bottom:4px}
+  .hbwarn{color:var(--amber)}
+  .hbren{flex:1;min-width:0;font-size:12px;padding:1px 6px;border-radius:5px;
+    border:1px solid #b9c8dd;background:var(--panel)}
+  /* 每条习惯的操作（2026-10-26）：平时不占位，鼠标上来才露。 */
+  .hbleaf{position:relative}
+  .hbleaf .hact{display:none;gap:3px;align-items:center}
+  .hbleaf:hover .hact{display:flex}
+  .hbtn{border:0;background:transparent;color:var(--faint);cursor:pointer;
+    font-size:11px;padding:0 3px;border-radius:4px;line-height:16px}
+  .hbtn:hover{background:#ecece7;color:var(--ink)}
+  .hbtn.danger{color:var(--red)}
+  .hbedit{display:block;padding:3px 0 7px 14px}
+  .hbedit textarea{width:100%;box-sizing:border-box;min-height:56px;resize:vertical;
+    font:12px/1.55 inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink)}
+  .hbedit .hbrow{display:flex;gap:7px;align-items:center;margin-top:5px}
+  .hbadd{margin:4px 0 0 14px}
+  /* ★ 习惯区自己的按钮用**独立 class**（2026-10-26）：复用 `.tadd` 会被树那边的
+     「＋ 加一个节点」批量绑定顺手覆盖成 `_askNode(undefined)` —— 点上去毫无反应。 */
+  .hbbtn{border:1px dashed #d8d8d1;background:none;font:inherit;font-size:11.5px;
+    color:var(--faint);padding:2px 8px;border-radius:6px;cursor:pointer}
+  .hbbtn:hover{border-color:#b8b8ae;color:var(--dim)}
+  /* 档位落到层上（2026-10-26）：本档不带的那层压暗，带的高亮。 */
+  .tnode.offlayer > summary{opacity:.5}
+  .tnode.onlayer{border-left:2px solid var(--blue);padding-left:6px;margin-left:-8px}
+  /* 档位行 + 节点勾（2026-10-26）。 */
+  .moderow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    margin:2px 0 6px;font-size:12px}
+  .modebtn{border:1px solid var(--line);background:var(--panel);font:inherit;font-size:11.5px;
+    color:var(--dim);padding:2px 8px;border-radius:999px;cursor:pointer}
+  .modebtn.on{background:var(--blue-bg);border-color:#b9c8dd;color:var(--blue);font-weight:500}
+  .modebtn .up{color:var(--amber);font-size:10px;margin-left:3px}
+  .rleaf{display:flex;align-items:center;gap:7px;font-size:12px;padding:1px 0 1px 2px}
+  .rleaf input{width:13px;height:13px;margin:0}
+  .rleaf.fixed{color:var(--faint);font-size:11px}
+  /* 待采纳的提案（2026-10-26）：它不进任何注入，所以样式上要跟"已经是规则"区分开。 */
+  .propose{border:1px dashed #d8d8d1;border-radius:8px;padding:7px 9px;margin:4px 0 8px;
+    background:#fafafa}
+  .propose .pt{font-size:12.5px;font-weight:500;margin-bottom:2px}
+  .propose .pb{font-size:12px;color:var(--ink);white-space:pre-wrap;
+    max-height:66px;overflow:hidden}
+  .propose .pm{font-size:11px;color:var(--faint);margin-top:4px}
+  .propose .pact{display:flex;gap:7px;align-items:center;margin-top:6px}
+  /* 免问提案（2026-10-26）：这一种采纳之后会**扩大权力**，视觉上不能和"多一条规矩"一样轻。 */
+  .propose.pallow{border-color:#e0e0e0;background:#f7f7f7}
+  /* 待采纳提案的行内编辑（2026-10-26）：默认收起，点了才展开。 */
+  .peditbox{margin-top:6px}
+  .pedit{width:100%;box-sizing:border-box;min-height:70px;font:inherit;font-size:12px;
+    border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:var(--panel);
+    color:var(--ink);resize:vertical;line-height:1.55}
+  .subcard .sbtn.done{background:#eaf3ea;border-color:#bcd6bd;color:var(--green)}
+  .spacer{flex:1}
+  select,button,input{font:inherit;color:inherit}
+  select{border:1px solid var(--line);background:var(--panel);border-radius:8px;
+    padding:5px 8px;outline:none}
+  button{border:1px solid var(--line);background:var(--panel);border-radius:8px;
+    padding:6px 13px;cursor:pointer}
+  button:hover{border-color:var(--faint)}
+  button:disabled{opacity:.45;cursor:default}
+  button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  button.primary:hover{background:#1a6cbd}
+  button.danger{color:var(--red);border-color:#e3c3c3}
+
+  /* 三栏 */
+  /* ★ 这个容器原名叫 .body，和消息气泡的 .body 撞了 —— 见 .msg .body 那条注释。 */
+  /* ★ 两栏：项目/会话（含收起的详情抽屉） + 执行流。
+     原来是三栏 236/1fr/292 —— 最右那 292px 是"偶尔查一下"的东西，
+     却天天占着正文的宽度。用户说的"粘黏"有一半来自这里。 */
+  /* ★ 左栏宽度是变量（--leftw），由拖拽条改，记在 localStorage。
+     用户：「是否可以让这个界面可以自己调整容器的大小？就像 workbuddy 一样」 */
+  .shell{flex:1;display:grid;
+    grid-template-columns:var(--leftw,252px) 7px 1fr;
+    gap:8px;padding:10px 12px;min-height:0}
+
+  /* 拖拽条：6px 的抓手，hover 时显形 */
+  .splitter{cursor:col-resize;border-radius:4px;background:transparent;
+    position:relative;align-self:stretch}
+  .splitter:hover,.splitter.dragging{background:var(--line)}
+  .splitter::after{content:'';position:absolute;left:2.5px;top:50%;
+    width:2px;height:26px;margin-top:-13px;border-radius:1px;background:#d6d6d0}
+  .splitter:hover::after,.splitter.dragging::after{background:#b9b9b2}
+
+  /* ── 进度抽屉（2026-10-26 从左栏搬到右边缘）──
+     形态：贴右边缘一条竖把手，悬停滑出一栏。
+     ★ 用 transform 而不是改 width：改宽度会触发布局重排（连正文一起重算），
+       而这条抽屉每次悬停都要动 —— 用 transform 只走合成层，正文不抖。
+     ★ 自己不设 overflow:hidden。它要能伸到把手左边去，
+       裁掉的话抽屉就只剩 20px 宽。 */
+  .railside{position:fixed;right:0;top:92px;bottom:186px;width:20px;z-index:34}
+  .railhint{position:absolute;right:0;top:50%;transform:translateY(-50%);
+    width:20px;padding:12px 0;border-radius:8px 0 0 8px;cursor:default;
+    background:#eeece5;border:1px solid var(--line);border-right:0;
+    font-size:10.5px;color:#7c7c76;letter-spacing:.06em;
+    writing-mode:vertical-rl;text-align:center;
+    display:flex;align-items:center;gap:6px}
+  .railhint:hover{background:#e8e8e8;color:var(--ink-2)}
+  .railnum{font-variant-numeric:tabular-nums;color:var(--faint);letter-spacing:0}
+  .raildrawer{position:absolute;right:0;top:0;bottom:0;width:322px;
+    background:var(--panel);border:1px solid var(--line);border-right:0;
+    border-radius:10px 0 0 10px;box-shadow:-10px 0 26px rgba(0,0,0,.07);
+    padding:9px 10px 10px;display:flex;flex-direction:column;
+    transform:translateX(100%);transition:transform .16s ease-out;will-change:transform}
+  /* 展开/钉住 ⇒ 滑出来。★ 两者都留：只靠悬停的话，点完节点鼠标一移就没了。
+     ★ 用 .open 类而不是 :hover（2026-10-26 实测踩到）：`:hover` 没法从 JS 触发，
+       于是"悬停会不会展开"这件事**永远测不到** —— 探针里发真鼠标事件也不生效
+       （Electron 的 sendInputEvent 不改变伪类）。测不到就等于没验证过，
+       所以我把它改成一个可观测的状态类，mouseenter/mouseleave 去切换它。 */
+  .railside.open .raildrawer,.railside.pin .raildrawer{transform:translateX(0)}
+  .railside.open .railhint,.railside.pin .railhint{opacity:0}
+  .nphead{font-size:10.5px;font-weight:600;color:var(--dim);letter-spacing:.04em;
+    margin:0 0 5px 2px;display:flex;align-items:center;gap:6px}
+  .npnum{font-weight:400;color:var(--faint)}
+  .railpin{margin-left:auto;font:inherit;font-size:10.5px;font-weight:400;
+    color:var(--faint);background:transparent;border:1px solid var(--line);
+    border-radius:5px;padding:0 6px;line-height:16px;cursor:pointer}
+  .railpin:hover{color:var(--ink-2);background:#f1f1f1}
+  .railside.pin .railpin{color:var(--ink-2);background:#e9e9e9;border-color:#d6d6d6}
+  .npbody{flex:1;overflow:auto;min-height:0;font-size:12.5px}
+  /* 一条节点 = · + 时间 + 一句（单行，超出省略，全文在 title） */
+  /* ★ 节点可点（2026-10-26 用户：「每一个进度用鼠标点击都能溯源到那次对话」）——
+     所以它得看起来像能点的：手型 + 悬停底色。不加这两样，没人会去点。 */
+  .node{display:flex;gap:5px;align-items:baseline;padding:4px 3px 4px 4px;
+    border-bottom:1px solid #f2f2f2;line-height:1.45;border-radius:5px;
+    cursor:pointer}
+  .node:hover{background:#f4f4f4}
+  /* 溯源的落点：滚过去之后**闪一下**。只滚不闪的话，人不知道自己到了哪儿 ——
+     正文里每一段长得都差不多，靠"读一遍来确认"太慢。 */
+  @keyframes flashTurn{0%{background:#fff6d8;box-shadow:0 0 0 6px #fff6d8}
+    100%{background:transparent;box-shadow:0 0 0 6px transparent}}
+  .turn.flash{animation:flashTurn 1.25s ease-out 1;border-radius:8px}
+  .node::before{content:'·';color:#c2c2bb;flex:0 0 auto;font-weight:600}
+  .nt{flex:0 0 auto;color:var(--faint);font-size:10.5px;
+    font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  /* ★ 用户：「进度栏里面的文字不要不够显示就不显示了，自动换行一下吧」。
+     现在是两行内换行，超两行才省略（行高小，两行 = 一句话的长度）。 */
+  .nx{flex:1;min-width:0;color:var(--dim);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;word-break:break-word}
+  .col{display:flex;flex-direction:column;min-height:0;min-width:0}
+  .cap{font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.04em;
+    margin:0 0 6px 2px}
+  .capwarn{color:#b45309;font-weight:600;letter-spacing:0}
+
+  /* 左栏底部的"这个会话做了什么"：默认收起，展开后自己滚 */
+  .sidedrawer{flex:0 0 auto;margin-top:8px;background:var(--panel);
+    border:1px solid var(--line);border-radius:9px;padding:6px 9px;
+    font-size:11.5px;color:var(--dim);max-height:44%;min-height:0;display:flex;
+    flex-direction:column}
+  .sidedrawer>summary{cursor:pointer;font-weight:600;color:var(--dim);outline:none;
+    list-style:none}
+  .sidedrawer>summary::-webkit-details-marker{display:none}
+  .sidedrawer-body{overflow:auto;min-height:0;margin-top:4px}
+
+  /* ── 左栏（2026-10-26 第三版：按 WorkBuddy 左栏的实测截图重排）──
+     那张图的结构（逐条对照）：
+       产品名 + 版本 + 右上一个小按钮
+       一组"图标 + 文字"的菜单项（新建任务 / 助理 / 专家…），**不是蓝色大按钮**
+       「置顶 (2)」分组 —— 组名后面带**括号数字**
+       会话行是**一行**：标题在左、相对时间在右（11分钟前 / 10月17日）
+       「查看更多 (5)」
+       「空间 (1)」分组
+     ★ 所以这一版改的几件事，都不是自创：
+       · 新建会话改用菜单项样式（它本来就该和"设置/状态"同一层，不该是个促销按钮）
+       · 组名改成「名称 (n)」，数字不再是右边一个孤零零的 6
+       · 会话行去掉"· 27 条"，时间挪到右边 —— 一列对齐的时间比标题下面一行小字好扫
+       · 去掉折叠箭头，改成「查看更多」（WorkBuddy 那三组都不折叠） */
+  .list{flex:1 1 auto;overflow:auto;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:3px;overscroll-behavior:contain}
+  .colhead{display:flex;align-items:center;gap:5px;margin:0 2px 4px}
+  .colhead select{flex:1;min-width:0}
+  button.tiny{font-size:11.5px;padding:2px 8px;border-radius:6px;color:var(--dim)}
+
+  /* 菜单项：图标 + 文字。左栏里所有"动作"都长这样，包括新建 */
+  .sitem{display:flex;align-items:center;gap:9px;width:100%;box-sizing:border-box;
+    padding:7px 9px;border:0;background:transparent;border-radius:7px;
+    font:inherit;font-size:13px;color:var(--ink-2);cursor:pointer;text-align:left}
+  .sitem:hover{background:#f1f1f1}
+  .sitem svg{flex:0 0 auto;opacity:.6}
+  .sitem kbd{margin-left:auto;font-size:10.5px;color:#b3b3ad;font-family:inherit}
+
+  /* 搜索框 */
+  .ssearch{position:relative;margin:2px 2px 6px}
+  .ssearch svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);
+    color:var(--faint);pointer-events:none}
+  .ssearch input{width:100%;box-sizing:border-box;border:1px solid var(--line);
+    background:var(--panel);border-radius:7px;padding:5px 8px 5px 26px;
+    font:inherit;font-size:12px;outline:none;color:var(--ink)}
+  .ssearch input:focus{border-color:var(--accent);background:var(--panel)}
+  .ssearch input::placeholder{color:#b3b3ad}
+
+  /* 分组头：「名称 (n)」，小字灰色，不折叠 */
+  .proj{margin:2px 0}
+  .pjhead{display:flex;align-items:baseline;gap:4px;
+    padding:11px 9px 3px;font-size:11.5px;color:var(--faint);font-weight:600}
+  .pjname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .pjnum{flex:0 0 auto}
+  .pjlist{padding:0}
+  /* 「查看更多 (n)」 */
+  .smore{display:block;width:100%;box-sizing:border-box;padding:5px 9px;border:0;
+    background:transparent;border-radius:6px;text-align:left;
+    font:inherit;font-size:11.5px;color:var(--faint);cursor:pointer}
+  .smore:hover{background:#f4f4f0;color:var(--ink-2)}
+
+  /* 添加项目用的输入框：Electron 里 window.prompt 不可用，所以自己做一个 */
+  dialog{border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    box-shadow:0 12px 40px rgba(0,0,0,.14);background:var(--panel);min-width:420px}
+  dialog::backdrop{background:rgba(20,20,20,.22)}
+  dialog input{width:100%;margin-top:2px;font-family:Consolas,monospace;font-size:12px}
+
+  /* 设置面板 */
+  .cfgwrap{min-width:470px}
+  .cfgttl{margin:0 0 4px;font-size:14px;font-weight:600;color:var(--ink-2)}
+  .cfgnote{margin:0 0 12px;font-size:11.5px;color:var(--faint);line-height:1.65}
+  .cfgnote code{background:#f3f3f0;padding:0 3px;border-radius:3px;
+    font-family:Consolas,monospace;font-size:11px}
+  .cfgsub{margin:11px 0 5px;font-size:11.5px;color:#6b6488;font-weight:600}
+  #cfgdialog label{display:block;margin:7px 0;font-size:11.5px;color:var(--dim)}
+  #cfgdialog hr{border:none;border-top:1px solid var(--line);margin:13px 0 0}
+  .cfgfoot{margin-top:15px;text-align:right}
+  .cfgfoot button{margin-left:6px}
+  /* ── 技能分页（2026-10-26）──
+     它和执行流占同一个位置，开哪个显示哪个。做法是给 body 加 .skillmode，
+     用 CSS 决定"谁让位"，而不是把元素搬来搬去 —— 搬 DOM 会丢滚动位置和事件绑定。 */
+  .sitem .snum{margin-left:auto;font-size:10.5px;color:var(--faint);
+    background:#f1f1f1;border-radius:8px;padding:0 6px;line-height:15px}
+  .skillpage{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+  .sphead{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+  .sphead b{font-size:13px}
+  /* 页签：一条下划线表示"现在在哪"，不用胶囊按钮 ——
+     胶囊在两个页签之间读起来像"两个动作"，而它们是同一页的两个角度 */
+  .sptabs{display:flex;gap:2px}
+  .sptab{border:0;background:transparent;font:inherit;font-size:12.5px;color:var(--faint);
+    padding:4px 9px 5px;border-radius:6px 6px 0 0;cursor:pointer;
+    border-bottom:2px solid transparent;display:flex;align-items:center;gap:5px}
+  .sptab:hover{color:var(--ink-2);background:#f4f4f0}
+  .sptab.on{color:#15171a;font-weight:600;border-bottom-color:#3a3f47}
+  .sptab .snum{font-size:10.5px;color:var(--faint);background:#f1f1f1;border-radius:8px;
+    padding:0 5px;line-height:15px;font-weight:400}
+  .sptab.on .snum{color:#5a5a55}
+  /* 外部工具那一张卡：传输方式单独一个标记，因为"它跑在哪"决定了
+     排查时该看进程还是该看网络 */
+  .mcp-tr{font-size:10.5px;color:#4a5a72;background:#f0f0f0;border-radius:4px;padding:0 5px}
+  .mcp-tr.http{color:#5b4a72;background:#f2eef6}
+  .tk{display:flex;align-items:baseline;gap:7px;padding:4px 0;
+    border-bottom:1px solid #f2f2f2;font-size:12px}
+  .tk:last-child{border-bottom:0}
+  .tk .tkname{font-family:Consolas,monospace;font-size:11.5px;color:var(--ink-2);flex:0 0 auto}
+  .tk .tkd{color:var(--faint);font-size:11.5px;min-width:0;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .tk .tkflag{margin-left:auto;flex:0 0 auto;font-size:10.5px;border-radius:4px;padding:0 5px}
+  .tk .tkflag.deny{color:#a33;background:#fdeaea}
+  .tk .tkflag.ask{color:#6b6b6b;background:#f5f5f5}
+  .tk .tkflag.ok{color:#2f7a4a;background:#eaf5ee}
+  .spfoot em{font-style:normal;font-weight:600;color:#6b6b65}
+  .sphint{font-size:11.5px;color:var(--faint)}
+  .spspace{flex:1}
+  .splist{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px}
+  .skempty{padding:18px;color:var(--faint);font-size:12.5px;line-height:1.8}
+  .skcard{border:1px solid #ececec;border-radius:9px;padding:10px 12px;background:var(--panel)}
+  .sk-top{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .sk-name{font-size:13px;font-weight:600;color:#22252a}
+  .sk-lv{font-size:10.5px;color:#7c7c76;background:#f1f1f1;border-radius:4px;padding:0 5px}
+  .sk-desc{margin-top:3px;font-size:12.5px;color:var(--dim);line-height:1.6}
+  .sk-meta{margin-top:6px;font-size:11px;color:var(--faint);word-break:break-all;
+    font-family:Consolas,monospace}
+  .sk-act{margin-top:8px;display:flex;gap:7px}
+  .sk-body{white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.72;
+    margin-top:9px;background:#fbfbfb;border:1px solid #efefef;border-radius:8px;
+    padding:9px 11px;max-height:360px;overflow:auto;color:#33373d}
+  .spfoot{flex:0 0 auto;margin:0;font-size:11px;color:var(--faint);line-height:1.7}
+  .splist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));align-content:start;gap:12px}
+  .splist .skcard{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;
+    height:112px;box-sizing:border-box;min-width:0;text-align:start;color:var(--ink);border-color:var(--line)}
+  .splist .sk-name,.splist .sk-desc,.splist .sk-status{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .splist .sk-name{color:inherit}
+  .splist .sk-status{color:var(--dim)}
+  .extension-detail{width:min(560px,90vw);max-height:80vh;box-sizing:border-box;overflow:auto;
+    padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink)}
+  .extension-detail::backdrop{background:rgba(0,0,0,.32)}
+  .extension-detail header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  /* 技能模式下让输入区让位：这一页不需要说话 */
+  body.skillmode .composer,body.skillmode .cresize,body.skillmode #feedcap{display:none}
+
+  /* ── 会话项：**一行**（标题左、时间右）──
+     ★ 原来是两行（标题 + "今天 01:15 · 27 条"）。改成一行不是为了省地方，
+       是为了让**时间成一列**：右对齐的一列时间可以竖着扫，
+       而"每天在标题下面换一行"的写法，扫的时候眼睛得上下折返。
+     ★ 条数去掉了：它不是人判断"这条要不要打开"的依据，
+       而它占的正是时间那一栏。要看条数可以 hover 看 title。
+     ★ 删除从"hover 就出现在鼠标路径上的 ×"收进「⋯」菜单 —— 删除不可逆、改名可逆，
+       把不可逆的那个做成最容易误点的形状，是风险不对称。 */
+  .sess{position:relative;display:flex;align-items:center;gap:8px;
+    padding:6px 26px 6px 9px;border-radius:7px;cursor:pointer;margin:1px 0}
+  .sess:hover{background:#f2f2f2}
+  .sess.on{background:#e9e9e4}
+  .sess .dot{width:6px;height:6px;border-radius:50%;background:#3f9d5f;
+    flex:0 0 auto;box-shadow:0 0 0 2px rgba(63,157,95,.16)}
+  .sess .ntx{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;font-size:12.5px;color:var(--ink-2)}
+  .sess.on .ntx{color:#15171a}
+  .sess .mt{flex:0 0 auto;font-size:11px;color:var(--faint);white-space:nowrap}
+  .sess .more{position:absolute;right:3px;top:50%;transform:translateY(-50%);
+    width:20px;height:20px;line-height:18px;text-align:center;border:0;
+    background:transparent;border-radius:5px;color:var(--faint);cursor:pointer;
+    font-size:14px;padding:0;display:none}
+  .sess .more{position:absolute;right:4px;top:5px;width:20px;height:20px;
+    line-height:18px;text-align:center;border:0;background:transparent;
+    border-radius:5px;color:var(--faint);cursor:pointer;font-size:14px;padding:0;
+    display:none}
+  .sess:hover .more{display:block}
+  .sess .more:hover{background:#e6e6e0;color:var(--ink-2)}
+
+  /* 会话的「⋯」菜单：fixed 定位，不受列表滚动裁切 */
+  .sessmenu{position:fixed;z-index:60;background:var(--panel);border:1px solid #e2e2e2;
+    border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.14);padding:3px;
+    min-width:132px}
+  .sessmenu button{display:block;width:100%;text-align:left;border:0;background:transparent;
+    padding:5px 10px;border-radius:5px;font:inherit;font-size:12px;color:var(--ink-2);cursor:pointer}
+  .sessmenu button:hover{background:#f4f4f0}
+  .sessmenu button.danger{color:#b3382f}
+  .sessmenu button.danger:hover{background:#fdeeee}
+
+  .flowtabs{display:flex;align-items:center;gap:18px;flex:0 0 auto;padding:0 2px}
+  .flowtab{position:relative;border:0;background:transparent;padding:3px 0 7px;
+    color:var(--faint);font-size:12.5px;cursor:pointer}
+  .flowtab:hover{color:var(--ink)}
+  .flowtab.on{color:var(--ink);font-weight:600}
+  .flowtab.on::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
+    border-radius:2px;background:var(--blue)}
+
+  /* ── 思考折叠块：按轮次排在**这一轮正文上方**（2026-10-31 用户定稿）──
+     不是页面顶部一个独立区域，而是文档流里的一段：
+     思考块A → 正文A → 思考块B → 正文B。这样"这段话是哪段思考换来的"对得上。 */
+  .thinkblock{margin:2px 0 6px;border:0;background:transparent}
+  .thinkblock > summary{list-style:none;cursor:pointer;user-select:none;
+    display:flex;align-items:center;gap:7px;padding:4px 2px;
+    color:var(--faint);font-size:12.5px;letter-spacing:.02em}
+  .thinkblock > summary::-webkit-details-marker{display:none}
+  .thinkblock > summary:hover{color:var(--ink)}
+  .thinkblock .tp-ico{font-size:12px;opacity:.75}
+  .thinkblock:not([open]) > summary .tp-ico{display:inline-block;transform:rotate(-90deg)}
+  .thinkblock .thinkbody{padding:2px 0 4px 4px;max-height:40vh;
+    overflow-y:auto;overflow-x:hidden}
+  /* 块里的过程卡不再各自描边：整块已经是一个容器，里面再套边框就是边界套边界。 */
+  .thinkbody .procfold,.thinkbody .reasoning{border:0;background:transparent;box-shadow:none}
+
+  /* ★ 正文容器与背景同色、没有边框（2026-10-31 用户截图：两侧那条线很费眼睛）。
+     正文不是"一张卡片"，它就是写在页面上的内容；容器只负责滚动和内边距。 */
+  .feed{flex:1;overflow-y:auto;overflow-x:hidden;background:transparent;
+    border:0;border-radius:0;padding:4px 2px 12px;font-size:13px;line-height:1.72}
+  /* ★ overflow-x:hidden：正文里随便一句长路径就能把整条流撑出横向滚动条，
+     而那条横条横在底部一整天 —— 看着就是"没收拾干净"。真要横向滚动的地方
+     （代码块、表格）自己带 overflow:auto。 */
+
+  /* ── 结构化渲染 ──
+     ★ 一次改版（2026-10-24）：从「卡片式」改成「连续流」。
+       原因：我第一版抄的是 Codex **CLI** 的形态 —— 终端里没有别的表达手段，
+       只能靠边框和色带把内容隔开。但那是 CLI 的限制，不是好设计。
+       WorkBuddy 那种 GUI 的做法是用**间距、缩进、淡色**表达层次，
+       不用边框把一次工作切成碎块 —— 碎块看起来像几件不相干的事，
+       而实际上它是一次连续的、有因果的工作。
+       所以：去掉边框和底色，只留左边一条细线表示"这是一次动作"。 */
+
+  /* 消息：**用户靠右、agent 靠左**，一眼分得出谁说的。
+     ★ 这是第三次改这块的形态，前两次都错在"抄错了对象"：
+       第一次抄 Codex CLI（全是等宽文本行，只能用边框分隔），
+       第二次去掉边框改连续流（方向对），但没有左右之分 —— 人还是要一行行读才知道谁说的。
+       现在照 WorkBuddy 那种对话形态：右侧气泡 = 你说的，左侧 = 它说的。 */
+  .msg{display:flex;margin:9px 0;align-items:flex-start}
+  /* ★ display:block 是必须写的：这条 .body 以前继承到了布局容器的 display:grid，
+     于是每段回复都被排成三列窄条、时间戳被拉成一竖行。
+     写死 display 比"指望没人撞名"可靠。
+     ★★ 这里**不许**再写 line-height / white-space：
+       它们曾经把 `.md` 的 14px/22px 覆盖成 1.75（= 24.5px，实测量到），
+       而且 pre-wrap 会把源码里的换行也保留下来，和 markdown 的 <p> 段距叠在一起 ——
+       人看到的就是"行距很高 + 一段话散成好几截"。
+       正文的排版只由 `.md` 一套规则说了算。 */
+  /* ★ width:100% 是必须的：flex item 的宽度默认由**内容**决定，
+     于是 max-width 只是个上限、正文实际只有 491px，右边白白空出 160px
+     （实测就是它 —— 用户说的"say 有一大段空白"有一半来自这里）。 */
+  .msg .body{display:block;width:100%;word-break:break-word;position:relative;min-width:0}
+  /* ★ 用户气泡是右对齐的，如果只给 .msg.agent 让位，它会一直伸到批注底下 ——
+     截图里"用户的发言直接顶出去了"就是这个。两边都要让出 182。 */
+  /* ★ 用户气泡是右对齐的：**给容器留右边距**（而不是压窄气泡本身），
+     这样它仍然贴右、仍然是 76% 宽、仍然有底色圆角（和 agent 一眼分得开），
+     但右边缘停在批注左边，不会钻到批注底下。 */
+  .msg.user{justify-content:flex-end;margin-right:182px}
+  .msg.user .body{max-width:76%;background:var(--panel-2);color:var(--ink);
+    padding:9px 13px;border-radius:13px 13px 4px 13px}
+  /* ★ 居中试过，不行 —— 用户：「say 居中取消掉吧，直接把标注压得看不见了，
+     而且左边也有留白」。原因有两个，都在这一行上：
+       ① 气泡居中后往右挪，把绝对定位的批注**盖住了**（正文 z-index 1，批注是 auto）；
+       ② 左边空出来一块，看着像没排满。
+     ⇒ 回到贴左。批注仍然是 198，正文让位 252 —— 宽度上的改善保留。 */
+  /* 头像搬到正文上方之后：气泡是一列（标题行 + 正文），不再是横排 flex。 */
+  .msg.agent{display:block}
+  /* ★ 正文宽度用 min(640px, 68%)：
+     640px ≈ 一行 45 个中文字，是长文里最好读的宽度（再宽眼睛要来回跑）。
+     小窗口下退成 68%，把右边让给批注；窗口更小时批注整列隐藏。
+     ★ 之前用纯 84%：宽屏上正文拉到 800+，一行 60 多字，读起来是"漂"的。
+     ★ 现在是 min(700px, 100% - 270px)：右边那 270px 留给批注，不再用百分比 ——
+       百分比在宽屏上会让批注区空得离谱（用户：「右边剩了很多空间出来」）。 */
+  /* ★ 正文 = 执行流宽度 - 批注(240) - 间距(14)：**永远占满，不留白**。
+     窗口变大它就变宽（用户说这个能接受），窗口变小它就变窄。 */
+  /* ★ 2026-10-31 用户：「输出流里面不要留边界了」。
+     正文不再是白底圆角卡片：透明、无边框、无阴影，和思考 / 过程**同一条左边界**。
+     轮次靠留白区分，不靠描边。 */
+  .msg.agent .body{max-width:calc(100% - 182px);background:transparent;border:0;
+    box-shadow:none;padding:9px 0;border-radius:0}
+  /* 头像：位置已经说明谁说的，头像只是让两边更像对话 */
+  .av{width:26px;height:26px;border-radius:50%;flex:0 0 auto;margin:0 7px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;background:#f0f0f0;color:var(--faint);user-select:none}
+  .msg.user .av{background:#e8e8e8;color:#3a5bd0}
+  .msg.agent .av{background:#f1f1f1;color:#7a7a7a}
+  /* ★ nowrap：时间戳被挤成竖排完全是宽度不够时逐字换行造成的，
+     而它本来就该是一行 —— 宁可省略，不要叠成一列。 */
+  .ts{font-size:10.5px;color:var(--faint);margin-top:4px;text-align:right;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ──────────────────────────────────────────────────────────────
+     思考块 / 过程折叠：**规格照抄 WorkBuddy 的实现**，不是自己调。
+     来源（本机安装包，可复核）：
+       E:/workbuddy/resources/app.asar.unpacked/renderer/assets/src-CBaV_A3S.css
+       类：_assistantReasoning_1ecmd_60 / _assistantReasoningHeader_1ecmd_76
+           / _assistantReasoningContent_1ecmd_79 / _loadingText_1ecmd_99
+           / _metaFoldHead_9ymy5_26 / _metaFoldBody_9ymy5_139
+     从这里能读到的硬事实（逐条都对着 CSS 抄的）：
+       标题 15px / 行高 1.75 / 灰色 tertiary；hover 变 primary
+       正文 border-left **4px**、左内距 12px、行高 20px、**max-height 200px** 自滚
+       完成后正文是**上下渐隐**（primary 20% → tertiary 80%，background-clip:text）
+       流式时标题走 **2.2s 线性无限**的扫光（110deg，背景 200% 宽）
+       收起 = 箭头 rotate(-90deg) 且 opacity:0，hover 才露出来
+     ────────────────────────────────────────────────────────────── */
+  /* ★ [hidden] 必须压过我们自己的 display。
+     浏览器默认的 [hidden]{display:none} 特异性极低，而 .reasoning/.msg 都写了
+     display:flex —— 于是 hidden 只是"挂了个属性"，元素照样显示。
+     实测后果：'正在思考' 那块一直空着挂在流里，而且打字机写进去也看不见
+     （因为 thPump 里判 hidden 的分支和真实显示状态对不上）。 */
+  [hidden]{display:none !important}
+
+  :root{
+    --cb-text-primary:#1f2328;
+    --cb-text-tertiary:rgba(0,0,0,.5);
+    --cb-reasoning-border-color:#ebebeb;
+  }
+
+  /* ★★ 四类板块靠**左色条 + 极淡底**分开，正文保持白底近黑字（强对比）：
+       思考 = 冷蓝 · 批注 = 暖琥珀 · 过程/状态 = 中性灰 · 正文 = 纯白。
+     用户：「say 的内容和思考以及后面的核验输出环节的区别程度还是太小了，不显眼」
+          「我个人喜欢黑白色强对比，然后穿插一些冷暖色的不同对比」。
+     ★ 只加底色不改字色 —— 底色一重，黑字就变成"彩底灰字"，反而更不清楚。 */
+  /* ★★ 用户：「每个对话产出的模块的边界是否可以模糊化。这些边界的线条本身也是一些噪点」。
+     所以把"左色条"全部去掉 —— 边界改由**底色深浅 + 圆角 + 间距**表达。
+     一条竖线看着不重，但一屏十几块就是十几条线，那才是画面乱的主因。 */
+  /* ★ 思考块必须和 say 的正文**同宽同左边界**。
+     原来它没有任何宽度限制 ⇒ 占满整条执行流，看着像另一层的东西；
+     而且一行能排七八十个字，读起来就是"挤在一堆"（用户说的第 3 条）。
+     #feed > 只作用于顶层：thinkgroup 里面的小块是嵌套的，再套一次会越缩越窄。 */
+  #feed > .reasoning,#feed > .thinkgroup{max-width:calc(100% - 182px)}
+  .reasoning{display:flex;flex-direction:column;gap:2px;margin:9px 0;
+    padding:7px 0;background:transparent;
+    font-size:13px;color:var(--cb-text-tertiary);cursor:pointer;user-select:none}
+  .rhead{display:flex;align-items:center;gap:4px;font-size:15px;line-height:1.75;
+    width:fit-content;max-width:100%;transition:color .16s}
+  /* ★ 一行一条，像 WorkBuddy 那样：**小图标 + 一句"在干什么"**。
+     用户：「我说的思考过程就像 workbuddy 这种，而且他这种前面有个小图标的表现形式也很好」。
+     所以标题不再是「思考 · 模型 · 第 N 轮 · 关于 X」这种堆参数的长句，
+     而是「运行校验、修改：index.html」——动词在前、对象在后，模型名退到右边小字。 */
+  .ric{flex:0 0 auto;opacity:.45;margin-right:2px}
+  .rtext{font-size:13.5px;line-height:1.7;color:var(--ink);min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rwho{margin-left:8px;font-size:11px;color:#adadad;white-space:nowrap}
+  /* 收起状态下用来区分"这是哪一轮的思考"的一句话。淡、窄、不抢标题 */
+  .rhint{font-size:12.5px;font-weight:400;opacity:.82;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rhead:hover{color:var(--cb-text-primary)}
+  .rarrow{opacity:1;transition:transform .2s,opacity .16s;flex:0 0 auto}
+  /* 小思考块 + 收它们的大折叠块（2026-10-31：输出流里**不留边界**）。
+     不再用底色块 / 圆角 / 分隔线划分区块 —— 一屏十几块就是十几条边，
+     用户说"块状边界太多、看着累"。现在层级只靠**缩进 + 灰字 + 留白**。 */
+  .thinkgroup{margin:8px 0 10px;background:transparent}
+  .thinkgroup>summary{cursor:pointer;padding:5px 0;font-size:11.5px;
+    color:var(--dim);list-style:none;user-select:none}
+  .thinkgroup>summary::-webkit-details-marker{display:none}
+  .thinkgroup>summary:hover{color:var(--ink)}
+  .thinkgroup[open]>summary{border-bottom:0}
+  .thinkgroup .reasoning.thinkmini{margin:1px 0;padding:4px 0;
+    background:transparent;border-radius:0}
+  .reasoning.collapse .rarrow{opacity:0;transform:rotate(-90deg)}
+  .reasoning.collapse .rhead:hover .rarrow{opacity:1}
+  .reasoning.collapse .rbody{display:none}
+  .rbody{color:var(--cb-text-primary);border-left:0;
+    padding:2px 0 0 14px;line-height:20px;font-size:13px;max-height:200px;
+    overflow:hidden auto;user-select:text;white-space:pre-wrap;word-break:break-word;
+    scrollbar-width:thin;scrollbar-color:#888 transparent;
+    /* ★ 必须是 contain：不加的话，正文滚到底之后滚轮会**继续带动外层对话流** ——
+       实测（真实 mouseWheel）正文 0→142 的同时 feed 2454→2574。
+       表现就是"思考块的滚轮是坏的"：你想在里面滚，整页跟着跑。 */
+    overscroll-behavior:contain}
+  .rbody::-webkit-scrollbar{width:8px}
+  .rbody::-webkit-scrollbar-thumb{background:#c2c2c2;border-radius:4px}
+  .rbody::-webkit-scrollbar-thumb:hover{background:#a8a8a8}
+  /* 完成后：正文从上到下渐隐（上面实、下面淡）。这是"旧思考退到背景里"的做法。
+     ★ 用 mask 而不是 background-clip:text —— 后者在这台机器上**拖动滚动条时内容不重绘**，
+       表现就是"滑块动了、字没动"。background-clip 把文字变成了背景图，
+       Chromium 滚动时按贴图处理、不重排，这是它的老毛病。
+       mask 只做遮罩，文字仍然是文字，滚动正常。 */
+  .reasoning.complete .rbody{
+    -webkit-mask-image:linear-gradient(180deg,#000 20%,rgba(0,0,0,.55) 80%);
+    mask-image:linear-gradient(180deg,#000 20%,rgba(0,0,0,.55) 80%)}
+  /* 流式时取消渐隐：正在写的字必须清楚 */
+  .reasoning.streaming .rbody{background:none;-webkit-text-fill-color:initial}
+  /* 标题扫光：只在"正在思考"时出现在标题上，正文不动 */
+  .rhead.loading{
+    background:linear-gradient(110deg,
+      rgba(31,35,40,.26) 0%, rgba(31,35,40,.26) 35%, rgba(31,35,40,.55) 50%,
+      rgba(31,35,40,.26) 65%, rgba(31,35,40,.26) 100%);
+    background-size:200% 100%;-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:rshine 2.2s linear infinite}
+  @keyframes rshine{0%{background-position:200% 0}to{background-position:-200% 0}}
+
+  /* 一轮里的思考可能分好几段（每次 llm 一段）。它们都进同一个块，
+     用**留白**隔开 —— 不再画分隔线（2026-10-31 用户：输出流里不要边界）。 */
+  .rseg+.rseg{margin-top:8px;padding-top:0;border-top:0}
+  .rdraft{opacity:.95}
+
+  /* 过程折叠：一组工具调用共用**一行**人话摘要，点开才看每一步 */
+  .procfold{margin:6px 0;user-select:none}
+  /* ★ 摘要字号从 15 降到 13（2026-10-27）：原来它和正文一样大（15px/26px），
+     于是一轮里"11 条工具流水"和"自我说的那句话"在视觉上是同一个层级 ——
+     用户的原话是「自我的输出直接没了，替代的是一堆流程，显得画面特别脏」。
+     过程是索引，不是正文：小一档、灰一档，主次才立得住。 */
+  .prochead{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.7;
+    width:fit-content;color:var(--cb-text-tertiary);cursor:pointer;transition:color .16s}
+  .prochead:hover{color:var(--cb-text-primary)}
+  .parrow{opacity:.55;transition:transform .16s,opacity .16s}
+  .prochead:hover .parrow{opacity:1}
+  .procfold.open .parrow{opacity:1;transform:rotate(0)}
+  .procfold:not(.open) .parrow{transform:rotate(-90deg)}
+  .procbody{display:none;padding:2px 0;user-select:text}
+  .procfold.open .procbody{display:block}
+  /* 折叠体内每一步：一行，等宽小字，失败那行标红 */
+  .procrow{display:flex;gap:8px;align-items:baseline;padding:1px 0 1px 14px;
+    border-left:0;margin-left:0;font-size:11.5px;
+    font-family:Consolas,monospace;color:var(--faint);line-height:1.7;cursor:pointer}
+  .procrow:hover{color:var(--dim)}
+  .procrow.bad{color:#a4544f}
+  /* 叙述行：它自己说"接下来要干什么"。
+     ★ 为什么用正文字体、比工具行大一号：工具行是**动作**（等宽、小字、次要），
+       叙述是**意图**（人先读它才知道那串动作为什么发生）。
+       两者字号一样的话，扫起来是"一行行小字"，看不出哪句在讲目的。 */
+  .procrow.narr{font-family:inherit;font-size:12.5px;color:var(--dim);
+    line-height:1.72;padding:9px 0 3px 12px;border-left-color:transparent;
+    cursor:default;align-items:flex-start;white-space:normal}
+  .procrow.narr:hover{color:var(--dim)}
+  .procrow.narr .pobj{white-space:normal;overflow:visible;text-overflow:clip;
+    color:inherit}
+  /* 后面的动作行贴着它，不再额外留空 */
+  .procrow.narr + .procrow{padding-top:2px}
+  .procrow .pverb{flex:0 0 auto;color:#6f6f6a}
+  .procrow .pobj{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .procrow .pms{flex:0 0 auto;color:var(--faint);font-size:10.5px}
+  /* 改动规模：绿加红减（和 git / GitHub 一致 —— 这里是代码 diff，不是股票涨跌） */
+  .procrow .pdiff{flex:0 0 auto;font-size:10.5px;color:#2f7a4a;
+    background:#eaf5ee;border-radius:4px;padding:0 5px;font-variant-numeric:tabular-nums}
+  /* diff 全文：等宽、保留空白、长行横滚不折行 ——
+     折行的 diff 会把「改动的位置」弄丢，而那正是要看的东西 */
+  .procrow pre.diffpre,.procrow pre.diffload{margin:4px 0 6px;padding:7px 10px;
+    background:#fbfbfb;border:1px solid #eeece6;border-radius:6px;
+    font-size:11px;line-height:1.55;color:var(--dim);white-space:pre;
+    overflow:auto;max-height:340px;overscroll-behavior:contain}
+  /* diff 按行着色：删的红底、加的绿底、块头淡蓝灰。
+     ★ 用底色不用纯文字色：整行底色能让人**扫一眼**看出增删的分布，
+       而只有字变色时，短行（一个括号、一个逗号）几乎看不出来。 */
+  .diffpre .da{background:#eef8f1;color:#2f6b46}
+  .diffpre .dd{background:#fdf0ef;color:#9c453d}
+  .diffpre .dh{color:var(--faint)}
+  .diffpre .dk{color:#5b6b8a}
+  .procrow pre{margin:3px 0 5px;padding:6px 9px;background:#f2f2f2;border-radius:6px;
+    font-size:11px;color:#5b5b57;white-space:pre-wrap;word-break:break-word;
+    max-height:200px;overflow:auto;overscroll-behavior:contain}
+
+  /* 本我跑的时候那句"本我在读这一轮的流水"就在这一类里 ——
+     11.5px/#9a9a95 太淡，人说"提示文字太小、颜色太淡"。 */
+  .line{padding:2px 0;font-size:12.5px;color:#6f6f68;line-height:1.75;margin:4px 0}
+  /* 「这一轮它没有交代」：是**陈述事实**，不是过程，所以不进折叠，但要比正文轻 */
+  .line.silent{color:#a08f6a}
+  .line.badline{color:var(--red)}
+
+  /* 结论：唯一保留一点底的 —— 它和过程要分开，不然人会以为结论也是过程的一部分 */
+  /* 「这一轮做了什么」改成一行 token —— 原来那三条列表是路径碎片 */
+  .summary{display:flex;align-items:center;gap:6px;margin:6px 0 2px;
+    font-size:11.5px;color:#8f8f8a}
+  .sumtk{font-variant-numeric:tabular-nums}
+  .sumdot{color:#c6c6c0}
+  .summin{color:#a5a5a0}
+  /* 元信息（时间戳 / 收尾 / 摘要）是**同一段东西**：三行小字，各带 10~14px 上边距
+     就会读成三件不相干的事，中间全是空白。贴成 2px，视觉上是一块。 */
+  .ts + .endline,.endline + .summary,.ts + .summary{margin-top:2px}
+  /* 结束状态：一行小字，只靠颜色分好坏（不要色块） */
+  /* 14→6：它本来就紧跟在时间戳后面，14px 让它读起来像"另一件事"，
+     而它俩是同一段元信息（什么时候、多久、怎么结束的）。 */
+  .endline{margin:6px 0 2px;font-size:11.5px;line-height:1.6}
+  .endline.ok{color:#4a7d57}
+  .endline.bad{color:#a05a45}
+
+  /* 它在问你 —— 这时候该人说话了，所以要醒目，而不是混在过程里 */
+  .askblock{margin:10px 0;padding:10px 13px;border-radius:8px;
+    background:#fff9e8;border-left:3px solid #e8c97a;color:#6b4e12;line-height:1.7}
+  .askhead{font-size:11px;font-weight:600;color:#8a5a13;margin-bottom:4px}
+  .askq{font-size:13.5px;line-height:1.7}
+  .askq p{margin:0 0 6px}
+  .askq p:last-child{margin-bottom:0}
+  .askform{display:flex;gap:8px;align-items:flex-end;margin-top:8px}
+  .askin{flex:1;min-width:0;resize:vertical;font:inherit;font-size:12.5px;
+    line-height:1.6;padding:6px 9px;border-radius:7px;border:1px solid #e6d6ae;
+    background:#fffdf6;color:#4a3a10;outline:none}
+  .askin:focus{border-color:#d9bf7d;box-shadow:0 0 0 2px #f6ecd2}
+  .askgo{flex:0 0 auto;padding:6px 14px;border-radius:7px;border:1px solid #e0c98c;
+    background:var(--panel);color:#7a5a17;font-size:12px;cursor:pointer}
+  .askgo:hover{background:#fff8e6}
+  .askgo:disabled{opacity:.55;cursor:default}
+  .askhint{font-size:11.5px;color:#8a8a8a;margin-top:6px}
+
+  /* ★★ 一轮 = 正文 + 右侧**浮着**的批注（不占正文的宽度）。
+     走过的两次弯路：
+       ① 最右单开一栏（292px）—— 正文被压到 630px，批注和它批的那段隔着一整列；
+       ② grid 两列（214px）—— 不挤了，但**只要挂一条批注，正文就窄 214px**，
+          正文短的时候右边就是一大片空白（用户：「放到批注会导致 say 有一大段空白」）。
+     现在是：正文按自己的宽度排，批注**浮在它右边本来就空着的地方**，
+     再用一条线连到它批的那句话上。批注多寡都不改变正文宽度。 */
+  /* 每条消息之间 9→7（2026-10-26 用户：「这些空白能不能收缩得更少一些」）。
+     只收 2px：再小两条消息的边界就糊在一起了，而它们是不同的两轮。 */
+  .turn{position:relative;margin:7px 0}
+  .turn > .msg{margin:0}
+  /* ★ 固定 240、贴住右边界。正文是 calc(100% - 254px)，两者加起来正好等于执行流宽度
+     —— 用户：「我不接受扩大到最大的时候，say 容器和批注不能占满整个渲染画布」。
+     之前用 JS 算 left/width，结果批注只占一截、右边永远剩一条白。 */
+  .bncol{position:absolute;top:0;right:0;width:168px;z-index:2}
+  .bncol:empty{display:none}
+  /* 连线层：铺满整个 turn，不挡点击。
+     ★ 上一版 1.2px + 很淡的紫色，实测在浅底上几乎看不见（用户："没找到画的线"）。
+       现在 1.6px、暖褐，和"引用/指注"这种语义相称。 */
+  /* ★ 连线的层级试了三版：
+     ① z-index:1 —— 线压在字上，斜线穿过行首，影响读；
+     ② z-index:0 —— 被正文气泡的**白底**整块盖住，直接看不见（用户："压到最底层直接看不见了"）；
+     ③ z-index:2 + 起点从被批的那句**右边缘再往右让 6px** —— 线在气泡上方，但不碰字。
+     这是第 ③ 版。 */
+  .bnsvg{position:absolute;inset:0;width:100%;height:100%;
+    pointer-events:none;overflow:visible;z-index:2}
+  .turn > .msg{position:relative;z-index:1}
+  .bnsvg path{fill:none;stroke:#b5b5b5;stroke-width:1.6;stroke-linecap:round;opacity:.85}
+  .bnsvg path.final{stroke:#b9b3d0}
+  .bnsvg circle{fill:#fff;stroke:#b5b5b5;stroke-width:1.6}
+  /* 被批的那句话：淡色下划线 + 一点点底 —— 一眼看出"说的是这句" */
+  .bnq{background:linear-gradient(transparent 62%,rgba(128,128,128,.18) 62%);
+    border-bottom:0;border-radius:1px}
+  /* 窄窗口放不下两栏 ⇒ 批注整列隐藏，正文吃满（总比两边都挤成一团好） */
+  @media (max-width:1040px){
+    .bncol{display:none}
+    .msg.agent .body{max-width:100%}
+  }
+  /* 旁注：小一号、灰、只有一条左边线。它不是结论，是"另一个人在旁边小声说" */
+  /* 容器铺满右边，但文字限宽 —— 旁注一行 25 字就够长了 */
+  /* 一条批注 = 一行标签 + 一句话。不留"依据"那一行 —— 那是复核的活。 */
+  /* ★ 只有**一种**批注：左边线暖褐、字 12.5px。
+     原来有两套颜色（黄=过程中、紫=收尾），用户问了两次"紫色是哪个环节的产物"——
+     同一类东西用两种颜色，就是在逼人猜。来源写在头标里（本我 · 过程中 / 本我 · 复核）。 */
+  .benninote{padding:6px 9px;background:#FFFCF2;border-radius:7px;
+    font-size:12.5px;line-height:1.55;color:#4a4636;margin:0 0 8px}
+  .bnhead{font-size:10.5px;font-weight:600;letter-spacing:.02em;margin-bottom:1px}
+  .bntext{color:#4a4762}
+  .bnrest{color:#7d7a92;margin-top:2px}
+  /* 过程中的批注：左边线暖一点、头标更小 —— 它说的是"此刻可疑"，
+     不是收尾时那份总结。两者形式不同，人才分得清哪条是即时的。 */
+  .bnhead{color:#a8874a}
+
+  /* 本我：第二意见，和结论同级所以要分开，但不用卡片框 */
+  /* ★★ 用户：「下面这些东西干脆跟正文完全一样吧，现在格式和表现形式都不一致」。
+     所以这块**不再有自己的底色和圆角** —— 它就是正文里多出来的一段，
+     只有一行更小的标题把"这是复核"说出来。 */
+  /* ★★ 上一轮我只改了这条规则的第一行，**第二行又把 background 和 border-left 设回来了**
+     —— 同一条规则里后面的声明覆盖前面的，所以"底色还在"。
+     而且 font-size:15px / color:#43405c 和正文（15px / #1a1d22）差两档，
+     用户说的"字体差太多了，完全不是一个世界"就是这个。
+     ⇒ 现在整块**继承正文**的字号、颜色、行高，只留一行更小的"本我复核"标题。 */
+  /* 用户：「本我复核的显示位置和正文离得有点远，可以再靠近一点」——
+     18px 是上一版为了把它和正文分开才拉开的，现在它已经继承正文样式了，不需要那么远。 */
+  /* ★★ 从"正文里的一段"改成"气泡外的一条旁注"（2026-10-27）。
+     第一版我把它留在 `.body` 里，只加了间距和横线 —— 存一下再打开真实会话就看清了：
+     **它仍然在自我的白色气泡内部**，抬头那行又小又灰，于是用户看到的是
+     「为什么用户的输出里面会有本我」：一段本我的分析，长在自我的气泡里，分不出是谁说的。
+     ⇒ 位置挪到气泡**外面**（`.msg.agent` 里、`.body` 之后），形态用"左侧色条"——
+     这是这个界面里"旁注/第二意见"已经用惯的语言（右侧批注也是这套），
+     而字号/颜色/行高继续继承正文，不另造一套排版。 */
+  .msg > .benniblock{margin:11px 0 0;padding:0 0 0 13px;
+    border-left:2px solid #e0d3b0;background:none;border-radius:0;
+    max-width:calc(100% - 182px);
+    color:inherit;font-size:inherit;white-space:normal;line-height:inherit}
+  /* 用户：「本我思考中的提示文字也太小，颜色太淡了」——
+     11.5px / #8f8f88 在浅底上几乎看不见。 */
+  .bennihead{font-size:12.5px;font-weight:600;color:#5f5a4c;margin-bottom:7px;
+    letter-spacing:.01em}
+  /* ★ `bennisub` 原来**没有任何样式**（2026-10-27 看截图才发现）：
+     于是"读了一遍"和"它不能判赢，只能说…"直接粘成一句
+     「读了一遍它不能判赢」，读起来像同一句话的两个半截。
+     它属于"抬头里的说明"，该轻一档、并且隔开。 */
+  .bennisub{margin-left:7px;font-weight:400;color:#8d8880;font-size:12px}
+  /* ★★ 下面这一组原来**一个样式都没有**（2026-10-27 扫出来的）：
+     `.bnsec` / `.bnk` / `.bnbody` / `.bennilist` / `.bsec` / `.mhead` / `.mname`
+     / `.truncnote` 在 HTML 和模板字符串里都用着，但 CSS 里搜不到。
+     后果很具体：本我那 ①②④⑤ 四段完全没有分节层级，四段话连成一片；
+     "AI 模型名"那行和正文之间没有间距；正文被截断的提示长得跟正文一样，
+     人以为模型就是那么说的。**用了但没定义，等于排版全靠换行。** */
+  .bnsec + .bnsec{margin-top:9px}
+  .bnk{display:inline-block;font-size:11px;font-weight:600;color:#a8874a;
+    margin-right:6px;vertical-align:1px;font-variant-numeric:tabular-nums}
+  .bnbody{margin-top:2px;color:#3f3b33}
+  .bennilist{margin:3px 0 0;padding-left:19px}
+  .bennilist li{margin:1px 0}
+  /* 本我在跑时那行的秒表（tickBenni 每秒钟往里写） */
+  .bsec{font-size:11.5px;color:#9a9384;font-variant-numeric:tabular-nums}
+  /* say 的头行：头像 + 模型名。原来没样式，两个元素直接贴在一起 */
+  .mhead{display:flex;align-items:center;gap:7px;margin:0 0 7px}
+  .mname{font-size:11.5px;color:var(--faint);letter-spacing:.01em}
+  /* 正文被截断的说明：**不能长得像正文**，否则人以为模型就这么说的 */
+  .truncnote{margin-top:9px;padding:6px 9px;background:#fbf7ee;border-radius:6px;
+    font-size:11.5px;line-height:1.6;color:#8a7a52}
+
+  /* 正在进行的思考：实时草稿。llm 事件要整轮结束才写，这块让人边想边看 */
+  .thinking{margin:6px 0 0;padding:8px 12px;border-left:2px solid #e2e2ee;
+    background:#fafafa;border-radius:0 6px 6px 0;color:#5a5a64;font-size:12.5px;
+    white-space:pre-wrap;word-break:break-word;max-height:190px;overflow:auto;
+    line-height:1.75}
+
+  /* 「×4」：同类动作合并后的次数徽标（WorkBuddy 是一组并一行） */
+  .pcount{font-size:11px;line-height:16px;color:#8b8b84;background:#f1f1f1;
+    border-radius:8px;padding:0 5px;margin-left:3px;flex:0 0 auto}
+
+  /* 回到底部：往上翻历史之后，别逼人手动拖回去 */
+  /* ★ bottom 从 118 抬到 172（2026-10-25）：118 正好压在输入框上方那一排控件上，
+       而「空闲 / 暂停」在最右端 —— 两个一重叠，状态就被这个悬浮按钮盖掉一半。
+       实测坐标：状态 pill x=1151 宽 41，按钮 right:34 宽约 80 ⇒ 落在 1166~1246，
+       正好盖住它右边那截。抬到控件行上方就不会打架。 */
+  .tobottom{position:absolute;right:34px;bottom:172px;z-index:6;
+    background:var(--panel);border:1px solid #e4e2da;border-radius:16px;padding:4px 12px;
+    font-size:11.5px;color:var(--dim);box-shadow:0 2px 10px rgba(0,0,0,.09);cursor:pointer}
+  .tobottom:hover{color:var(--ink-2);border-color:#d4d2c9}
+
+  /* 正在说：流式打字的临时气泡。
+     ★ 它用的是**正式 agent 气泡的壳**（.msg.agent .body），不是另做一个样式 ——
+       否则 say 事件到达、正式气泡插进来时，会看出"换了个东西"（宽度、内边距都跳一下）。
+     ★ 光标：末尾一条闪动的竖线，这是"它正在写"最直接的信号。 */
+  #streaming.feedpos{margin:9px 0 0}
+  /* ★★ 不再限高、不再内滚（2026-10-25）：
+     用户的原话是「正文能不能输出在 say 里，而不是像思考块一样用一个很小的窗口在那里
+     输出，然后再全部展示到 say 里面。现在这样看着有点不流畅」。
+     限高的代价很具体：正文长到 38vh 之后就在**内框里**滚，转正后又变成自然高度 ——
+     同一段字，前后两种高度行为，切换那一刻整页跳一下，而且内滚的框本身就是个"小窗"。
+     ⇒ 让它从一开始就按**最终的样子**长，跟着 feed 滚。这样"转正"是无感的。
+     ★ white-space 也要一并对齐：pre-wrap 是给纯文本用的，正文是 markdown 渲染出来的，
+       段落间距由 .md 的 padding 决定。两处不一致，转正时行距会变。 */
+  .sbody{word-break:break-word}
+  /* ★ 谁在说话（2026-10-25）：用户「正文里面直接没有本我自我的分别了，还是得在
+     输出栏里面文字分类一下的」「像图里面完全没有过渡」。
+     ★ 为什么不是画一条线：用户说过「这些边界的线条本身也是一些噪点」。
+       所以用**一个词 + 极淡的底**做标签，过渡靠留白，不靠框。 */
+  .spk{display:inline-block;font-size:11px;font-weight:500;line-height:16px;
+    letter-spacing:.06em;padding:0 6px;border-radius:4px;margin-right:7px;
+    vertical-align:1px;user-select:none}
+  .spk-b{background:#fdf5e0;color:#8a6a17}
+  .spk-d{background:#eaf2e7;color:#4a6b45}
+  .spk-e{background:#f1f1ee;color:#6f6f69}
+  /* 钩子：和"收尾/记忆"同一套标签写法，但颜色更冷 —— 它是**外部**跑的东西，
+     不该被读成模型自己说的话 */
+  .spk-h{background:#f0f0f0;color:#4a5a72}
+  .sbody::after{content:"▌";color:#9db6e8;margin-left:1px;
+    animation:blink 1s steps(2,start) infinite}
+  @keyframes blink{to{visibility:hidden}}
+
+  /* Markdown 渲染后的排版 —— 数值全部来自 WorkBuddy 的 .cb-markdown：
+       p/ul/ol 用 padding-bottom:12px 拉开，margin:0（不是 margin-bottom）
+       标题统一 13px / 600，下边距 4px（它不分级调字号）
+       blockquote 是 all:unset —— 引用**没有**左边线和灰底
+       表格 1px 描边、border-collapse:separate
+       代码块底 #f2f2f2、max-height 200px 自滚
+     */
+  /* ★ 正文字号行高：14px / 21px（= 1.5）。
+     原来是 22px（1.57），再加上被 `.msg .body` 覆盖成 1.75（24.5px），
+     整段话看着"一行一行很空" —— 用户原话「say 里面行距太高了」。
+     段距也从 12px 收到 9px：段与段之间靠"空一点"就够了，
+     空太多每一段都像另起一件事，读起来是碎的。 */
+  .md{white-space:normal;font-size:15px;line-height:26px}
+  /* ★★ 流里的"非消息块"必须和 say 同宽同左边界。
+     它们原来是直接插进 #feed 的 div，没有任何宽度约束 ⇒ 占满整条执行流，
+     而 say 只有 640 ⇒ 用户看到的是"额外冒出来的一批报错"。
+     （原话：「这一大串内容突兀的主要原因是宽度和 say 不一致，
+      看着就像额外出现的一批报错一样」） */
+  #feed > .flowblock{max-width:calc(100% - 182px)}
+  /* ★ 段间距 9 → 15px：分段之间要能看出"换了一段"，同段内行距不动（22px）。 */
+  .md p{margin:0;padding-bottom:9px}
+  .md p:last-child{padding-bottom:0}
+  /* ★★ 末尾归零（2026-10-26，量了才发现第一次写错）：
+     原来写 `.md > :last-child{margin-bottom:0}` —— **它永远不生效**，
+     因为时间戳/收尾行/摘要行也在同一个 `.md` 容器里（它们是被追加进来的 div），
+     所以正文的最后一块**从来不是** last-child。
+     实测：正文以代码块结尾时，.codebox 的 margin-bottom:15px 原样留着，
+     以表格结尾留 14px —— 那一截就是"正文下面那块空白"。
+     ⇒ 换判据：**后面紧跟着元信息的那一块**归零。:has() 在 Chromium 105+ 可用。 */
+  .md > *:has(+ .ts),
+  .md > *:has(+ .endline),
+  .md > *:has(+ .summary),
+  .md > :last-child{margin-bottom:0;padding-bottom:0}
+  .md ul,.md ol{margin:0;padding-bottom:12px;padding-left:21px}
+  .md ul:last-child,.md ol:last-child{padding-bottom:0}
+  .md li{margin:0}
+  .md li>p{padding-bottom:0}
+  /* ★ 标题要**比正文醒**才叫标题。WorkBuddy 是 13px/600（靠加粗区分），
+     但我们的正文已经 14.5px，13px 的标题反而更小 —— 用户：「正文的格式也该严格对齐
+     workbuddy 这种标题类文本字号和醒目处理」。⇒ 加粗 + 比正文大 + 上面留白。
+     段与段之间靠 margin 拉开，行内仍保持 22px（同段行距不变）。 */
+  .md h1{margin:14px 0 7px;font-weight:600;font-size:18px;line-height:27px;
+    color:#1a1d22;letter-spacing:.01em}
+  .md h2{margin:13px 0 7px;font-weight:600;font-size:16.5px;line-height:25px;color:#1a1d22}
+  .md h3,.md h4{margin:12px 0 6px;font-weight:600;font-size:15.5px;line-height:24px;color:#23272e}
+  .md h1:first-child,.md h2:first-child,.md h3:first-child{margin-top:2px}
+  .md blockquote{all:unset;display:block}
+  .md hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+  .md code{background:#f2f2f2;border-radius:4px;padding:1px 4px;
+    font-family:Consolas,monospace;font-size:12.5px}
+  .md a{color:#3a5bd0;text-decoration:none}
+  .md a:hover{text-decoration:underline}
+  .md table{border-collapse:separate;border-spacing:0;width:100%;
+    border:1px solid #e2e2de;border-radius:6px;overflow:hidden;
+    margin:2px 0 14px;font-size:13.5px}
+  .md tbody tr:nth-child(even){background:#fbfbfb}
+  .md th,.md td{border-right:1px solid #e2e2de;border-bottom:1px solid #e2e2de;
+    padding:5px 9px;text-align:left}
+  .md th{font-size:12px;line-height:21px;font-weight:600;background:#fafaf7}
+  .md tr:last-child td{border-bottom:none}
+  .md th:last-child,.md td:last-child{border-right:none}
+  /* 代码块：不要边框，靠底色 + 圆角 + 内边距区分（边框线是噪点） */
+  .codebox{position:relative;margin:4px 0 15px;background:#F6F6F2;
+    border-radius:8px;overflow:hidden}
+  /* VS Code Light+ 的语法色：紫（关键字）/ 暗红（字符串）/ 绿（注释）/ 青绿（数字）/ 棕（函数） */
+  .hl-k{color:#AF00DB} .hl-s{color:#A31515} .hl-cm{color:#008000;font-style:italic}
+  .hl-n{color:#098658} .hl-f{color:#795E26}
+  .codebox pre{margin:0;padding:11px 13px;font-family:"JetBrains Mono",Consolas,monospace;
+    font-size:12px;line-height:1.55;color:#3f3f3a;white-space:pre-wrap;
+    word-break:break-word;max-height:200px;overflow:auto;overscroll-behavior:contain}
+  .copybtn{position:absolute;top:6px;right:6px;font-size:10.5px;padding:1px 7px;
+    border-radius:5px;border:1px solid #e4e2da;background:var(--panel);color:var(--faint);
+    opacity:0;transition:opacity .15s;cursor:pointer}
+  .codebox:hover .copybtn{opacity:1}
+
+  /* 契约：这一轮按什么判完成。淡蓝灰，和"思考/工具"区分开 —— 它是判据不是过程 */
+  .contractblock{margin:6px 0;padding:8px 11px;border-radius:7px;
+    background:#f6f8fc;border-left:2px solid #a8b6d8}
+  .cthead{font-size:10.5px;font-weight:600;color:#55638a;margin-bottom:4px}
+  .ctrow{display:flex;gap:7px;align-items:baseline;font-size:11.5px;padding:2px 0}
+  .ctid{color:#9aa3ba;font-family:Consolas,monospace;flex:0 0 auto}
+  .ctclaim{color:#3d4459;flex:1;min-width:0}
+  .ctcheck{font-family:Consolas,monospace;font-size:10.5px;color:#7b8398;
+    max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* 提炼候选：这一轮想进树的东西。淡青底，和契约（判据）区分开 */
+  /* 和复核那块同一病根：第二行把 background / border-left 设回来了 */
+  .distillblock{margin:16px 0 6px;padding:0;border:0;background:none;border-radius:0;
+    color:inherit;font-size:inherit;line-height:inherit}
+  .dshead{font-size:11.5px;font-weight:600;color:var(--faint);margin-bottom:5px}
+  .dsmodel{font-weight:400;color:#8aa79a;margin-left:7px}
+  .dsrow{display:flex;gap:7px;align-items:flex-start;padding:3px 0}
+  .dslayer{flex:0 0 auto;font-size:10px;padding:0 5px;border-radius:4px;
+    background:#e3f1ea;color:#4a7a63;margin-top:1px}
+  .dsrule{color:#33463d;font-size:11.5px;line-height:1.7}
+  .dswhy{color:#7d9189;font-size:10.5px;line-height:1.65;margin-top:1px}
+  .dscmd{margin-top:5px;padding-top:5px;border-top:1px dashed #dfeee6;
+    font-size:10.5px;color:#7d9189}
+  .dscmd code{font-family:Consolas,monospace;color:#4a7a63}
+
+  /* 状态栏：模型 / 累计 token / 门禁 —— Codex 底部也有一条 */
+  .statusbar{display:flex;gap:18px;flex-wrap:wrap;padding:5px 16px;
+    background:var(--panel);border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--faint);font-family:Consolas,monospace}
+  .ev{margin:1px 0}
+  .ev.llm{color:var(--dim)}
+  .ev.tool{color:#1f6f43}
+  .ev.denied{color:var(--red);font-weight:600}
+  .ev.final{color:var(--ink-2);font-weight:600}
+  .ev.err{color:var(--red)}
+  .ev.charter{color:#6b5b95}
+  .empty{color:var(--faint);font-family:inherit;padding:48px 0;text-align:center;font-size:12.5px}
+
+  /* 运行日志抽屉：默认收起。启动信息不是错误，但也不该占着执行流 */
+  .logwrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    font-size:12px;flex:0 0 auto;max-height:34%;overflow:auto}
+  .logwrap summary{padding:8px 12px;cursor:pointer;color:var(--dim);
+    font-family:Consolas,ui-monospace,monospace;font-size:11.5px;outline:none}
+  .logwrap[open] summary{border-bottom:1px solid var(--line)}
+  .logwrap pre{margin:0;padding:10px 12px;white-space:pre-wrap;word-break:break-word;
+    font-family:Consolas,ui-monospace,monospace;font-size:11.5px;line-height:1.7;
+    color:var(--dim)}
+
+  .side{flex:1;overflow:auto;background:var(--panel);border:1px solid var(--line);
+    /* ★ min-width:0 必须有：grid 子项默认 min-width:auto，
+       里面一句 nowrap 的长文本就能把整栏撑宽，把中间对话栏挤瘪。 */
+    min-width:0;overflow-x:hidden;
+    border-radius:10px;padding:12px 13px}
+  .big{font-size:18px;font-weight:600;margin:1px 0 8px}
+  .kv{color:var(--dim);line-height:1.95}
+  .kv b{font-weight:600;color:var(--ink)}
+  .hr{height:1px;background:var(--line);margin:12px 0}
+  .mini{font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.04em;margin:0 0 4px}
+  .li{color:var(--ink-2);font-size:12px}
+
+  /* 底栏 / 输入区 */
+  /* ★ 输入区在**执行流那一列里**，跟它同宽。
+     上一版它是 .app 的直接子元素，于是横贯整页、把左栏底部盖住了
+     —— 用户：「他是向左穿透出去的，而不是给左栏让路的收缩」。 */
+  /* ★ position:relative 是给补全列表用的（它浮在输入框上方） */
+  .composer{padding:8px 0 2px;background:transparent;border:0;position:relative}
+  /* 输入栏正上方的「等人决定」停靠区（2026-10-31）。
+     拦截卡不再进正文流：它需要人**动手**，不属于阅读流。 */
+  .askdock{margin:0 0 8px}
+  .askdock[hidden]{display:none}
+  .askdock .blk{margin:0}
+  /* ── 斜杠命令补全（2026-10-26）──
+     ★ 为什么浮在输入框**上方**：输入框在屏幕底部，往下弹会被窗口边缘切掉；
+       而且人是"先看到候选、再决定打什么"，候选在视线前进方向上。
+     ★ 一次最多列 8 条 —— 再多就得滚动，而滚动里的候选看不见等于没有。 */
+  .cmdmenu{position:absolute;left:0;right:0;bottom:calc(100% - 4px);z-index:36;
+    background:var(--panel);border:1px solid var(--line);border-radius:9px;
+    box-shadow:0 -6px 20px rgba(0,0,0,.08);padding:4px;max-height:264px;overflow:auto;
+    overscroll-behavior:contain}
+  .cmditem{display:flex;align-items:baseline;gap:8px;padding:6px 8px;border-radius:6px;
+    cursor:pointer;font-size:12.5px}
+  .cmditem:hover,.cmditem.on{background:#f2f2f2}
+  .cmdname{flex:0 0 auto;font-weight:600;color:var(--ink-2);font-family:Consolas,monospace;
+    font-size:12px}
+  .cmddesc{flex:1;min-width:0;color:var(--dim);overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .cmdargs{flex:0 0 auto;color:var(--faint);font-size:11px}
+  /* 输入框上沿的拖拽条：拖它改输入框最小高度（双击复位） */
+  .cresize{height:7px;cursor:row-resize;border-radius:4px;margin:1px 0 0;flex:0 0 auto}
+  .cresize:hover,.cresize.dragging{background:#e2e2dc}
+  /* 附件区：chip 一行，放不下就换行 */
+  .composer.dropping{outline:2px dashed #85B7EB;outline-offset:-6px;border-radius:10px}
+  .attachrow{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+  .attachrow[hidden]{display:none}
+  .chip{display:flex;align-items:center;gap:6px;padding:3px 5px 3px 3px;
+    background:#f2f2f2;border-radius:8px;font-size:11.5px;color:#54544e;
+    max-width:190px}
+  .chip img{width:28px;height:28px;object-fit:cover;border-radius:5px;flex:0 0 auto}
+  .chip .cname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip .cx{border:0;background:none;cursor:pointer;color:var(--faint);
+    font-size:14px;line-height:1;padding:0 3px;flex:0 0 auto}
+  .chip .cx:hover{color:#8a3226}
+  .attachnote{font-size:10.5px;color:#adada6;margin:0 0 6px}
+  .attachnote[hidden]{display:none}
+  .plus{flex:0 0 auto;width:30px;height:30px;border:1px solid var(--line);
+    background:var(--panel);border-radius:8px;cursor:pointer;color:#7a7a7a;
+    font-size:15px;line-height:1;padding:0;align-self:flex-end}
+  .plus:hover{background:#f4f4f1;color:#4a4a44}
+  .crow{display:flex;align-items:center;gap:8px;margin:0 0 6px;flex-wrap:wrap}
+  /* ── 模型这一行（2026-10-26）──
+     ★ 它比下面那行"参数"更重要，所以单独一行、放在最上面：
+       人扫一眼就该知道这一句是谁在答、谁在审。 */
+  /* ★ 模型这一行改成**浮窗**（2026-10-27）：平时只留一个「当前模型」按钮，
+     点开才浮在输入框上方。理由和上下文面板一样 —— 它是一周改一次的东西，
+     却占了输入区两行里的一整行；而每轮都要看的是"这一句要说什么"。 */
+  .mrow{display:none;align-items:center;gap:6px;flex-wrap:wrap}
+  .mrow.open{display:flex;position:absolute;left:0;right:0;bottom:100%;
+    margin:0 0 6px;padding:9px 10px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;z-index:30}
+  /* 点开时把「档案」放在最右边，和收起时的按钮位置对得上 */
+  .mrow.open .mspacer{flex:1}
+  .mset{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;
+    font-size:11.5px;color:var(--dim);cursor:pointer;padding:2px 4px;border-radius:6px}
+  .mset:hover{background:#f2f2f2}
+  .mset b{font-weight:600;color:var(--dim);max-width:150px;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .mfield{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--dim);
+    background:var(--panel);border:1px solid var(--line);border-radius:7px;
+    padding:2px 4px 2px 8px;max-width:44%}
+  .mrole{flex:0 0 auto;font-weight:600;color:var(--dim)}
+  .mfield select{border:0;background:transparent;font-size:11.5px;color:var(--ink);
+    max-width:240px;min-width:0;padding:1px 2px;outline:none;cursor:pointer}
+  .mswap{border:1px solid var(--line);background:var(--panel);border-radius:7px;
+    width:26px;height:24px;line-height:1;font-size:13px;color:var(--dim);cursor:pointer;padding:0}
+  .mswap:hover{background:#f2f2f2;color:var(--ink-2)}
+  .mtiny{border:1px solid var(--line);background:var(--panel);border-radius:7px;
+    font-size:11.5px;color:var(--dim);padding:2px 8px;cursor:pointer}
+  .mtiny:hover{background:#f2f2f2;color:var(--ink)}
+  /* ★ 上下文用量按钮（2026-10-27）：和「记忆容量」同一行、同样式 ——
+     它回答的是同一个问题（"这一句按什么预算跑"），只是给的是**答案**不是选项。
+     百分比直接写在按钮上：藏在面板里的数字，只有出事那天才会有人点开看。 */
+  .cbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
+    background:var(--panel);border-radius:7px;padding:2px 8px;cursor:pointer;
+    font-size:11.5px;color:var(--dim);font-family:inherit;
+    /* ★ 不换行（2026-10-27 量出来的）：一行放不下时它会被挤成两行，高度从 22 变 38，
+       和旁边的下拉框对不齐 —— 实测 460px 宽时就是这样。 */
+    white-space:nowrap;flex:0 0 auto}
+  .cbtn:hover{background:#f2f2f2;color:var(--ink)}
+  .cbtn b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .cbtn.warn{border-color:#e6c08a;background:#fdf6e7}
+  /* ★ 上下文按钮做成**圆环**（2026-10-27 用户：「用了的部分偏黑，没用的偏灰白」）。
+     环本身就能读出比例，不需要在旁边再写一个百分比 —— 那行已经很挤了。
+     百分比留在 `#ctxpct` 里当无障碍文本（视觉上隐藏），读屏和判据都还能用它。 */
+  .cring{border:none;background:none;padding:0;width:26px;height:26px;flex:0 0 auto;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%}
+  .cring:hover{background:#efefea}
+  .cring svg{display:block;transform:rotate(-90deg)}
+  .cring circle{fill:none;stroke-width:3.6;stroke-linecap:round}
+  .cring .cring-bg{stroke:#e3e3de}
+  .cring .cring-fg{stroke:#4b5563;transition:stroke-dashoffset .18s linear}
+  .cring.warn .cring-fg{stroke:#d08a24}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .cfgprobe{display:flex;align-items:center;gap:8px;margin:-2px 0 8px}
+  .cfgprobe button{border:1px solid var(--line);background:var(--panel);border-radius:7px;
+    font-size:11.5px;color:var(--dim);padding:2px 8px;cursor:pointer;font-family:inherit}
+  .cfgprobe button:hover:not(:disabled){background:#f2f2f2;color:var(--ink)}
+  .cfgprobe button:disabled{opacity:.5;cursor:default}
+  /* ★ 必须把 min-width 也压掉：`.cfgwrap` 写的是 min-width:470px，
+     只写 width 不管用 —— 实测面板真的长成 470px 宽（2026-10-27）。 */
+  .ctxwrap{width:340px;min-width:0}
+  .ctxhead{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+  .ctxhead .cfgttl{margin:0}
+  .ctxbig{margin:0 0 6px;display:flex;align-items:baseline;gap:6px}
+  .ctxbig b{font-size:26px;font-weight:600;letter-spacing:-.5px;color:var(--ink-2);
+    font-variant-numeric:tabular-nums}
+  .ctxbig span{font-size:11px;color:var(--dim)}
+  /* ★ 进度条画的是**窗口**：彩色段之和 = 已用，剩下的就是灰底（未使用）。
+     不是"把已用这一份再按比例铺满"—— 那样条永远是满的，人看不出还剩多少。 */
+  .ctxbar{display:flex;height:9px;border-radius:5px;overflow:hidden;background:#e8e8e3;
+    margin:0 0 14px}
+  .ctxbar i{display:block;height:100%}
+  .ctxlist{display:flex;flex-direction:column;gap:9px;margin:0 0 12px}
+  .ctxrow{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--ink-2)}
+  .ctxdot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;margin-top:5px}
+  .ctxnm{flex:1;min-width:0}
+  .ctxsub{display:block;font-size:10.5px;color:var(--faint);margin-top:1px}
+  .ctxvl{font-variant-numeric:tabular-nums;color:var(--dim);font-size:11.5px;
+    line-height:17px;white-space:nowrap}
+  /* 上限拉条：三档（300K 标准 / 600K 长 / 1M 超长），和面板里看到的是一回事 */
+  .limit{border-top:1px solid var(--line);padding-top:12px}
+  .limit-t{text-align:center;font-size:12.5px;color:var(--ink-2);margin:0 0 10px}
+  .limit-t b{font-weight:600}
+  .limit-track{position:relative;height:9px;border-radius:5px;background:#e8e8e3}
+  .limit-fill{position:absolute;left:0;top:0;height:100%;border-radius:5px;
+    background:#34d399;transition:width .12s linear}
+  .limit-dot{position:absolute;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;
+    border-radius:50%;background:var(--panel);opacity:.9}
+  .limit-knob{position:absolute;top:50%;width:19px;height:19px;margin:-9.5px 0 0 -9.5px;
+    border-radius:50%;background:var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.22);
+    border:1px solid var(--line);cursor:grab;transition:left .12s linear}
+  .limit-knob:active{cursor:grabbing}
+  /* 原生 range 铺满整个轨道当命中区，视觉由上面那三层画 —— 这样键盘也能调 */
+  .limit-hit{position:absolute;inset:-8px 0;width:100%;opacity:0;cursor:pointer}
+  .limit-note{text-align:center;font-size:10.5px;color:var(--faint);margin:8px 0 0}
+  .mspacer{flex:1;min-width:0}
+  .mwarn{font-size:11px;color:#8a6414;background:#fdf6e7;border:1px solid #e6d3ae;
+    border-radius:6px;padding:1px 6px}
+  /* 档案列表：一行一份，当前在用的标出来 */
+  .plist{max-height:210px;overflow:auto;margin:0 0 4px;display:flex;
+    flex-direction:column;gap:6px}
+  .prow{display:flex;align-items:center;gap:8px;border:1px solid var(--line);
+    border-radius:8px;padding:6px 8px;font-size:11.5px;background:#fafafa}
+  .prow.on{border-color:#b9d5c6;background:#f4faf6}
+  .prow .pn{font-weight:600;color:var(--ink-2);white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;max-width:150px}
+  .prow .pm{color:var(--dim);font-family:Consolas,monospace;font-size:11px}
+  .prow .pk{color:var(--faint);font-family:Consolas,monospace;font-size:10.5px}
+  .prow .psp{flex:1;min-width:0}
+  .prow .pbtn{border:1px solid var(--line);background:var(--panel);border-radius:6px;
+    font-size:11px;padding:1px 6px;cursor:pointer;color:var(--dim)}
+  .prow .pbtn:hover{background:#f2f2f2;color:var(--ink)}
+  .prow .pbtn.on{background:#e9f5ee;border-color:#b9d5c6;color:#1f6f43}
+  .cfield{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;
+    color:var(--dim);background:#f4f4f1;border:1px solid var(--line);
+    border-radius:7px;padding:2px 4px 2px 8px}
+  .cfield select{border:0;background:transparent;font-size:11.5px;color:var(--ink);
+    outline:none;padding:1px 2px;cursor:pointer}
+  /* ★ 权限这一档用红字（2026-10-27 用户要求）：它是唯一一个"点错了就不问你"的开关，
+     和旁边几个"省钱/省事"的选项不是一类东西，颜色上就得分开。
+     原来只有 `<b>` 一行字，现在是能选的下拉，所以红字打在 span 和 select 上。 */
+  .cgate span,.cgate select{color:var(--red)}
+  .cgate select{font-weight:600}
+  .cspacer{flex:1}
+  .chint{font-size:11px;color:var(--faint)}
+  .cmain{display:flex;gap:9px;align-items:flex-end}
+  #task{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;
+    outline:none;font:inherit;font-size:13px;line-height:1.6;resize:none;
+    /* ★ 默认三行（用户：「默认高度应该至少是三行文字」）；
+       高度可以拖（#cresize），也会随内容自动长到 60vh。 */
+    min-height:var(--inputh,68px);max-height:60vh;background:var(--panel)}
+  #task:focus{border-color:var(--accent)}
+  .hint{font-size:11px;color:var(--faint);align-self:center}
+
+  /* 需要人回答的弹窗。★ 没有进度条、没有倒计时 —— 它就是在等，等到人为止 */
+  /* ★★ 改成**非模态浮层**（2026-10-26，用户原话：
+     「这个弹窗是否可以跟 workbuddy 的弹窗一样不卡页面，因为有时候我需要结合
+       上下文去做推断，而不是直接根据弹窗选项来选择」）。
+     原来是 showModal()：浏览器的模态层会同时做三件事 ——
+       ① ::backdrop 吞掉滚轮（往上翻不了事件流）② 焦点被锁在弹窗内 ③ 页面点不动。
+     三条都正好挡住"我要边看上下文边决定"这个用法。
+     ⇒ 改用 dialog.show()（非模态）+ 自己定位到右下角：
+       正文完全不挡，滚轮照常滚，可以一边读一边选。
+     代价是 Esc 不再自动关（非模态没有这个默认行为），所以弹窗里补了「收起」。 */
+  /* ★★ 位置：贴输入框上方、横跨正文列（2026-10-26 第二次调）。
+     第一版放在右下角 560px 宽的浮层，实测把正文右半截盖掉了 ——
+     而"结合上下文推断"要看恰恰是那半边。挡住正文的弹窗等于没解放页面。
+     ⇒ 横跨正文列、只压住最下面一条：上面的历史全部可见可滚，
+       它自己高度封顶 46vh，超了内部滚。左边界用 --leftw 让开可拖的侧栏。 */
+  .askdlg{border-radius:13px;padding:0;
+    width:auto;max-width:none;
+    box-shadow:0 18px 50px rgba(0,0,0,.18);
+    position:fixed;left:calc(var(--leftw, 252px) + 26px);top:auto;right:26px;
+    bottom:146px;margin:0;z-index:40;
+    border:1px solid #e2e2e2;
+    max-height:min(38vh, 300px);overflow:auto}
+  /* 非模态没有 backdrop（那是模态层才有的）—— 也不该有：
+     有遮罩就等于"看不见上下文"，正是要治的那件事。 */
+  .askdlg::backdrop{background:transparent}
+  /* 标题行右侧的「收起」：非模态下 Esc 不生效，必须给一个明确的收手 */
+  .askttl{display:flex;align-items:center;gap:8px}
+  .askfold{margin-left:auto;border:1px solid #e2e2e2;background:var(--panel);border-radius:7px;
+    padding:2px 9px;font:inherit;font-size:11.5px;color:var(--dim);cursor:pointer}
+  .askfold:hover{background:#f6f6f3;color:var(--ink-2)}
+  .askwrap{padding:14px 16px 12px}
+  .askqs{margin:8px 0 10px;font-size:13px;line-height:1.7;color:var(--ink-2)}
+  .askqs ol{margin:0;padding-left:20px}
+  .askqs li{margin:0 0 6px}
+  /* ★ 候选按钮：横排 2~3 个，一行放不下就折行。只有给了 options 时才显示。 */
+  /* ★ 用 grid 而不是 flex：flex 的 flex-wrap 会出现"两个一行、第三个独占一行"，
+     三个并列的候选看起来就不像一组了。auto-fit + minmax 在宽时三列、窄时自动降。 */
+  .askopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:8px;margin:9px 0 6px}
+  .askopts:empty{display:none}
+  .askopts button{min-width:0;border:1px solid var(--line);background:var(--panel);
+    border-radius:9px;padding:9px 13px;font-size:12.5px;line-height:1.5;color:var(--ink-2);
+    text-align:left;cursor:pointer;transition:border-color .12s,background .12s}
+  .askopts button:hover{border-color:var(--accent);background:#f8fbfd}
+  .askopts button:active{background:#eef5fb}
+  /* "或者自己输入" 这行只在有候选时才显示 */
+  .askorcust{margin:6px 0 4px;font-size:11.5px;color:var(--faint)}
+  .askorcust:empty,.askopts:empty ~ .askorcust{display:none}
+  #askin{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;
+    padding:8px 10px;font:inherit;font-size:13px;line-height:1.6;outline:none;resize:vertical}
+  #askin:focus{border-color:var(--accent)}
+  .askrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .asknote{font-size:11.5px;color:var(--faint);flex:1}
+
+  /* "在等你回话" 的条：它替代了原来那行"结束：needs_human · N 轮" */
+  .waitbar{display:flex;align-items:center;gap:8px;margin:10px 0 4px;
+    padding:9px 12px;border-radius:9px;background:#fffaf0;
+    border:1px solid #f0e0bd;font-size:12.5px;color:#7a5c1d}
+  .wdot{width:7px;height:7px;border-radius:50%;background:#e0a93a;flex:0 0 auto;
+    animation:wpulse 1.6s ease-in-out infinite}
+  @keyframes wpulse{0%,100%{opacity:.45}50%{opacity:1}}
+  .wtxt{flex:1}
+  .waitbar .reopen{border:1px solid #e2cf9f;background:var(--panel);border-radius:7px;
+    padding:4px 11px;font-size:12px;color:#7a5c1d;cursor:pointer}
+  .waitbar .reopen:hover{background:#fff6e4}
+
+  /* ── 闸门拦住了：停下来问的那一张卡（2026-10-26 一次性许可）──
+     为什么不做成弹窗：弹窗会挡住执行流，而"它刚才想干什么"正要看那几行上下文。
+     为什么按钮只给三种：批一次 / 批十分钟 / 不给。没有"永久允许" ——
+     永久允许应该写进规则文件（可审、可进版本库），而不是一次点击的残留。 */
+  .blk{margin:10px 0 6px;border:1px solid #e8d9b8;border-radius:10px;
+    background:#fffdf7;padding:10px 12px}
+  .blkh{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .blktag{flex:0 0 auto;font-size:10.5px;font-weight:600;color:#8a5a12;
+    background:#f7e8c8;border-radius:4px;padding:1px 6px}
+  .blkwhy{flex:1;font-size:12.5px;color:#5d4a2a}
+  .blkdetail{font-size:11.5px;color:#6b6153;white-space:pre-wrap;line-height:1.75;
+    background:#fffaf0;border-radius:7px;padding:7px 9px;margin-bottom:8px;
+    max-height:190px;overflow:auto;word-break:break-word}
+  /* 拦截卡的"为什么"折起来（2026-10-27）：它默认展开时能占满一屏，
+     而人真正要先回答的是"这一步给不给"。 */
+  .blkmore{margin:0 0 8px}
+  .blkmore > summary{font-size:11.5px;color:#8a7a52;cursor:pointer;
+    list-style:none;padding:1px 0;user-select:none}
+  .blkmore > summary::-webkit-details-marker{display:none}
+  .blkmore > summary::before{content:"▸";display:inline-block;margin-right:5px;
+    transition:transform .15s}
+  .blkmore[open] > summary::before{transform:rotate(90deg)}
+  .blkmore > summary:hover{color:#6b5d3d}
+  .blkb{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .gbtn{border:1px solid #d9c9a4;background:var(--panel);border-radius:7px;padding:4px 11px;
+    font:inherit;font-size:12px;color:#6b4f1d;cursor:pointer}
+  .gbtn:hover{background:#fff6e4;border-color:#c9b184}
+  .gbtn.gmain{background:#f6e7c6;border-color:#cbb182;font-weight:600}
+  .gbtn.gno{color:#8a4a3a;border-color:#e2c8c0}
+  .gbtn.gno:hover{background:#fdf0ec}
+  .gbtn:disabled{opacity:.5;cursor:default}
+  .gnote{font-size:11px;color:#a09a8c}
+  .blkok{margin:10px 0 6px;font-size:12px;color:#4a6b45;
+    background:#f4f9f2;border:1px solid #d9e6d3;border-radius:9px;padding:7px 11px}
+
+  /* 启动/请求失败的红条。★ 必须有：原来的失败是静默的，
+     用户看到的就是"输入发不出去"，而真实原因（找不到 Python / 服务没起）一个字都没显示 */
+  .boot{padding:9px 16px;background:#fdeaea;color:#8f2f2f;font-size:12.5px;
+    border-bottom:1px solid #f0cccc;white-space:pre-wrap;line-height:1.7}
+  /* ── 状态抽屉：工程状态 + 记忆树 ──
+     为什么是抽屉而不是新页面：用户要的是"随时能看"，不是"打开一个工具"。
+     为什么不是写进 say：say 是对话，状态是状态，混在一起两样都读不清。 */
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(580px,74vw);
+    background:var(--panel);border-left:1px solid var(--line);
+    display:flex;flex-direction:column;z-index:60;
+    box-shadow:-8px 0 24px rgba(0,0,0,.06)}
+  .drawer[hidden]{display:none}
+  .dhead{display:flex;align-items:center;justify-content:space-between;
+    padding:7px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .dtabs{display:flex;gap:3px}
+  .dtab{border:0;background:none;font:inherit;font-size:12.5px;color:var(--faint);
+    padding:4px 10px;border-radius:6px;cursor:pointer}
+  .dtab:hover{background:#f4f4f1}
+  .dtab.active{background:#eef0f4;color:var(--ink);font-weight:600}
+  .dclose{border:0;background:none;font-size:17px;color:var(--faint);cursor:pointer;
+    line-height:1;padding:0 4px}
+  .dclose:hover{color:var(--ink)}
+  .dbody{flex:1;overflow:auto;padding:12px 14px;overscroll-behavior:contain}
+
+  /* 工程状态：一张张小块，不画表格线（线是噪点） */
+  .scard{margin:0 0 14px}
+  .sctitle{font-size:11.5px;font-weight:600;color:var(--faint);letter-spacing:.04em;
+    margin:0 0 6px}
+  .srow{display:flex;align-items:baseline;gap:7px;padding:2px 0;font-size:12.5px;
+    color:#3f4450}
+  /* 许可卡里那一小截灰字（"只这一次" / "剩 N 分钟"）：和主文字同一行，
+     但不能抢读数 —— 它是修饰，不是内容 */
+  .scdim{color:var(--faint);font-size:11px;margin:0 4px}
+  .srow .dot{flex:0 0 auto;width:6px;height:6px;border-radius:50%;
+    background:#d8d8d1;margin-top:5px}
+  .srow .dot.ok{background:#6fa87c}
+  .srow .dot.bad{background:#d97362}
+  .srow .dot.wait{background:#e0a94a}
+  .srow code{font-family:Consolas,monospace;font-size:11.5px;color:#555a66;
+    background:#f4f4f1;padding:1px 5px;border-radius:4px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+  .sempty{font-size:12px;color:var(--faint);padding:2px 0}
+
+  /* 记忆树 */
+  .tsum{font-size:12px;color:var(--faint);margin:0 0 10px}
+  .tnode{margin:0 0 6px;border-radius:8px;background:#fbfbfb}
+  .tnode>summary{cursor:pointer;padding:6px 10px;font-size:12.5px;color:#2f3540;
+    list-style:none;display:flex;align-items:baseline;gap:8px}
+  .tnode>summary::-webkit-details-marker{display:none}
+  .tnode>summary:hover{color:#000}
+  .tname{font-weight:600}
+  .tmeta{margin-left:auto;font-size:11px;color:var(--faint);
+    font-variant-numeric:tabular-nums}
+  .tleaf{display:flex;align-items:baseline;gap:8px;padding:3px 10px 3px 20px;
+    font-size:12px;color:var(--dim);border-top:1px solid #f2f2f2}
+  .tleaf .tlt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap}
+  .tleaf .tlc{flex:0 0 auto;color:#b0b0a9;font-size:10.5px;
+    font-variant-numeric:tabular-nums}
+  /* ★ 记忆档位（2026-10-26）：三个区各自现在是哪一档。
+     `hot` = edit 档（机器能自己改规矩）—— 只给这一档上色，
+     理由是它已经在"机器不写教训"那条铁律的边上，必须一眼看得见。 */
+  .mtierrow{display:flex;gap:6px;flex-wrap:wrap;padding:6px 10px 2px 20px}
+  .mtier{font-size:11px;color:#6b6b64;background:#f4f4f4;border-radius:5px;
+    padding:2px 7px;font-variant-numeric:tabular-nums}
+  .mtier b{font-weight:600;color:#3a3f4a}
+  .mtier.hot{background:#fdeee6;color:#a8542a}
+  .mtier.hot b{color:#8f3f18}
+  .tleaf.msub{border-top:0;padding-top:8px;color:var(--faint)}
+  /* 事实的逐条视图（2026-10-26 收口）：一行一条，日期在左、正文吃中间 */
+  .fxhead{display:flex;align-items:baseline;gap:8px;padding:4px 10px 4px 34px}
+  .fxrow{display:flex;align-items:baseline;gap:6px;padding:2px 10px 2px 34px;
+    font-size:11.5px;color:var(--dim);border-top:0}
+  .fxrow .fxdate{flex:0 0 auto;color:var(--faint);font-variant-numeric:tabular-nums}
+  .fxrow .fxt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fxform{padding:4px 10px 8px 34px}
+  .fxform textarea{width:100%;box-sizing:border-box;min-height:52px;font:inherit;
+    font-size:12px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;
+    resize:vertical}
+  .hbbtn.fx{font-size:10.5px;padding:1px 6px}
+  /* 提案的两种落点（2026-10-26）：习惯跨项目、规则只这个项目。
+     不标出来的话，"采纳"按下去人不知道它会影响到别的仓库。 */
+  .pkind{display:inline-block;font-size:10px;font-weight:600;border-radius:4px;
+    padding:1px 5px;margin-right:6px;background:#eef4ec;color:#3f6b3a;vertical-align:1px}
+  .pkind.pkr{background:#eef0f6;color:#3f4f7a}
+  /* 免问提案（2026-10-26）：唯一一种"采纳之后会扩大权力"的提案，颜色上也要不一样 */
+  .pkind.pallow{background:#f6ead6;color:#8a6414}
+  /* 旧格式会话（2026-10-26）：小一号、灰一点，不抢标题但一眼看得见 */
+  .sess .lgc{flex:0 0 auto;font-size:9.5px;color:#9a9a92;border:1px solid #dededa;
+    border-radius:3px;padding:0 3px;line-height:13px;margin-right:1px}
+  .tadd{margin:2px 10px 8px 20px;border:1px dashed #d8d8d1;background:none;
+    font:inherit;font-size:11.5px;color:var(--faint);padding:3px 9px;border-radius:6px;
+    cursor:pointer}
+  .tadd:hover{border-color:#b8b8ae;color:var(--dim)}
+  .tform{margin:2px 10px 8px 20px;display:flex;gap:6px}
+  .tform input{flex:1;min-width:0;font:inherit;font-size:12px;padding:4px 7px;
+    border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+  .tform button{font:inherit;font-size:11.5px;padding:4px 9px;border-radius:6px;
+    border:1px solid var(--line);background:var(--panel);cursor:pointer}
+  .tform button.go{background:var(--blue);color:#fff;border-color:var(--blue)}
+  /* 判据体检 */
+  .prow{display:flex;gap:8px;padding:7px 0;border-top:1px solid #f2f2f2}
+  .pdot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;
+    background:#d8d8d1;margin-top:5px}
+  .pdot.ok{background:#6fa87c} .pdot.bad{background:#d97362} .pdot.wait{background:#e0a94a}
+  .pbody{flex:1;min-width:0}
+  .ptop{font-size:12.5px;color:#2f3540}
+  .pverdict{font-size:11px;color:var(--faint);margin-left:6px}
+  .pwhy{font-size:11.5px;color:#5b6068;line-height:1.55;margin-top:2px}
+  .pclaim{font-size:11px;color:var(--faint);margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   设计系统（2026-10-27 深度美化）
+   ---------------------------------------------------------------------------
+   为什么单放一层：美化只该动**视觉**，不该动结构与行为。
+   这一层只写颜色 / 字号 / 间距 / 圆角 / 阴影 / 过渡，一个类名都不新增、不删；
+   想退回原样，删掉这一段即可。
+   设计判断三条：
+     ① 纸感底保留，但**分层**：背景米白、卡片纯白、次级面板再浅半度 ——
+        原来全是米白 + 1px 浅边框，所以什么都"浮"不起来。
+     ② **一个主色**，只给主要动作、选中态、焦点。原来满屏灰字，
+        唯一的彩色是权限红字，眼睛没有落点。
+     ③ 正文字号 14px / 1.75。中文长段落 13.5px 读起来确实费劲（用户原话）。
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  /* ★ 黑白主题（2026-10-31 用户：整体换黑白，不用淡黄与深棕做对比）。
+     这一组在文件后段，**会覆盖文件开头那组同名变量** —— 之前只改开头等于没改。
+     底近白、字近黑、辅助灰、线浅灰；强调动作用黑，不再用橘红。 */
+  --bg:#fafafa;
+  --panel:#ffffff;
+  --panel-2:#f5f5f5;
+  --line:#e4e4e4;
+  --line-soft:#ececec;
+
+  --ink:#1a1a1a;
+  --ink-2:#3a3a3a;
+  --dim:#666666;
+  --faint:#9a9a9a;
+
+  --accent:#1a1a1a;            /* 主要动作、选中、焦点：黑白主题里就是黑 */
+  --accent-ink:#1a1a1a;
+  --accent-bg:#f0f0f0;
+  --accent-soft:#f5f5f5;
+  --benni:#666666;
+  --benni-bg:#f2f2f2;
+
+  --sh-1:0 1px 2px rgba(0,0,0,.05),0 1px 3px rgba(0,0,0,.03);
+  --sh-2:0 4px 16px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.04);
+  --sh-3:0 18px 44px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.06);
+
+  --r-s:7px; --r-m:12px; --r-l:16px;
+  --ease:cubic-bezier(.22,.68,.26,1);
+}
+
+body{font-size:14px;line-height:1.75;letter-spacing:.004em;
+  -webkit-font-smoothing:antialiased}
+
+/* ── 顶栏：从"一行灰字"变成一条安静的工具栏 ── */
+.bar{background:var(--panel);border-bottom:1px solid var(--line-soft);
+  box-shadow:0 1px 0 rgba(23,27,33,.02);padding:6px 14px}
+.brand{color:var(--ink);letter-spacing:.01em}
+.pill{background:var(--panel-2);border:1px solid var(--line-soft);color:var(--dim)}
+.pill b{color:var(--ink-2)}
+
+/* ── 左栏：选中态从"灰一点"变成"看得出来选中了" ── */
+.sess{border-radius:var(--r-m);border:1px solid transparent;
+  transition:background .14s var(--ease),border-color .14s var(--ease)}
+.sess:hover{background:var(--panel)}
+.sess.on{background:var(--accent-soft);border-color:#eeddc9}
+.sess.on::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:2px;
+  border-radius:2px;background:var(--accent)}
+.sess.on .ntx{color:var(--accent-ink)}
+
+/* ── 对话：用户气泡保留一点底色方便区分，agent 正文直接写在页面上 ──
+   2026-10-31 用户：正文容器跟背景同色、不要边界 —— 每段一张卡读起来太累。 */
+.msg{margin:12px 0}
+.msg .body{border-radius:var(--r-l);line-height:1.75}
+.msg.user .body{background:var(--panel-2);color:var(--ink);
+  border:0;box-shadow:none}
+.msg.agent .body{background:transparent;border:0;box-shadow:none;padding-left:0;padding-right:0}
+.msg.agent .av{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.msg.user .av{background:#f4d9c6;color:var(--accent-ink)}
+.msg .body h1,.msg .body h2,.msg .body h3{line-height:1.5;color:var(--ink)}
+.msg .body p{margin:.45em 0}
+.msg .body code{background:#f4eee3;border-radius:4px;padding:.08em .34em;
+  font-size:.92em;color:#6b4a33}
+.msg .body pre{background:#faf5ec;border:1px solid var(--line-soft);
+  border-radius:var(--r-m);box-shadow:none}
+.msg .body pre code{background:transparent;padding:0}
+.msg .body a{color:var(--accent);text-decoration:none;border-bottom:1px solid #ecc9b2}
+.msg .body a:hover{border-bottom-color:var(--accent)}
+
+/* ── 过程卡：退到背景里，但点得开、看得懂 ── */
+.procfold{background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-m);overflow:hidden;
+  transition:border-color .14s var(--ease),background .14s var(--ease)}
+.procfold:hover{border-color:#e2d6c4}
+.procfold.open{background:var(--panel);box-shadow:var(--sh-1)}
+.prochead{padding:6px 11px;font-size:12px;color:var(--dim);letter-spacing:.01em}
+.procfold.open .prochead{color:var(--ink-2);border-bottom:1px solid var(--line-soft)}
+.procbody{padding:6px 10px 8px}
+.prochead .parrow{transition:transform .16s var(--ease)}
+
+/* ── 本我：用紫，不用黄便签。它是"另一位模型"，不是警告 ── */
+.benninote{background:var(--benni-bg);border:1px solid #e6dff5;border-radius:var(--r-m);
+  box-shadow:none}
+.bennihead{color:var(--benni)}
+.bennisub{color:#8d84a8}
+.benniblock{border-left:2px solid #ddd4f0}
+
+/* ── 输入区：它是"下一步"的地方，该是页面上最挺的一块 ── */
+.composer{background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r-l);box-shadow:var(--sh-2);padding:10px 12px;
+  transition:border-color .16s var(--ease),box-shadow .16s var(--ease)}
+.composer:focus-within{border-color:#e8b79b;
+  box-shadow:0 0 0 3px rgba(201,99,63,.12),var(--sh-2)}
+#in,textarea{font-size:14px;line-height:1.7}
+#go{border-radius:var(--r-m);font-weight:600;letter-spacing:.02em;
+  transition:filter .14s var(--ease),transform .1s var(--ease)}
+#go:hover{filter:brightness(1.06)}
+#go:active{transform:translateY(1px)}
+
+/* ── 弹窗与浮窗：靠阴影分层，不靠更粗的边框 ── */
+dialog,.ctxdialog,.cfgdialog{border:1px solid var(--line-soft);
+  border-radius:var(--r-l);box-shadow:var(--sh-3)}
+.mrow{border-radius:var(--r-m);box-shadow:var(--sh-2)}
+
+/* ── 滚动条：细、半透明，不抢注意力 ── */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(23,27,33,.16);border-radius:99px;
+  border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(23,27,33,.28);
+  border:2px solid transparent;background-clip:content-box}
+
+/* ── 状态色统一走变量，不再各处各写一个灰 ── */
+.cap{color:var(--dim);letter-spacing:.06em}
+.gbtn{border-radius:var(--r-s);transition:background .14s var(--ease)}
+.gbtn.gmain{background:var(--accent);border-color:var(--accent);color:#fff}
+.gbtn.gmain:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+
+/* ── 空态：新用户第一眼（2026-10-27）。
+   原来只有一行 12.5px 的灰字，第一次打开像"页面没加载出来"。
+   文案一个字没改，只给它一个像样的位置与层级。 ── */
+.empty{max-width:520px;margin:52px auto;padding:26px 26px;text-align:left;
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-l);
+  box-shadow:var(--sh-1);color:var(--dim);font-size:13.5px;line-height:1.9}
+.empty::before{content:"";display:block;width:26px;height:3px;border-radius:99px;
+  background:var(--accent);margin-bottom:14px}
+
+/* ── 输入区上方那排控件：统一成 pill，不再是一排散字 ── */
+.crow{gap:6px;margin:0 0 8px}
+.cfield{background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:999px;padding:3px 10px;font-size:11.5px;line-height:1.6;
+  transition:background .14s var(--ease),border-color .14s var(--ease)}
+.cfield:hover{background:var(--panel);border-color:#e2d6c4}
+.cfield select{font-size:11.5px}
+
+/* ── 思考块：它是草稿，视觉上就该比正文浅一号 ── */
+.reasoning{background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-m);padding:6px 10px}
+.reasoning .rhead{font-size:12.5px;color:var(--dim)}
+/* ★ 思考块对齐 WorkBuddy 的样子（2026-10-29 用户：「包括思考块外观」）：
+     灰色斜体、小一号、可展开。斜体不是装饰 —— 它让"这是它在想"
+     和"这是它说的"在扫一眼时就分开，不用读内容。 */
+.reasoning .rbody{font-size:12.5px;color:var(--dim);font-style:italic;opacity:.86}
+/* 标题不斜体：斜体的标题读起来像注释，但它其实是这一行的"谁/什么时候" */
+.reasoning .rhead{font-size:12.5px;color:var(--dim);font-style:normal}
+
+/* ═══════════════════════════════════════════════════════════════
+   动效（2026-10-28 用户：「可以尝试加一些动效」）
+   克制三条：
+   ① **不给历史块加入场动画** —— 重放一个会话时几十个块一起动，看着像卡了；
+      只给"正在说的气泡 / 空态 / 弹窗 / 展开的过程卡"加。
+   ② 全部 160–220ms，缓出（`--ease`），不做弹簧和回弹。
+   ③ 尊重系统的"减少动态效果"设置（`prefers-reduced-motion`）。
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
+
+@media (prefers-reduced-motion:no-preference){
+  #streaming,.empty{animation:rise .22s var(--ease) both}
+  dialog[open]{animation:pop .18s var(--ease) both}
+  .procfold.open .procbody{animation:fadein .18s var(--ease) both}
+  #go:hover,.gbtn:hover{transform:translateY(-1px)}
+  /* 跑起来时状态点呼吸 —— "它还在动"不靠转圈，靠这一点光 */
+  .pill.live::before{content:"";width:6px;height:6px;border-radius:99px;
+    background:var(--accent);animation:breathe 1.6s ease-in-out infinite}
+}
+
+/* 主按钮统一走主色（原来是 var(--blue) 的冷蓝，和米黄橘红打架） */
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+
+/* ═══════════════════════════════════════════════════════════════
+   记忆面板（2026-10-28 用户：「记忆树这里的可视化可不可以做的高度成熟」）
+   原来是一屏 checkbox + 裸数字：看不出层级、看不出哪条长、数字没单位。
+   现在分三层：**概览 → 分组卡 → 条目**。
+   ★ 只加样式和结构，不改数据、不改任何 data-* 属性 —— 事件绑定全靠它们。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ① 概览：三个大数字 + 一条用量条。先回答"多少、满没满"，再看明细 */
+.memov{display:flex;gap:10px;margin:2px 0 10px}
+.memov .moc{flex:1;background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-m);padding:8px 11px}
+.memov .mon{font-size:19px;font-weight:650;line-height:1.25;color:var(--ink);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.memov .mon small{font-size:12px;font-weight:400;color:var(--faint);margin-left:2px}
+.memov .mol{font-size:11px;color:var(--dim);margin-top:1px}
+.membar{height:5px;border-radius:99px;background:#ece4d6;overflow:hidden;margin:2px 0 5px}
+.membar i{display:block;height:100%;border-radius:99px;background:var(--accent);
+  transition:width .3s var(--ease)}
+.membar.warn i{background:var(--amber)}
+.membar.over i{background:var(--red)}
+.memnote{font-size:11px;color:var(--dim);margin-bottom:10px}
+
+/* ② 分组卡：一组一张，头上有组名、启用数、整组开关 */
+.hbgroup{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:2;
+  background:var(--panel);padding:9px 2px 6px;margin-top:6px;
+  border-bottom:1px solid var(--line-soft)}
+.hbname{font-weight:650;font-size:12.5px;color:var(--ink-2)}
+.hbgroup .tlc{font-size:11px;color:var(--dim);background:var(--panel-2);
+  border:1px solid var(--line-soft);border-radius:99px;padding:0 7px;line-height:17px;
+  font-variant-numeric:tabular-nums}
+.hbgroup .hbbtn{margin-left:auto;font-size:11px}
+.hbgroup .hbbtn + .hbbtn{margin-left:0}
+
+/* ③ 条目：开关 + 文本 + 字数徽章；操作只在悬停时出现（平时不吵） */
+.hbleaf{display:flex;align-items:flex-start;gap:9px;padding:5px 2px;
+  border-radius:var(--r-s);transition:background .12s var(--ease)}
+.hbleaf:hover{background:var(--panel-2)}
+.hbleaf .tlt{flex:1;min-width:0;font-size:12.5px;line-height:1.65;color:var(--ink-2);
+  cursor:text;word-break:break-word}
+.hbleaf .tlc{flex:0 0 auto;font-size:10.5px;color:var(--faint);
+  font-variant-numeric:tabular-nums;padding-top:2px}
+.hbleaf .tlc::after{content:" 字"}
+.hbleaf .hact{flex:0 0 auto;display:flex;gap:4px;opacity:0;transition:opacity .12s}
+.hbleaf:hover .hact,.hbleaf:focus-within .hact{opacity:1}
+.hbleaf .hbtn{font-size:11px;padding:0 6px;line-height:18px;border-radius:5px}
+
+/* 关掉的条目：淡下去，但**仍然看得见**（不然关了就找不回来了） */
+.hbleaf:has(input[data-hbt]:not(:checked)) .tlt{color:var(--faint)}
+.hbleaf:has(input[data-hbt]:not(:checked)) .tlc{opacity:.6}
+
+/* 把 checkbox 画成开关：它还是同一个 input，事件一个不动 */
+#drawer input[type=checkbox]{appearance:none;-webkit-appearance:none;
+  flex:0 0 auto;width:26px;height:15px;margin:3px 0 0;border-radius:99px;
+  background:#ddd3c4;border:1px solid #d5c9b7;position:relative;cursor:pointer;
+  transition:background .16s var(--ease),border-color .16s var(--ease)}
+#drawer input[type=checkbox]::after{content:"";position:absolute;top:1px;left:1px;
+  width:11px;height:11px;border-radius:99px;background:#fffdf9;
+  box-shadow:0 1px 2px rgba(74,58,36,.25);transition:transform .16s var(--ease)}
+#drawer input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+#drawer input[type=checkbox]:checked::after{transform:translateX(11px)}
+#drawer input[type=checkbox]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ═══════════════════════════════════════════════════════════════
+   内化窗口按钮的**让位**（2026-10-28 用户：「记忆和判据体检点不出来」
+   「状态侧边栏点开之后没法关掉」）
+   那三个按钮是**原生绘制**的覆盖层，在最右上约 140px 宽：
+   - `elementFromPoint` 看不到它，所以探针会报"命中正常"，但真鼠标点的是它；
+   - 抽屉的 × 正好落在那个位置（实测 x=1260 / 窗口 1280）。
+   ⇒ 顶栏和抽屉头部都把右边让出来，别把控件放进那片区域。
+   ═══════════════════════════════════════════════════════════════ */
+.bar{padding-right:150px}
+.drawer .dhead{padding-right:150px}
+
+/* 人的气泡贴右（用户：「现在居中反而有点怪」）。
+   原来 margin-right:182px 是给本我批注栏让位，结果看着像居中；
+   批注栏挂在 agent 那一轮上，跟用户气泡没关系，不用让。 */
+.msg.user{margin-right:0}
+
+/* ═══════════════════════════════════════════════════════════════
+   外观三件套（2026-10-28 用户）：暗色 / 密度 / 字号
+   全部由根节点上的 dataset 驱动，设置只存 localStorage（是"这台机器上你看着
+   舒服"的偏好，不是项目数据，不进后端、不进仓库）。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 字号：所有正文都走 --fs，不再写死 14px */
+body{font-size:var(--fs,14px)}
+
+/* 密度：只动留白与行高，不动布局结构 */
+:root[data-density="compact"] body{line-height:1.6}
+:root[data-density="compact"] .msg{margin:7px 0}
+:root[data-density="compact"] .prochead{padding:4px 10px}
+:root[data-density="compact"] .procbody{padding:4px 9px 6px}
+:root[data-density="compact"] .hbleaf{padding:2px}
+:root[data-density="compact"] .bar{padding-top:4px;padding-bottom:4px}
+:root[data-density="compact"] .composer{padding:7px 10px}
+:root[data-density="compact"] .memov .moc{padding:5px 9px}
+:root[data-density="compact"] .memov .mon{font-size:17px}
+
+/* 暗色：同一套米黄逻辑的**反相** —— 底是烤过的深色，不是纯黑；
+   橘红提亮一点，不然在深底上发闷。 */
+:root[data-theme="dark"]{
+  /* ★ 黑白主题（2026-10-31 用户：整体换黑白，不要黄棕对比）。
+     深色也只看**明度**：底近黑、字近白、辅助灰、线深灰。
+     强调色不再用橙 —— 黑白主题里"强调"就是更亮一点的白。 */
+  color-scheme:dark;
+  --bg:#121212;
+  --panel:#1b1b1b;
+  --panel-2:#242424;
+  --line:#3a3a3a;
+  --line-soft:#2e2e2e;
+  --ink:#f2f2f2;
+  --ink-2:#e6e6e6;
+  --dim:#d0d0d0;
+  --faint:#a8a8a8;
+  --accent:#e0e0e0;
+  --accent-ink:#f0f0f0;
+  --accent-bg:#3a3a3a;
+  --accent-soft:#2c2c2c;
+  --benni:#b0b0b0;
+  --benni-bg:#2a2a2a;
+  --sh-1:0 1px 2px rgba(0,0,0,.35);
+  --sh-2:0 4px 16px rgba(0,0,0,.40);
+  --sh-3:0 18px 44px rgba(0,0,0,.55);
+}
+:root[data-theme="dark"] .msg .body code{background:#2c2c2c;color:#e0e0e0}
+:root[data-theme="dark"] .msg .body pre{background:#1f1f1f}
+:root[data-theme="dark"] .msg.user .body{border-color:#4a4a4a}
+:root[data-theme="dark"] .msg.user .av{background:var(--accent-soft);color:var(--ink)}
+:root[data-theme="dark"] .sptab:hover{background:var(--panel-2)}
+:root[data-theme="dark"] .sptab.on{color:var(--ink);border-bottom-color:var(--accent)}
+:root[data-theme="dark"] .sptab.on .snum{color:var(--dim)}
+:root[data-theme="dark"] .tnode>summary,
+:root[data-theme="dark"] .tnode>summary:hover,
+:root[data-theme="dark"] .mtier b{color:var(--ink-2)}
+:root[data-theme="dark"] .tleaf{border-color:var(--line-soft)}
+:root[data-theme="dark"] .mtier.hot{background:#402b21;color:#efbc9b}
+:root[data-theme="dark"] .mtier.hot b{color:inherit}
+:root[data-theme="dark"] .sess.on{border-color:#4a4a4a}
+:root[data-theme="dark"] .membar{background:#333333}
+:root[data-theme="dark"] #drawer input[type=checkbox]{background:#3a3a3a;border-color:#555555}
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb{background:rgba(230,230,230,.22);
+  border:2px solid transparent;background-clip:content-box}
+
+/* 外观浮窗：顶栏一个小按钮，点开三行设置 */
+.lookbtn{cursor:pointer}
+.lookpop{position:fixed;top:40px;right:150px;z-index:80;width:236px;
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-m);
+  box-shadow:var(--sh-3);padding:10px 12px}
+.lookpop .lrow{display:flex;align-items:center;justify-content:space-between;
+  gap:8px;padding:6px 0;font-size:12.5px;color:var(--ink-2)}
+.lookpop .lrow + .lrow{border-top:1px solid var(--line-soft)}
+.lookpop .lseg{display:flex;gap:4px}
+.lookpop .lopt{border:1px solid var(--line-soft);background:var(--panel-2);
+  color:var(--dim);border-radius:6px;padding:2px 9px;font-size:12px;cursor:pointer}
+.lookpop .lopt.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink)}
+
+/* 暗色下扫出来的三块亮底（实测，不是猜）：
+   加号按钮 / 输入框（textarea#task）/ 右侧进度竖条。
+   其余控件文字色都走变量，随主题变。 */
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] input[type=text],
+:root[data-theme="dark"] select{background:var(--panel-2);color:var(--ink);
+  border-color:var(--line)}
+:root[data-theme="dark"] .plus{background:var(--panel-2);color:var(--ink);
+  border-color:var(--line)}
+:root[data-theme="dark"] .railhint{background:var(--panel-2);color:var(--dim);
+  border-color:var(--line)}
+/* 输入框的颜色原来写在 **id 选择器**上（#task），优先级比元素选择器高，
+   所以上面那条 textarea 盖不住它 —— 暗色要单独点它的名。 */
+:root[data-theme="dark"] #task{background:var(--panel-2);color:var(--ink);
+  border-color:var(--line)}
+
+/* ═══════════════════════════════════════════════════════════════
+   ★ 内化标题栏的**拖拽区**（2026-10-28 用户：「状态分页依旧不支持鼠标操作」）
+   `titleBarStyle:'hidden'` 之后，窗口最上面那 34px 整条都是拖拽区，
+   不只是右上角那三个按钮。抽屉 `#drawer` 是 `position:fixed; top:0`，
+   它的页签和 × **正落在那条拖拽区里** ⇒ 一点就变成拖窗口。
+   脚本注入的点击（sendInputEvent）绕过原生命中测试，所以探针一直"正常"。
+   ⇒ 所有**浮层**一律标 no-drag；拖拽只由顶栏 `.bar` 自己承担。
+   ═══════════════════════════════════════════════════════════════ */
+.drawer,.lookpop,dialog,.ctxdialog,.cfgdialog,.mrow,.ctxbar,.bnfloat{
+  -webkit-app-region:no-drag}
+
+/* 暗色下的红：权限档和危险按钮都用它，#8f2f2f 在深底上对比只有 1.85（实测） */
+:root[data-theme="dark"]{--red:#e08a7a}
+
+/* 弹窗的底色：dialog 元素默认是 UA 的白色，不随变量走 */
+dialog{background:var(--panel);color:var(--ink)}
+
+/* 小字提高存在感（用户 2026-10-28）：字重 + 颜色，不靠继续缩小 */
+.cap,.pill,.cfield,.prochead,.hbnote,.memnote,.tlc,.bennisub,.railhint,.bsec{
+  font-weight:500}
+
+/* 页签的选中/悬停态原来是写死的浅蓝底（#eef0f4），暗色下变成"亮底亮字" */
+.dtab:hover{background:var(--panel-2)}
+.dtab.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+
+/* ── 双通道运行状态（2026-10-28 用户：「本我和自我哪一个真实在跑、跑了多久，
+   还是没有明显的动态指标」）
+   两条各占一行尾：自我（橘红）/ 本我（紫）。
+   在跑 = 活动点呼吸 + 秒表每秒跳；完成 = 绿点 + 总耗时；未跑 = 灰点灰字。 ── */
+.duobox{margin-left:auto;display:inline-flex;gap:12px;align-items:center}
+.duo{display:inline-flex;align-items:center;gap:5px;
+  font-size:11.5px;color:var(--dim);white-space:nowrap}
+.duo b{font-weight:500}
+.duo .dudot{width:7px;height:7px;border-radius:99px;background:#cfc6b8;flex:0 0 auto}
+.duo .dumodel{color:var(--faint);font-size:.94em;max-width:150px;
+  overflow:hidden;text-overflow:ellipsis}
+.duo .dustate{font-variant-numeric:tabular-nums}
+.duo.live .dudot{background:var(--accent);animation:breathe 1.4s ease-in-out infinite}
+.duo.live .dustate{color:var(--accent-ink)}
+.duo.done .dudot{background:var(--green)}
+.duo.benni.live .dudot{background:var(--benni)}
+.duo.benni.live .dustate{color:var(--benni)}
+@media (prefers-reduced-motion:reduce){.duo.live .dudot{animation:none}}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   字号变量化覆盖层（2026-10-28 生成）
+   上面的原规则**一字未动**（验收按原文查它们，约束"字号不能小"是对的）。
+   这一层只负责让「字号可调」对**所有**文字生效，而不只是正文 ——
+   用户实测"字号调整的范围只有很小一部分"。
+   共 226 条，由 tools/_fs_layer.py 生成，改动请改生成器别改这里。
+   ═══════════════════════════════════════════════════════════════ */
+.brand{font-size:13.500200000000001px}
+.pill{font-size:11.5px}
+/* 换模型横幅（2026-10-26）。它**不进**「过程」那一块折起来 ——
+     换模型不是一次工具调用，是"你看到的答案换了个人写的"，必须一直看得见。 */
+  .mswitch{font-size:12px}
+.mswitch .mkind{font-size:10.5px}
+.mswitch .mwhy{font-size:11px}
+.subcard .sh{font-size:12px}
+.subcard .stag{font-size:10.5px}
+.subcard .stime{font-size:11px}
+.subcard .sbtn{font-size:11px}
+.subcard .swhy{font-size:12px}
+.subcard .sres{font-size:12px}
+.subcard .sline{font-size:11.5px}
+.subcard .steerin{font-size:12px}
+.subcard .steernote{font-size:11px}
+/* 习惯开关（2026-10-26）：组一行、每条一个勾。 */
+  .hbgroup{font-size:12px}
+.hbleaf{font-size:12px}
+.hbnote{font-size:11px}
+.hbren{font-size:12px}
+.hbtn{font-size:11px}
+/* ★ 习惯区自己的按钮用**独立 class**（2026-10-26）：复用 `.tadd` 会被树那边的
+     「＋ 加一个节点」批量绑定顺手覆盖成 `_askNode(undefined)` —— 点上去毫无反应。 */
+  .hbbtn{font-size:11.5px}
+/* 档位行 + 节点勾（2026-10-26）。 */
+  .moderow{font-size:12px}
+.modebtn{font-size:11.5px}
+.modebtn .up{font-size:10px}
+.rleaf{font-size:12px}
+.rleaf.fixed{font-size:11px}
+.propose .pt{font-size:12.5px}
+.propose .pb{font-size:12px}
+.propose .pm{font-size:11px}
+.pedit{font-size:12px}
+.railhint{font-size:10.5px}
+.nphead{font-size:10.5px}
+.railpin{font-size:10.5px}
+.npbody{font-size:12.5px}
+.nt{font-size:10.5px}
+.cap{font-size:11px}
+/* 左栏底部的"这个会话做了什么"：默认收起，展开后自己滚 */
+  .sidedrawer{font-size:11.5px}
+button.tiny{font-size:11.5px}
+/* 菜单项：图标 + 文字。左栏里所有"动作"都长这样，包括新建 */
+  .sitem{font-size:13px}
+.sitem kbd{font-size:10.5px}
+.ssearch input{font-size:12px}
+.pjhead{font-size:11.5px}
+/* 「查看更多 (n)」 */
+  .smore{font-size:11.5px}
+dialog input{font-size:12px}
+.cfgttl{font-size:14px}
+.cfgnote{font-size:11.5px}
+.cfgnote code{font-size:11px}
+.cfgsub{font-size:11.5px}
+#cfgdialog label{font-size:11.5px}
+/* ── 技能分页（2026-10-26）──
+     它和执行流占同一个位置，开哪个显示哪个。做法是给 body 加 .skillmode，
+     用 CSS 决定"谁让位"，而不是把元素搬来搬去 —— 搬 DOM 会丢滚动位置和事件绑定。 */
+  .sitem .snum{font-size:10.5px}
+.sphead b{font-size:13px}
+.sptab{font-size:12.5px}
+.sptab .snum{font-size:10.5px}
+/* 外部工具那一张卡：传输方式单独一个标记，因为"它跑在哪"决定了
+     排查时该看进程还是该看网络 */
+  .mcp-tr{font-size:10.5px}
+.tk{font-size:12px}
+.tk .tkname{font-size:11.5px}
+.tk .tkd{font-size:11.5px}
+.tk .tkflag{font-size:10.5px}
+.sphint{font-size:11.5px}
+.skempty{font-size:12.5px}
+.sk-name{font-size:13px}
+.sk-lv{font-size:10.5px}
+.sk-desc{font-size:12.5px}
+.sk-meta{font-size:11px}
+.sk-body{font-size:12px}
+.spfoot{font-size:11px}
+.sess .ntx{font-size:12.5px}
+.sess .mt{font-size:11px}
+.sess .more{font-size:14px}
+.sess .more{font-size:14px}
+.sessmenu button{font-size:12px}
+.feed{font-size:13px}
+/* 头像：位置已经说明谁说的，头像只是让两边更像对话 */
+  .av{font-size:11px}
+/* ★ nowrap：时间戳被挤成竖排完全是宽度不够时逐字换行造成的，
+     而它本来就该是一行 —— 宁可省略，不要叠成一列。 */
+  .ts{font-size:10.5px}
+.reasoning{font-size:13px}
+.rhead{font-size:15px}
+.rtext{font-size:13.5px}
+.rwho{font-size:11px}
+/* 收起状态下用来区分"这是哪一轮的思考"的一句话。淡、窄、不抢标题 */
+  .rhint{font-size:12.5px}
+.thinkgroup>summary{font-size:11.5px}
+.rbody{font-size:13px}
+/* ★ 摘要字号从 15 降到 13（2026-10-27）：原来它和正文一样大（15px/26px），
+     于是一轮里"11 条工具流水"和"自我说的那句话"在视觉上是同一个层级 ——
+     用户的原话是「自我的输出直接没了，替代的是一堆流程，显得画面特别脏」。
+     过程是索引，不是正文：小一档、灰一档，主次才立得住。 */
+  .prochead{font-size:13px}
+/* 折叠体内每一步：一行，等宽小字，失败那行标红 */
+  .procrow{font-size:11.5px}
+/* 叙述行：它自己说"接下来要干什么"。
+     ★ 为什么用正文字体、比工具行大一号：工具行是**动作**（等宽、小字、次要），
+       叙述是**意图**（人先读它才知道那串动作为什么发生）。
+       两者字号一样的话，扫起来是"一行行小字"，看不出哪句在讲目的。 */
+  .procrow.narr{font-size:12.5px}
+.procrow .pms{font-size:10.5px}
+/* 改动规模：绿加红减（和 git / GitHub 一致 —— 这里是代码 diff，不是股票涨跌） */
+  .procrow .pdiff{font-size:10.5px}
+/* diff 全文：等宽、保留空白、长行横滚不折行 ——
+     折行的 diff 会把「改动的位置」弄丢，而那正是要看的东西 */
+  .procrow pre.diffpre,.procrow pre.diffload{font-size:11px}
+.procrow pre{font-size:11px}
+/* 本我跑的时候那句"本我在读这一轮的流水"就在这一类里 ——
+     11.5px/#9a9a95 太淡，人说"提示文字太小、颜色太淡"。 */
+  .line{font-size:12.5px}
+/* 结论：唯一保留一点底的 —— 它和过程要分开，不然人会以为结论也是过程的一部分 */
+  /* 「这一轮做了什么」改成一行 token —— 原来那三条列表是路径碎片 */
+  .summary{font-size:11.5px}
+/* 结束状态：一行小字，只靠颜色分好坏（不要色块） */
+  /* 14→6：它本来就紧跟在时间戳后面，14px 让它读起来像"另一件事"，
+     而它俩是同一段元信息（什么时候、多久、怎么结束的）。 */
+  .endline{font-size:11.5px}
+.askhead{font-size:11px}
+.askq{font-size:13.5px}
+.askin{font-size:12.5px}
+.askgo{font-size:12px}
+.askhint{font-size:11.5px}
+/* 旁注：小一号、灰、只有一条左边线。它不是结论，是"另一个人在旁边小声说" */
+  /* 容器铺满右边，但文字限宽 —— 旁注一行 25 字就够长了 */
+  /* 一条批注 = 一行标签 + 一句话。不留"依据"那一行 —— 那是复核的活。 */
+  /* ★ 只有**一种**批注：左边线暖褐、字 12.5px。
+     原来有两套颜色（黄=过程中、紫=收尾），用户问了两次"紫色是哪个环节的产物"——
+     同一类东西用两种颜色，就是在逼人猜。来源写在头标里（本我 · 过程中 / 本我 · 复核）。 */
+  .benninote{font-size:12.5px}
+.bnhead{font-size:10.5px}
+/* 用户：「本我思考中的提示文字也太小，颜色太淡了」——
+     11.5px / #8f8f88 在浅底上几乎看不见。 */
+  .bennihead{font-size:12.5px}
+/* ★ `bennisub` 原来**没有任何样式**（2026-10-27 看截图才发现）：
+     于是"读了一遍"和"它不能判赢，只能说…"直接粘成一句
+     「读了一遍它不能判赢」，读起来像同一句话的两个半截。
+     它属于"抬头里的说明"，该轻一档、并且隔开。 */
+  .bennisub{font-size:12px}
+.bnk{font-size:11px}
+/* 本我在跑时那行的秒表（tickBenni 每秒钟往里写） */
+  .bsec{font-size:11.5px}
+.mname{font-size:11.5px}
+/* 正文被截断的说明：**不能长得像正文**，否则人以为模型就这么说的 */
+  .truncnote{font-size:11.5px}
+/* 正在进行的思考：实时草稿。llm 事件要整轮结束才写，这块让人边想边看 */
+  .thinking{font-size:12.5px}
+/* 「×4」：同类动作合并后的次数徽标（WorkBuddy 是一组并一行） */
+  .pcount{font-size:11px}
+/* 回到底部：往上翻历史之后，别逼人手动拖回去 */
+  /* ★ bottom 从 118 抬到 172（2026-10-25）：118 正好压在输入框上方那一排控件上，
+       而「空闲 / 暂停」在最右端 —— 两个一重叠，状态就被这个悬浮按钮盖掉一半。
+       实测坐标：状态 pill x=1151 宽 41，按钮 right:34 宽约 80 ⇒ 落在 1166~1246，
+       正好盖住它右边那截。抬到控件行上方就不会打架。 */
+  .tobottom{font-size:11.5px}
+/* ★ 谁在说话（2026-10-25）：用户「正文里面直接没有本我自我的分别了，还是得在
+     输出栏里面文字分类一下的」「像图里面完全没有过渡」。
+     ★ 为什么不是画一条线：用户说过「这些边界的线条本身也是一些噪点」。
+       所以用**一个词 + 极淡的底**做标签，过渡靠留白，不靠框。 */
+  .spk{font-size:11px}
+/* Markdown 渲染后的排版 —— 数值全部来自 WorkBuddy 的 .cb-markdown：
+       p/ul/ol 用 padding-bottom:12px 拉开，margin:0（不是 margin-bottom）
+       标题统一 13px / 600，下边距 4px（它不分级调字号）
+       blockquote 是 all:unset —— 引用**没有**左边线和灰底
+       表格 1px 描边、border-collapse:separate
+       代码块底 #f2f2f2、max-height 200px 自滚
+     */
+  /* ★ 正文字号行高：14px / 21px（= 1.5）。
+     原来是 22px（1.57），再加上被 `.msg .body` 覆盖成 1.75（24.5px），
+     整段话看着"一行一行很空" —— 用户原话「say 里面行距太高了」。
+     段距也从 12px 收到 9px：段与段之间靠"空一点"就够了，
+     空太多每一段都像另起一件事，读起来是碎的。 */
+  .md{font-size:15px}
+/* ★ 标题要**比正文醒**才叫标题。WorkBuddy 是 13px/600（靠加粗区分），
+     但我们的正文已经 14.5px，13px 的标题反而更小 —— 用户：「正文的格式也该严格对齐
+     workbuddy 这种标题类文本字号和醒目处理」。⇒ 加粗 + 比正文大 + 上面留白。
+     段与段之间靠 margin 拉开，行内仍保持 22px（同段行距不变）。 */
+  .md h1{font-size:18px}
+.md h2{font-size:16.5px}
+.md h3,.md h4{font-size:15.5px}
+.md code{font-size:12.5px}
+.md table{font-size:13.5px}
+.md th{font-size:12px}
+.codebox pre{font-size:12px}
+.copybtn{font-size:10.5px}
+.cthead{font-size:10.5px}
+.ctrow{font-size:11.5px}
+.ctcheck{font-size:10.5px}
+.dshead{font-size:11.5px}
+.dslayer{font-size:10px}
+.dsrule{font-size:11.5px}
+.dswhy{font-size:10.5px}
+.dscmd{font-size:10.5px}
+/* 状态栏：模型 / 累计 token / 门禁 —— Codex 底部也有一条 */
+  .statusbar{font-size:11.5px}
+.empty{font-size:12.5px}
+/* 运行日志抽屉：默认收起。启动信息不是错误，但也不该占着执行流 */
+  .logwrap{font-size:12px}
+.logwrap summary{font-size:11.5px}
+.logwrap pre{font-size:11.5px}
+.big{font-size:18px}
+.mini{font-size:11px}
+.li{font-size:12px}
+.cmditem{font-size:12.5px}
+.cmdname{font-size:12px}
+.cmdargs{font-size:11px}
+.chip{font-size:11.5px}
+.chip .cx{font-size:14px}
+.attachnote{font-size:10.5px}
+.plus{font-size:15px}
+.mset{font-size:11.5px}
+.mfield{font-size:11.5px}
+.mfield select{font-size:11.5px}
+.mswap{font-size:13px}
+.mtiny{font-size:11.5px}
+/* ★ 上下文用量按钮（2026-10-27）：和「记忆容量」同一行、同样式 ——
+     它回答的是同一个问题（"这一句按什么预算跑"），只是给的是**答案**不是选项。
+     百分比直接写在按钮上：藏在面板里的数字，只有出事那天才会有人点开看。 */
+  .cbtn{font-size:11.5px}
+.cfgprobe button{font-size:11.5px}
+.ctxbig b{font-size:26px}
+.ctxbig span{font-size:11px}
+.ctxrow{font-size:12px}
+.ctxsub{font-size:10.5px}
+.ctxvl{font-size:11.5px}
+.limit-t{font-size:12.5px}
+.limit-note{font-size:10.5px}
+.mwarn{font-size:11px}
+.prow{font-size:11.5px}
+.prow .pm{font-size:11px}
+.prow .pk{font-size:10.5px}
+.prow .pbtn{font-size:11px}
+.cfield{font-size:11.5px}
+.cfield select{font-size:11.5px}
+.chint{font-size:11px}
+#task{font-size:13px}
+.hint{font-size:11px}
+.askfold{font-size:11.5px}
+.askqs{font-size:13px}
+.askopts button{font-size:12.5px}
+/* "或者自己输入" 这行只在有候选时才显示 */
+  .askorcust{font-size:11.5px}
+#askin{font-size:13px}
+.asknote{font-size:11.5px}
+/* "在等你回话" 的条：它替代了原来那行"结束：needs_human · N 轮" */
+  .waitbar{font-size:12.5px}
+.waitbar .reopen{font-size:12px}
+.blktag{font-size:10.5px}
+.blkwhy{font-size:12.5px}
+.blkdetail{font-size:11.5px}
+.blkmore > summary{font-size:11.5px}
+.gbtn{font-size:12px}
+.gnote{font-size:11px}
+.blkok{font-size:12px}
+/* 启动/请求失败的红条。★ 必须有：原来的失败是静默的，
+     用户看到的就是"输入发不出去"，而真实原因（找不到 Python / 服务没起）一个字都没显示 */
+  .boot{font-size:12.5px}
+.dtab{font-size:12.5px}
+.dclose{font-size:17px}
+.sctitle{font-size:11.5px}
+.srow{font-size:12.5px}
+/* 许可卡里那一小截灰字（"只这一次" / "剩 N 分钟"）：和主文字同一行，
+     但不能抢读数 —— 它是修饰，不是内容 */
+  .scdim{font-size:11px}
+.srow code{font-size:11.5px}
+.sempty{font-size:12px}
+/* 记忆树 */
+  .tsum{font-size:12px}
+.tnode>summary{font-size:12.5px}
+.tmeta{font-size:11px}
+.tleaf{font-size:12px}
+.tleaf .tlc{font-size:10.5px}
+.mtier{font-size:11px}
+.fxrow{font-size:11.5px}
+.fxform textarea{font-size:12px}
+.hbbtn.fx{font-size:10.5px}
+/* 提案的两种落点（2026-10-26）：习惯跨项目、规则只这个项目。
+     不标出来的话，"采纳"按下去人不知道它会影响到别的仓库。 */
+  .pkind{font-size:10px}
+/* 旧格式会话（2026-10-26）：小一号、灰一点，不抢标题但一眼看得见 */
+  .sess .lgc{font-size:9.5px}
+.tadd{font-size:11.5px}
+.tform input{font-size:12px}
+.tform button{font-size:11.5px}
+.ptop{font-size:12.5px}
+.pverdict{font-size:11px}
+.pwhy{font-size:11.5px}
+.pclaim{font-size:11px}
+body{font-size:14px}
+.prochead{font-size:12px}
+#in,textarea{font-size:14px}
+/* ── 空态：新用户第一眼（2026-10-27）。
+   原来只有一行 12.5px 的灰字，第一次打开像"页面没加载出来"。
+   文案一个字没改，只给它一个像样的位置与层级。 ── */
+.empty{font-size:13.5px}
+.cfield{font-size:11.5px}
+.cfield select{font-size:11.5px}
+.reasoning .rhead{font-size:12.5px}
+.reasoning .rbody{font-size:12.5px}
+.memov .mon{font-size:19px}
+.memov .mon small{font-size:12px}
+.memov .mol{font-size:11px}
+.memnote{font-size:11px}
+.hbname{font-size:12.5px}
+.hbgroup .tlc{font-size:11px}
+.hbgroup .hbbtn{font-size:11px}
+.hbleaf .tlt{font-size:12.5px}
+.hbleaf .tlc{font-size:10.5px}
+.hbleaf .hbtn{font-size:11px}
+:root[data-density="compact"] .memov .mon{font-size:17px}
+.lookpop .lrow{font-size:12.5px}
+.lookpop .lopt{font-size:12px}
+.duo{font-size:11.499600000000001px}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   字号变量化覆盖层（2026-10-28 生成）
+   上面的原规则**一字未动**（验收按原文查它们，约束"字号不能小"是对的）。
+   这一层只负责让「字号可调」对**所有**文字生效，而不只是正文 ——
+   用户实测"字号调整的范围只有很小一部分"。
+   共 452 条，由 tools/_fs_layer.py 生成，改动请改生成器别改这里。
+   ═══════════════════════════════════════════════════════════════ */
+.brand{font-size:calc(var(--fs,14px) * 0.9643)}
+.pill{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 换模型横幅（2026-10-26）。它**不进**「过程」那一块折起来 ——
+     换模型不是一次工具调用，是"你看到的答案换了个人写的"，必须一直看得见。 */
+  .mswitch{font-size:calc(var(--fs,14px) * 0.8571)}
+.mswitch .mkind{font-size:calc(var(--fs,14px) * 0.7500)}
+.mswitch .mwhy{font-size:calc(var(--fs,14px) * 0.7857)}
+.subcard .sh{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .stag{font-size:calc(var(--fs,14px) * 0.7500)}
+.subcard .stime{font-size:calc(var(--fs,14px) * 0.7857)}
+.subcard .sbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+.subcard .swhy{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .sres{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .sline{font-size:calc(var(--fs,14px) * 0.8214)}
+.subcard .steerin{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .steernote{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 习惯开关（2026-10-26）：组一行、每条一个勾。 */
+  .hbgroup{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbleaf{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbnote{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbren{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+/* ★ 习惯区自己的按钮用**独立 class**（2026-10-26）：复用 `.tadd` 会被树那边的
+     「＋ 加一个节点」批量绑定顺手覆盖成 `_askNode(undefined)` —— 点上去毫无反应。 */
+  .hbbtn{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 档位行 + 节点勾（2026-10-26）。 */
+  .moderow{font-size:calc(var(--fs,14px) * 0.8571)}
+.modebtn{font-size:calc(var(--fs,14px) * 0.8214)}
+.modebtn .up{font-size:calc(var(--fs,14px) * 0.7143)}
+.rleaf{font-size:calc(var(--fs,14px) * 0.8571)}
+.rleaf.fixed{font-size:calc(var(--fs,14px) * 0.7857)}
+.propose .pt{font-size:calc(var(--fs,14px) * 0.8929)}
+.propose .pb{font-size:calc(var(--fs,14px) * 0.8571)}
+.propose .pm{font-size:calc(var(--fs,14px) * 0.7857)}
+.pedit{font-size:calc(var(--fs,14px) * 0.8571)}
+.railhint{font-size:calc(var(--fs,14px) * 0.7500)}
+.nphead{font-size:calc(var(--fs,14px) * 0.7500)}
+.railpin{font-size:calc(var(--fs,14px) * 0.7500)}
+.npbody{font-size:calc(var(--fs,14px) * 0.8929)}
+.nt{font-size:calc(var(--fs,14px) * 0.7500)}
+.cap{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 左栏底部的"这个会话做了什么"：默认收起，展开后自己滚 */
+  .sidedrawer{font-size:calc(var(--fs,14px) * 0.8214)}
+button.tiny{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 菜单项：图标 + 文字。左栏里所有"动作"都长这样，包括新建 */
+  .sitem{font-size:calc(var(--fs,14px) * 0.9286)}
+.sitem kbd{font-size:calc(var(--fs,14px) * 0.7500)}
+.ssearch input{font-size:calc(var(--fs,14px) * 0.8571)}
+.pjhead{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 「查看更多 (n)」 */
+  .smore{font-size:calc(var(--fs,14px) * 0.8214)}
+dialog input{font-size:calc(var(--fs,14px) * 0.8571)}
+.cfgttl{font-size:calc(var(--fs,14px) * 1.0000)}
+.cfgnote{font-size:calc(var(--fs,14px) * 0.8214)}
+.cfgnote code{font-size:calc(var(--fs,14px) * 0.7857)}
+.cfgsub{font-size:calc(var(--fs,14px) * 0.8214)}
+#cfgdialog label{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ── 技能分页（2026-10-26）──
+     它和执行流占同一个位置，开哪个显示哪个。做法是给 body 加 .skillmode，
+     用 CSS 决定"谁让位"，而不是把元素搬来搬去 —— 搬 DOM 会丢滚动位置和事件绑定。 */
+  .sitem .snum{font-size:calc(var(--fs,14px) * 0.7500)}
+.sphead b{font-size:calc(var(--fs,14px) * 0.9286)}
+.sptab{font-size:calc(var(--fs,14px) * 0.8929)}
+.sptab .snum{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 外部工具那一张卡：传输方式单独一个标记，因为"它跑在哪"决定了
+     排查时该看进程还是该看网络 */
+  .mcp-tr{font-size:calc(var(--fs,14px) * 0.7500)}
+.tk{font-size:calc(var(--fs,14px) * 0.8571)}
+.tk .tkname{font-size:calc(var(--fs,14px) * 0.8214)}
+.tk .tkd{font-size:calc(var(--fs,14px) * 0.8214)}
+.tk .tkflag{font-size:calc(var(--fs,14px) * 0.7500)}
+.sphint{font-size:calc(var(--fs,14px) * 0.8214)}
+.skempty{font-size:calc(var(--fs,14px) * 0.8929)}
+.sk-name{font-size:calc(var(--fs,14px) * 0.9286)}
+.sk-lv{font-size:calc(var(--fs,14px) * 0.7500)}
+.sk-desc{font-size:calc(var(--fs,14px) * 0.8929)}
+.sk-meta{font-size:calc(var(--fs,14px) * 0.7857)}
+.sk-body{font-size:calc(var(--fs,14px) * 0.8571)}
+.spfoot{font-size:calc(var(--fs,14px) * 0.7857)}
+.sess .ntx{font-size:calc(var(--fs,14px) * 0.8929)}
+.sess .mt{font-size:calc(var(--fs,14px) * 0.7857)}
+.sess .more{font-size:calc(var(--fs,14px) * 1.0000)}
+.sess .more{font-size:calc(var(--fs,14px) * 1.0000)}
+.sessmenu button{font-size:calc(var(--fs,14px) * 0.8571)}
+.feed{font-size:calc(var(--fs,14px) * 0.9286)}
+/* 头像：位置已经说明谁说的，头像只是让两边更像对话 */
+  .av{font-size:calc(var(--fs,14px) * 0.7857)}
+/* ★ nowrap：时间戳被挤成竖排完全是宽度不够时逐字换行造成的，
+     而它本来就该是一行 —— 宁可省略，不要叠成一列。 */
+  .ts{font-size:calc(var(--fs,14px) * 0.7500)}
+.reasoning{font-size:calc(var(--fs,14px) * 0.9286)}
+.rhead{font-size:calc(var(--fs,14px) * 1.0714)}
+.rtext{font-size:calc(var(--fs,14px) * 0.9643)}
+.rwho{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 收起状态下用来区分"这是哪一轮的思考"的一句话。淡、窄、不抢标题 */
+  .rhint{font-size:calc(var(--fs,14px) * 0.8929)}
+.thinkgroup>summary{font-size:calc(var(--fs,14px) * 0.8214)}
+.rbody{font-size:calc(var(--fs,14px) * 0.9286)}
+/* ★ 摘要字号从 15 降到 13（2026-10-27）：原来它和正文一样大（15px/26px），
+     于是一轮里"11 条工具流水"和"自我说的那句话"在视觉上是同一个层级 ——
+     用户的原话是「自我的输出直接没了，替代的是一堆流程，显得画面特别脏」。
+     过程是索引，不是正文：小一档、灰一档，主次才立得住。 */
+  .prochead{font-size:calc(var(--fs,14px) * 0.9286)}
+/* 折叠体内每一步：一行，等宽小字，失败那行标红 */
+  .procrow{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 叙述行：它自己说"接下来要干什么"。
+     ★ 为什么用正文字体、比工具行大一号：工具行是**动作**（等宽、小字、次要），
+       叙述是**意图**（人先读它才知道那串动作为什么发生）。
+       两者字号一样的话，扫起来是"一行行小字"，看不出哪句在讲目的。 */
+  .procrow.narr{font-size:calc(var(--fs,14px) * 0.8929)}
+.procrow .pms{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 改动规模：绿加红减（和 git / GitHub 一致 —— 这里是代码 diff，不是股票涨跌） */
+  .procrow .pdiff{font-size:calc(var(--fs,14px) * 0.7500)}
+/* diff 全文：等宽、保留空白、长行横滚不折行 ——
+     折行的 diff 会把「改动的位置」弄丢，而那正是要看的东西 */
+  .procrow pre.diffpre,.procrow pre.diffload{font-size:calc(var(--fs,14px) * 0.7857)}
+.procrow pre{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 本我跑的时候那句"本我在读这一轮的流水"就在这一类里 ——
+     11.5px/#9a9a95 太淡，人说"提示文字太小、颜色太淡"。 */
+  .line{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 结论：唯一保留一点底的 —— 它和过程要分开，不然人会以为结论也是过程的一部分 */
+  /* 「这一轮做了什么」改成一行 token —— 原来那三条列表是路径碎片 */
+  .summary{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 结束状态：一行小字，只靠颜色分好坏（不要色块） */
+  /* 14→6：它本来就紧跟在时间戳后面，14px 让它读起来像"另一件事"，
+     而它俩是同一段元信息（什么时候、多久、怎么结束的）。 */
+  .endline{font-size:calc(var(--fs,14px) * 0.8214)}
+.askhead{font-size:calc(var(--fs,14px) * 0.7857)}
+.askq{font-size:calc(var(--fs,14px) * 0.9643)}
+.askin{font-size:calc(var(--fs,14px) * 0.8929)}
+.askgo{font-size:calc(var(--fs,14px) * 0.8571)}
+.askhint{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 旁注：小一号、灰、只有一条左边线。它不是结论，是"另一个人在旁边小声说" */
+  /* 容器铺满右边，但文字限宽 —— 旁注一行 25 字就够长了 */
+  /* 一条批注 = 一行标签 + 一句话。不留"依据"那一行 —— 那是复核的活。 */
+  /* ★ 只有**一种**批注：左边线暖褐、字 12.5px。
+     原来有两套颜色（黄=过程中、紫=收尾），用户问了两次"紫色是哪个环节的产物"——
+     同一类东西用两种颜色，就是在逼人猜。来源写在头标里（本我 · 过程中 / 本我 · 复核）。 */
+  .benninote{font-size:calc(var(--fs,14px) * 0.8929)}
+.bnhead{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 用户：「本我思考中的提示文字也太小，颜色太淡了」——
+     11.5px / #8f8f88 在浅底上几乎看不见。 */
+  .bennihead{font-size:calc(var(--fs,14px) * 0.8929)}
+/* ★ `bennisub` 原来**没有任何样式**（2026-10-27 看截图才发现）：
+     于是"读了一遍"和"它不能判赢，只能说…"直接粘成一句
+     「读了一遍它不能判赢」，读起来像同一句话的两个半截。
+     它属于"抬头里的说明"，该轻一档、并且隔开。 */
+  .bennisub{font-size:calc(var(--fs,14px) * 0.8571)}
+.bnk{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 本我在跑时那行的秒表（tickBenni 每秒钟往里写） */
+  .bsec{font-size:calc(var(--fs,14px) * 0.8214)}
+.mname{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 正文被截断的说明：**不能长得像正文**，否则人以为模型就这么说的 */
+  .truncnote{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 正在进行的思考：实时草稿。llm 事件要整轮结束才写，这块让人边想边看 */
+  .thinking{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 「×4」：同类动作合并后的次数徽标（WorkBuddy 是一组并一行） */
+  .pcount{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 回到底部：往上翻历史之后，别逼人手动拖回去 */
+  /* ★ bottom 从 118 抬到 172（2026-10-25）：118 正好压在输入框上方那一排控件上，
+       而「空闲 / 暂停」在最右端 —— 两个一重叠，状态就被这个悬浮按钮盖掉一半。
+       实测坐标：状态 pill x=1151 宽 41，按钮 right:34 宽约 80 ⇒ 落在 1166~1246，
+       正好盖住它右边那截。抬到控件行上方就不会打架。 */
+  .tobottom{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ★ 谁在说话（2026-10-25）：用户「正文里面直接没有本我自我的分别了，还是得在
+     输出栏里面文字分类一下的」「像图里面完全没有过渡」。
+     ★ 为什么不是画一条线：用户说过「这些边界的线条本身也是一些噪点」。
+       所以用**一个词 + 极淡的底**做标签，过渡靠留白，不靠框。 */
+  .spk{font-size:calc(var(--fs,14px) * 0.7857)}
+/* Markdown 渲染后的排版 —— 数值全部来自 WorkBuddy 的 .cb-markdown：
+       p/ul/ol 用 padding-bottom:12px 拉开，margin:0（不是 margin-bottom）
+       标题统一 13px / 600，下边距 4px（它不分级调字号）
+       blockquote 是 all:unset —— 引用**没有**左边线和灰底
+       表格 1px 描边、border-collapse:separate
+       代码块底 #f2f2f2、max-height 200px 自滚
+     */
+  /* ★ 正文字号行高：14px / 21px（= 1.5）。
+     原来是 22px（1.57），再加上被 `.msg .body` 覆盖成 1.75（24.5px），
+     整段话看着"一行一行很空" —— 用户原话「say 里面行距太高了」。
+     段距也从 12px 收到 9px：段与段之间靠"空一点"就够了，
+     空太多每一段都像另起一件事，读起来是碎的。 */
+  .md{font-size:calc(var(--fs,14px) * 1.0714)}
+/* ★ 标题要**比正文醒**才叫标题。WorkBuddy 是 13px/600（靠加粗区分），
+     但我们的正文已经 14.5px，13px 的标题反而更小 —— 用户：「正文的格式也该严格对齐
+     workbuddy 这种标题类文本字号和醒目处理」。⇒ 加粗 + 比正文大 + 上面留白。
+     段与段之间靠 margin 拉开，行内仍保持 22px（同段行距不变）。 */
+  .md h1{font-size:calc(var(--fs,14px) * 1.2857)}
+.md h2{font-size:calc(var(--fs,14px) * 1.1786)}
+.md h3,.md h4{font-size:calc(var(--fs,14px) * 1.1071)}
+.md code{font-size:calc(var(--fs,14px) * 0.8929)}
+.md table{font-size:calc(var(--fs,14px) * 0.9643)}
+.md th{font-size:calc(var(--fs,14px) * 0.8571)}
+.codebox pre{font-size:calc(var(--fs,14px) * 0.8571)}
+.copybtn{font-size:calc(var(--fs,14px) * 0.7500)}
+.cthead{font-size:calc(var(--fs,14px) * 0.7500)}
+.ctrow{font-size:calc(var(--fs,14px) * 0.8214)}
+.ctcheck{font-size:calc(var(--fs,14px) * 0.7500)}
+.dshead{font-size:calc(var(--fs,14px) * 0.8214)}
+.dslayer{font-size:calc(var(--fs,14px) * 0.7143)}
+.dsrule{font-size:calc(var(--fs,14px) * 0.8214)}
+.dswhy{font-size:calc(var(--fs,14px) * 0.7500)}
+.dscmd{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 状态栏：模型 / 累计 token / 门禁 —— Codex 底部也有一条 */
+  .statusbar{font-size:calc(var(--fs,14px) * 0.8214)}
+.empty{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 运行日志抽屉：默认收起。启动信息不是错误，但也不该占着执行流 */
+  .logwrap{font-size:calc(var(--fs,14px) * 0.8571)}
+.logwrap summary{font-size:calc(var(--fs,14px) * 0.8214)}
+.logwrap pre{font-size:calc(var(--fs,14px) * 0.8214)}
+.big{font-size:calc(var(--fs,14px) * 1.2857)}
+.mini{font-size:calc(var(--fs,14px) * 0.7857)}
+.li{font-size:calc(var(--fs,14px) * 0.8571)}
+.cmditem{font-size:calc(var(--fs,14px) * 0.8929)}
+.cmdname{font-size:calc(var(--fs,14px) * 0.8571)}
+.cmdargs{font-size:calc(var(--fs,14px) * 0.7857)}
+.chip{font-size:calc(var(--fs,14px) * 0.8214)}
+.chip .cx{font-size:calc(var(--fs,14px) * 1.0000)}
+.attachnote{font-size:calc(var(--fs,14px) * 0.7500)}
+.plus{font-size:calc(var(--fs,14px) * 1.0714)}
+.mset{font-size:calc(var(--fs,14px) * 0.8214)}
+.mfield{font-size:calc(var(--fs,14px) * 0.8214)}
+.mfield select{font-size:calc(var(--fs,14px) * 0.8214)}
+.mswap{font-size:calc(var(--fs,14px) * 0.9286)}
+.mtiny{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ★ 上下文用量按钮（2026-10-27）：和「记忆容量」同一行、同样式 ——
+     它回答的是同一个问题（"这一句按什么预算跑"），只是给的是**答案**不是选项。
+     百分比直接写在按钮上：藏在面板里的数字，只有出事那天才会有人点开看。 */
+  .cbtn{font-size:calc(var(--fs,14px) * 0.8214)}
+.cfgprobe button{font-size:calc(var(--fs,14px) * 0.8214)}
+.ctxbig b{font-size:calc(var(--fs,14px) * 1.8571)}
+.ctxbig span{font-size:calc(var(--fs,14px) * 0.7857)}
+.ctxrow{font-size:calc(var(--fs,14px) * 0.8571)}
+.ctxsub{font-size:calc(var(--fs,14px) * 0.7500)}
+.ctxvl{font-size:calc(var(--fs,14px) * 0.8214)}
+.limit-t{font-size:calc(var(--fs,14px) * 0.8929)}
+.limit-note{font-size:calc(var(--fs,14px) * 0.7500)}
+.mwarn{font-size:calc(var(--fs,14px) * 0.7857)}
+.prow{font-size:calc(var(--fs,14px) * 0.8214)}
+.prow .pm{font-size:calc(var(--fs,14px) * 0.7857)}
+.prow .pk{font-size:calc(var(--fs,14px) * 0.7500)}
+.prow .pbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+.cfield{font-size:calc(var(--fs,14px) * 0.8214)}
+.cfield select{font-size:calc(var(--fs,14px) * 0.8214)}
+.chint{font-size:calc(var(--fs,14px) * 0.7857)}
+#task{font-size:calc(var(--fs,14px) * 0.9286)}
+.hint{font-size:calc(var(--fs,14px) * 0.7857)}
+.askfold{font-size:calc(var(--fs,14px) * 0.8214)}
+.askqs{font-size:calc(var(--fs,14px) * 0.9286)}
+.askopts button{font-size:calc(var(--fs,14px) * 0.8929)}
+/* "或者自己输入" 这行只在有候选时才显示 */
+  .askorcust{font-size:calc(var(--fs,14px) * 0.8214)}
+#askin{font-size:calc(var(--fs,14px) * 0.9286)}
+.asknote{font-size:calc(var(--fs,14px) * 0.8214)}
+/* "在等你回话" 的条：它替代了原来那行"结束：needs_human · N 轮" */
+  .waitbar{font-size:calc(var(--fs,14px) * 0.8929)}
+.waitbar .reopen{font-size:calc(var(--fs,14px) * 0.8571)}
+.blktag{font-size:calc(var(--fs,14px) * 0.7500)}
+.blkwhy{font-size:calc(var(--fs,14px) * 0.8929)}
+.blkdetail{font-size:calc(var(--fs,14px) * 0.8214)}
+.blkmore > summary{font-size:calc(var(--fs,14px) * 0.8214)}
+.gbtn{font-size:calc(var(--fs,14px) * 0.8571)}
+.gnote{font-size:calc(var(--fs,14px) * 0.7857)}
+.blkok{font-size:calc(var(--fs,14px) * 0.8571)}
+/* 启动/请求失败的红条。★ 必须有：原来的失败是静默的，
+     用户看到的就是"输入发不出去"，而真实原因（找不到 Python / 服务没起）一个字都没显示 */
+  .boot{font-size:calc(var(--fs,14px) * 0.8929)}
+.dtab{font-size:calc(var(--fs,14px) * 0.8929)}
+.dclose{font-size:calc(var(--fs,14px) * 1.2143)}
+.sctitle{font-size:calc(var(--fs,14px) * 0.8214)}
+.srow{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 许可卡里那一小截灰字（"只这一次" / "剩 N 分钟"）：和主文字同一行，
+     但不能抢读数 —— 它是修饰，不是内容 */
+  .scdim{font-size:calc(var(--fs,14px) * 0.7857)}
+.srow code{font-size:calc(var(--fs,14px) * 0.8214)}
+.sempty{font-size:calc(var(--fs,14px) * 0.8571)}
+/* 记忆树 */
+  .tsum{font-size:calc(var(--fs,14px) * 0.8571)}
+.tnode>summary{font-size:calc(var(--fs,14px) * 0.8929)}
+.tmeta{font-size:calc(var(--fs,14px) * 0.7857)}
+.tleaf{font-size:calc(var(--fs,14px) * 0.8571)}
+.tleaf .tlc{font-size:calc(var(--fs,14px) * 0.7500)}
+.mtier{font-size:calc(var(--fs,14px) * 0.7857)}
+.fxrow{font-size:calc(var(--fs,14px) * 0.8214)}
+.fxform textarea{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbbtn.fx{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 提案的两种落点（2026-10-26）：习惯跨项目、规则只这个项目。
+     不标出来的话，"采纳"按下去人不知道它会影响到别的仓库。 */
+  .pkind{font-size:calc(var(--fs,14px) * 0.7143)}
+/* 旧格式会话（2026-10-26）：小一号、灰一点，不抢标题但一眼看得见 */
+  .sess .lgc{font-size:calc(var(--fs,14px) * 0.6786)}
+.tadd{font-size:calc(var(--fs,14px) * 0.8214)}
+.tform input{font-size:calc(var(--fs,14px) * 0.8571)}
+.tform button{font-size:calc(var(--fs,14px) * 0.8214)}
+.ptop{font-size:calc(var(--fs,14px) * 0.8929)}
+.pverdict{font-size:calc(var(--fs,14px) * 0.7857)}
+.pwhy{font-size:calc(var(--fs,14px) * 0.8214)}
+.pclaim{font-size:calc(var(--fs,14px) * 0.7857)}
+body{font-size:calc(var(--fs,14px) * 1.0000)}
+.prochead{font-size:calc(var(--fs,14px) * 0.8571)}
+#in,textarea{font-size:calc(var(--fs,14px) * 1.0000)}
+/* ── 空态：新用户第一眼（2026-10-27）。
+   原来只有一行 12.5px 的灰字，第一次打开像"页面没加载出来"。
+   文案一个字没改，只给它一个像样的位置与层级。 ── */
+.empty{font-size:calc(var(--fs,14px) * 0.9643)}
+.cfield{font-size:calc(var(--fs,14px) * 0.8571)}
+.cfield select{font-size:calc(var(--fs,14px) * 0.8571)}
+.reasoning .rhead{font-size:calc(var(--fs,14px) * 0.8929)}
+.reasoning .rbody{font-size:calc(var(--fs,14px) * 0.8929)}
+.memov .mon{font-size:calc(var(--fs,14px) * 1.3571)}
+.memov .mon small{font-size:calc(var(--fs,14px) * 0.8571)}
+.memov .mol{font-size:calc(var(--fs,14px) * 0.7857)}
+.memnote{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbname{font-size:calc(var(--fs,14px) * 0.8929)}
+.hbgroup .tlc{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbgroup .hbbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbleaf .tlt{font-size:calc(var(--fs,14px) * 0.8929)}
+.hbleaf .tlc{font-size:calc(var(--fs,14px) * 0.7500)}
+.hbleaf .hbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+:root[data-density="compact"] .memov .mon{font-size:calc(var(--fs,14px) * 1.2143)}
+.lookpop .lrow{font-size:calc(var(--fs,14px) * 0.8929)}
+.lookpop .lopt{font-size:calc(var(--fs,14px) * 0.8571)}
+.duo{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ═══════════════════════════════════════════════════════════════
+   字号变量化覆盖层（2026-10-28 生成）
+   上面的原规则**一字未动**（验收按原文查它们，约束"字号不能小"是对的）。
+   这一层只负责让「字号可调」对**所有**文字生效，而不只是正文 ——
+   用户实测"字号调整的范围只有很小一部分"。
+   共 226 条，由 tools/_fs_layer.py 生成，改动请改生成器别改这里。
+   ═══════════════════════════════════════════════════════════════ */
+.brand{font-size:calc(var(--fs,14px) * 0.9643)}
+.pill{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 换模型横幅（2026-10-26）。它**不进**「过程」那一块折起来 ——
+     换模型不是一次工具调用，是"你看到的答案换了个人写的"，必须一直看得见。 */
+  .mswitch{font-size:calc(var(--fs,14px) * 0.8571)}
+.mswitch .mkind{font-size:calc(var(--fs,14px) * 0.7500)}
+.mswitch .mwhy{font-size:calc(var(--fs,14px) * 0.7857)}
+.subcard .sh{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .stag{font-size:calc(var(--fs,14px) * 0.7500)}
+.subcard .stime{font-size:calc(var(--fs,14px) * 0.7857)}
+.subcard .sbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+.subcard .swhy{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .sres{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .sline{font-size:calc(var(--fs,14px) * 0.8214)}
+.subcard .steerin{font-size:calc(var(--fs,14px) * 0.8571)}
+.subcard .steernote{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 习惯开关（2026-10-26）：组一行、每条一个勾。 */
+  .hbgroup{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbleaf{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbnote{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbren{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+/* ★ 习惯区自己的按钮用**独立 class**（2026-10-26）：复用 `.tadd` 会被树那边的
+     「＋ 加一个节点」批量绑定顺手覆盖成 `_askNode(undefined)` —— 点上去毫无反应。 */
+  .hbbtn{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 档位行 + 节点勾（2026-10-26）。 */
+  .moderow{font-size:calc(var(--fs,14px) * 0.8571)}
+.modebtn{font-size:calc(var(--fs,14px) * 0.8214)}
+.modebtn .up{font-size:calc(var(--fs,14px) * 0.7143)}
+.rleaf{font-size:calc(var(--fs,14px) * 0.8571)}
+.rleaf.fixed{font-size:calc(var(--fs,14px) * 0.7857)}
+.propose .pt{font-size:calc(var(--fs,14px) * 0.8929)}
+.propose .pb{font-size:calc(var(--fs,14px) * 0.8571)}
+.propose .pm{font-size:calc(var(--fs,14px) * 0.7857)}
+.pedit{font-size:calc(var(--fs,14px) * 0.8571)}
+.railhint{font-size:calc(var(--fs,14px) * 0.7500)}
+.nphead{font-size:calc(var(--fs,14px) * 0.7500)}
+.railpin{font-size:calc(var(--fs,14px) * 0.7500)}
+.npbody{font-size:calc(var(--fs,14px) * 0.8929)}
+.nt{font-size:calc(var(--fs,14px) * 0.7500)}
+.cap{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 左栏底部的"这个会话做了什么"：默认收起，展开后自己滚 */
+  .sidedrawer{font-size:calc(var(--fs,14px) * 0.8214)}
+button.tiny{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 菜单项：图标 + 文字。左栏里所有"动作"都长这样，包括新建 */
+  .sitem{font-size:calc(var(--fs,14px) * 0.9286)}
+.sitem kbd{font-size:calc(var(--fs,14px) * 0.7500)}
+.ssearch input{font-size:calc(var(--fs,14px) * 0.8571)}
+.pjhead{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 「查看更多 (n)」 */
+  .smore{font-size:calc(var(--fs,14px) * 0.8214)}
+dialog input{font-size:calc(var(--fs,14px) * 0.8571)}
+.cfgttl{font-size:calc(var(--fs,14px) * 1.0000)}
+.cfgnote{font-size:calc(var(--fs,14px) * 0.8214)}
+.cfgnote code{font-size:calc(var(--fs,14px) * 0.7857)}
+.cfgsub{font-size:calc(var(--fs,14px) * 0.8214)}
+#cfgdialog label{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ── 技能分页（2026-10-26）──
+     它和执行流占同一个位置，开哪个显示哪个。做法是给 body 加 .skillmode，
+     用 CSS 决定"谁让位"，而不是把元素搬来搬去 —— 搬 DOM 会丢滚动位置和事件绑定。 */
+  .sitem .snum{font-size:calc(var(--fs,14px) * 0.7500)}
+.sphead b{font-size:calc(var(--fs,14px) * 0.9286)}
+.sptab{font-size:calc(var(--fs,14px) * 0.8929)}
+.sptab .snum{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 外部工具那一张卡：传输方式单独一个标记，因为"它跑在哪"决定了
+     排查时该看进程还是该看网络 */
+  .mcp-tr{font-size:calc(var(--fs,14px) * 0.7500)}
+.tk{font-size:calc(var(--fs,14px) * 0.8571)}
+.tk .tkname{font-size:calc(var(--fs,14px) * 0.8214)}
+.tk .tkd{font-size:calc(var(--fs,14px) * 0.8214)}
+.tk .tkflag{font-size:calc(var(--fs,14px) * 0.7500)}
+.sphint{font-size:calc(var(--fs,14px) * 0.8214)}
+.skempty{font-size:calc(var(--fs,14px) * 0.8929)}
+.sk-name{font-size:calc(var(--fs,14px) * 0.9286)}
+.sk-lv{font-size:calc(var(--fs,14px) * 0.7500)}
+.sk-desc{font-size:calc(var(--fs,14px) * 0.8929)}
+.sk-meta{font-size:calc(var(--fs,14px) * 0.7857)}
+.sk-body{font-size:calc(var(--fs,14px) * 0.8571)}
+.spfoot{font-size:calc(var(--fs,14px) * 0.7857)}
+.sess .ntx{font-size:calc(var(--fs,14px) * 0.8929)}
+.sess .mt{font-size:calc(var(--fs,14px) * 0.7857)}
+.sess .more{font-size:calc(var(--fs,14px) * 1.0000)}
+.sess .more{font-size:calc(var(--fs,14px) * 1.0000)}
+.sessmenu button{font-size:calc(var(--fs,14px) * 0.8571)}
+.feed{font-size:calc(var(--fs,14px) * 0.9286)}
+/* 头像：位置已经说明谁说的，头像只是让两边更像对话 */
+  .av{font-size:calc(var(--fs,14px) * 0.7857)}
+/* ★ nowrap：时间戳被挤成竖排完全是宽度不够时逐字换行造成的，
+     而它本来就该是一行 —— 宁可省略，不要叠成一列。 */
+  .ts{font-size:calc(var(--fs,14px) * 0.7500)}
+.reasoning{font-size:calc(var(--fs,14px) * 0.9286)}
+.rhead{font-size:calc(var(--fs,14px) * 1.0714)}
+.rtext{font-size:calc(var(--fs,14px) * 0.9643)}
+.rwho{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 收起状态下用来区分"这是哪一轮的思考"的一句话。淡、窄、不抢标题 */
+  .rhint{font-size:calc(var(--fs,14px) * 0.8929)}
+.thinkgroup>summary{font-size:calc(var(--fs,14px) * 0.8214)}
+.rbody{font-size:calc(var(--fs,14px) * 0.9286)}
+/* ★ 摘要字号从 15 降到 13（2026-10-27）：原来它和正文一样大（15px/26px），
+     于是一轮里"11 条工具流水"和"自我说的那句话"在视觉上是同一个层级 ——
+     用户的原话是「自我的输出直接没了，替代的是一堆流程，显得画面特别脏」。
+     过程是索引，不是正文：小一档、灰一档，主次才立得住。 */
+  .prochead{font-size:calc(var(--fs,14px) * 0.9286)}
+/* 折叠体内每一步：一行，等宽小字，失败那行标红 */
+  .procrow{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 叙述行：它自己说"接下来要干什么"。
+     ★ 为什么用正文字体、比工具行大一号：工具行是**动作**（等宽、小字、次要），
+       叙述是**意图**（人先读它才知道那串动作为什么发生）。
+       两者字号一样的话，扫起来是"一行行小字"，看不出哪句在讲目的。 */
+  .procrow.narr{font-size:calc(var(--fs,14px) * 0.8929)}
+.procrow .pms{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 改动规模：绿加红减（和 git / GitHub 一致 —— 这里是代码 diff，不是股票涨跌） */
+  .procrow .pdiff{font-size:calc(var(--fs,14px) * 0.7500)}
+/* diff 全文：等宽、保留空白、长行横滚不折行 ——
+     折行的 diff 会把「改动的位置」弄丢，而那正是要看的东西 */
+  .procrow pre.diffpre,.procrow pre.diffload{font-size:calc(var(--fs,14px) * 0.7857)}
+.procrow pre{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 本我跑的时候那句"本我在读这一轮的流水"就在这一类里 ——
+     11.5px/#9a9a95 太淡，人说"提示文字太小、颜色太淡"。 */
+  .line{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 结论：唯一保留一点底的 —— 它和过程要分开，不然人会以为结论也是过程的一部分 */
+  /* 「这一轮做了什么」改成一行 token —— 原来那三条列表是路径碎片 */
+  .summary{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 结束状态：一行小字，只靠颜色分好坏（不要色块） */
+  /* 14→6：它本来就紧跟在时间戳后面，14px 让它读起来像"另一件事"，
+     而它俩是同一段元信息（什么时候、多久、怎么结束的）。 */
+  .endline{font-size:calc(var(--fs,14px) * 0.8214)}
+.askhead{font-size:calc(var(--fs,14px) * 0.7857)}
+.askq{font-size:calc(var(--fs,14px) * 0.9643)}
+.askin{font-size:calc(var(--fs,14px) * 0.8929)}
+.askgo{font-size:calc(var(--fs,14px) * 0.8571)}
+.askhint{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 旁注：小一号、灰、只有一条左边线。它不是结论，是"另一个人在旁边小声说" */
+  /* 容器铺满右边，但文字限宽 —— 旁注一行 25 字就够长了 */
+  /* 一条批注 = 一行标签 + 一句话。不留"依据"那一行 —— 那是复核的活。 */
+  /* ★ 只有**一种**批注：左边线暖褐、字 12.5px。
+     原来有两套颜色（黄=过程中、紫=收尾），用户问了两次"紫色是哪个环节的产物"——
+     同一类东西用两种颜色，就是在逼人猜。来源写在头标里（本我 · 过程中 / 本我 · 复核）。 */
+  .benninote{font-size:calc(var(--fs,14px) * 0.8929)}
+.bnhead{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 用户：「本我思考中的提示文字也太小，颜色太淡了」——
+     11.5px / #8f8f88 在浅底上几乎看不见。 */
+  .bennihead{font-size:calc(var(--fs,14px) * 0.8929)}
+/* ★ `bennisub` 原来**没有任何样式**（2026-10-27 看截图才发现）：
+     于是"读了一遍"和"它不能判赢，只能说…"直接粘成一句
+     「读了一遍它不能判赢」，读起来像同一句话的两个半截。
+     它属于"抬头里的说明"，该轻一档、并且隔开。 */
+  .bennisub{font-size:calc(var(--fs,14px) * 0.8571)}
+.bnk{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 本我在跑时那行的秒表（tickBenni 每秒钟往里写） */
+  .bsec{font-size:calc(var(--fs,14px) * 0.8214)}
+.mname{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 正文被截断的说明：**不能长得像正文**，否则人以为模型就这么说的 */
+  .truncnote{font-size:calc(var(--fs,14px) * 0.8214)}
+/* 正在进行的思考：实时草稿。llm 事件要整轮结束才写，这块让人边想边看 */
+  .thinking{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 「×4」：同类动作合并后的次数徽标（WorkBuddy 是一组并一行） */
+  .pcount{font-size:calc(var(--fs,14px) * 0.7857)}
+/* 回到底部：往上翻历史之后，别逼人手动拖回去 */
+  /* ★ bottom 从 118 抬到 172（2026-10-25）：118 正好压在输入框上方那一排控件上，
+       而「空闲 / 暂停」在最右端 —— 两个一重叠，状态就被这个悬浮按钮盖掉一半。
+       实测坐标：状态 pill x=1151 宽 41，按钮 right:34 宽约 80 ⇒ 落在 1166~1246，
+       正好盖住它右边那截。抬到控件行上方就不会打架。 */
+  .tobottom{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ★ 谁在说话（2026-10-25）：用户「正文里面直接没有本我自我的分别了，还是得在
+     输出栏里面文字分类一下的」「像图里面完全没有过渡」。
+     ★ 为什么不是画一条线：用户说过「这些边界的线条本身也是一些噪点」。
+       所以用**一个词 + 极淡的底**做标签，过渡靠留白，不靠框。 */
+  .spk{font-size:calc(var(--fs,14px) * 0.7857)}
+/* Markdown 渲染后的排版 —— 数值全部来自 WorkBuddy 的 .cb-markdown：
+       p/ul/ol 用 padding-bottom:12px 拉开，margin:0（不是 margin-bottom）
+       标题统一 13px / 600，下边距 4px（它不分级调字号）
+       blockquote 是 all:unset —— 引用**没有**左边线和灰底
+       表格 1px 描边、border-collapse:separate
+       代码块底 #f2f2f2、max-height 200px 自滚
+     */
+  /* ★ 正文字号行高：14px / 21px（= 1.5）。
+     原来是 22px（1.57），再加上被 `.msg .body` 覆盖成 1.75（24.5px），
+     整段话看着"一行一行很空" —— 用户原话「say 里面行距太高了」。
+     段距也从 12px 收到 9px：段与段之间靠"空一点"就够了，
+     空太多每一段都像另起一件事，读起来是碎的。 */
+  .md{font-size:calc(var(--fs,14px) * 1.0714)}
+/* ★ 标题要**比正文醒**才叫标题。WorkBuddy 是 13px/600（靠加粗区分），
+     但我们的正文已经 14.5px，13px 的标题反而更小 —— 用户：「正文的格式也该严格对齐
+     workbuddy 这种标题类文本字号和醒目处理」。⇒ 加粗 + 比正文大 + 上面留白。
+     段与段之间靠 margin 拉开，行内仍保持 22px（同段行距不变）。 */
+  .md h1{font-size:calc(var(--fs,14px) * 1.2857)}
+.md h2{font-size:calc(var(--fs,14px) * 1.1786)}
+.md h3,.md h4{font-size:calc(var(--fs,14px) * 1.1071)}
+.md code{font-size:calc(var(--fs,14px) * 0.8929)}
+.md table{font-size:calc(var(--fs,14px) * 0.9643)}
+.md th{font-size:calc(var(--fs,14px) * 0.8571)}
+.codebox pre{font-size:calc(var(--fs,14px) * 0.8571)}
+.copybtn{font-size:calc(var(--fs,14px) * 0.7500)}
+.cthead{font-size:calc(var(--fs,14px) * 0.7500)}
+.ctrow{font-size:calc(var(--fs,14px) * 0.8214)}
+.ctcheck{font-size:calc(var(--fs,14px) * 0.7500)}
+.dshead{font-size:calc(var(--fs,14px) * 0.8214)}
+.dslayer{font-size:calc(var(--fs,14px) * 0.7143)}
+.dsrule{font-size:calc(var(--fs,14px) * 0.8214)}
+.dswhy{font-size:calc(var(--fs,14px) * 0.7500)}
+.dscmd{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 状态栏：模型 / 累计 token / 门禁 —— Codex 底部也有一条 */
+  .statusbar{font-size:calc(var(--fs,14px) * 0.8214)}
+.empty{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 运行日志抽屉：默认收起。启动信息不是错误，但也不该占着执行流 */
+  .logwrap{font-size:calc(var(--fs,14px) * 0.8571)}
+.logwrap summary{font-size:calc(var(--fs,14px) * 0.8214)}
+.logwrap pre{font-size:calc(var(--fs,14px) * 0.8214)}
+.big{font-size:calc(var(--fs,14px) * 1.2857)}
+.mini{font-size:calc(var(--fs,14px) * 0.7857)}
+.li{font-size:calc(var(--fs,14px) * 0.8571)}
+.cmditem{font-size:calc(var(--fs,14px) * 0.8929)}
+.cmdname{font-size:calc(var(--fs,14px) * 0.8571)}
+.cmdargs{font-size:calc(var(--fs,14px) * 0.7857)}
+.chip{font-size:calc(var(--fs,14px) * 0.8214)}
+.chip .cx{font-size:calc(var(--fs,14px) * 1.0000)}
+.attachnote{font-size:calc(var(--fs,14px) * 0.7500)}
+.plus{font-size:calc(var(--fs,14px) * 1.0714)}
+.mset{font-size:calc(var(--fs,14px) * 0.8214)}
+.mfield{font-size:calc(var(--fs,14px) * 0.8214)}
+.mfield select{font-size:calc(var(--fs,14px) * 0.8214)}
+.mswap{font-size:calc(var(--fs,14px) * 0.9286)}
+.mtiny{font-size:calc(var(--fs,14px) * 0.8214)}
+/* ★ 上下文用量按钮（2026-10-27）：和「记忆容量」同一行、同样式 ——
+     它回答的是同一个问题（"这一句按什么预算跑"），只是给的是**答案**不是选项。
+     百分比直接写在按钮上：藏在面板里的数字，只有出事那天才会有人点开看。 */
+  .cbtn{font-size:calc(var(--fs,14px) * 0.8214)}
+.cfgprobe button{font-size:calc(var(--fs,14px) * 0.8214)}
+.ctxbig b{font-size:calc(var(--fs,14px) * 1.8571)}
+.ctxbig span{font-size:calc(var(--fs,14px) * 0.7857)}
+.ctxrow{font-size:calc(var(--fs,14px) * 0.8571)}
+.ctxsub{font-size:calc(var(--fs,14px) * 0.7500)}
+.ctxvl{font-size:calc(var(--fs,14px) * 0.8214)}
+.limit-t{font-size:calc(var(--fs,14px) * 0.8929)}
+.limit-note{font-size:calc(var(--fs,14px) * 0.7500)}
+.mwarn{font-size:calc(var(--fs,14px) * 0.7857)}
+.prow{font-size:calc(var(--fs,14px) * 0.8214)}
+.prow .pm{font-size:calc(var(--fs,14px) * 0.7857)}
+.prow .pk{font-size:calc(var(--fs,14px) * 0.7500)}
+.prow .pbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+.cfield{font-size:calc(var(--fs,14px) * 0.8214)}
+.cfield select{font-size:calc(var(--fs,14px) * 0.8214)}
+.chint{font-size:calc(var(--fs,14px) * 0.7857)}
+#task{font-size:calc(var(--fs,14px) * 0.9286)}
+.hint{font-size:calc(var(--fs,14px) * 0.7857)}
+.askfold{font-size:calc(var(--fs,14px) * 0.8214)}
+.askqs{font-size:calc(var(--fs,14px) * 0.9286)}
+.askopts button{font-size:calc(var(--fs,14px) * 0.8929)}
+/* "或者自己输入" 这行只在有候选时才显示 */
+  .askorcust{font-size:calc(var(--fs,14px) * 0.8214)}
+#askin{font-size:calc(var(--fs,14px) * 0.9286)}
+.asknote{font-size:calc(var(--fs,14px) * 0.8214)}
+/* "在等你回话" 的条：它替代了原来那行"结束：needs_human · N 轮" */
+  .waitbar{font-size:calc(var(--fs,14px) * 0.8929)}
+.waitbar .reopen{font-size:calc(var(--fs,14px) * 0.8571)}
+.blktag{font-size:calc(var(--fs,14px) * 0.7500)}
+.blkwhy{font-size:calc(var(--fs,14px) * 0.8929)}
+.blkdetail{font-size:calc(var(--fs,14px) * 0.8214)}
+.blkmore > summary{font-size:calc(var(--fs,14px) * 0.8214)}
+.gbtn{font-size:calc(var(--fs,14px) * 0.8571)}
+.gnote{font-size:calc(var(--fs,14px) * 0.7857)}
+.blkok{font-size:calc(var(--fs,14px) * 0.8571)}
+/* 启动/请求失败的红条。★ 必须有：原来的失败是静默的，
+     用户看到的就是"输入发不出去"，而真实原因（找不到 Python / 服务没起）一个字都没显示 */
+  .boot{font-size:calc(var(--fs,14px) * 0.8929)}
+.dtab{font-size:calc(var(--fs,14px) * 0.8929)}
+.dclose{font-size:calc(var(--fs,14px) * 1.2143)}
+.sctitle{font-size:calc(var(--fs,14px) * 0.8214)}
+.srow{font-size:calc(var(--fs,14px) * 0.8929)}
+/* 许可卡里那一小截灰字（"只这一次" / "剩 N 分钟"）：和主文字同一行，
+     但不能抢读数 —— 它是修饰，不是内容 */
+  .scdim{font-size:calc(var(--fs,14px) * 0.7857)}
+.srow code{font-size:calc(var(--fs,14px) * 0.8214)}
+.sempty{font-size:calc(var(--fs,14px) * 0.8571)}
+/* 记忆树 */
+  .tsum{font-size:calc(var(--fs,14px) * 0.8571)}
+.tnode>summary{font-size:calc(var(--fs,14px) * 0.8929)}
+.tmeta{font-size:calc(var(--fs,14px) * 0.7857)}
+.tleaf{font-size:calc(var(--fs,14px) * 0.8571)}
+.tleaf .tlc{font-size:calc(var(--fs,14px) * 0.7500)}
+.mtier{font-size:calc(var(--fs,14px) * 0.7857)}
+.fxrow{font-size:calc(var(--fs,14px) * 0.8214)}
+.fxform textarea{font-size:calc(var(--fs,14px) * 0.8571)}
+.hbbtn.fx{font-size:calc(var(--fs,14px) * 0.7500)}
+/* 提案的两种落点（2026-10-26）：习惯跨项目、规则只这个项目。
+     不标出来的话，"采纳"按下去人不知道它会影响到别的仓库。 */
+  .pkind{font-size:calc(var(--fs,14px) * 0.7143)}
+/* 旧格式会话（2026-10-26）：小一号、灰一点，不抢标题但一眼看得见 */
+  .sess .lgc{font-size:calc(var(--fs,14px) * 0.6786)}
+.tadd{font-size:calc(var(--fs,14px) * 0.8214)}
+.tform input{font-size:calc(var(--fs,14px) * 0.8571)}
+.tform button{font-size:calc(var(--fs,14px) * 0.8214)}
+.ptop{font-size:calc(var(--fs,14px) * 0.8929)}
+.pverdict{font-size:calc(var(--fs,14px) * 0.7857)}
+.pwhy{font-size:calc(var(--fs,14px) * 0.8214)}
+.pclaim{font-size:calc(var(--fs,14px) * 0.7857)}
+body{font-size:calc(var(--fs,14px) * 1.0000)}
+.prochead{font-size:calc(var(--fs,14px) * 0.8571)}
+#in,textarea{font-size:calc(var(--fs,14px) * 1.0000)}
+/* ── 空态：新用户第一眼（2026-10-27）。
+   原来只有一行 12.5px 的灰字，第一次打开像"页面没加载出来"。
+   文案一个字没改，只给它一个像样的位置与层级。 ── */
+.empty{font-size:calc(var(--fs,14px) * 0.9643)}
+.cfield{font-size:calc(var(--fs,14px) * 0.8571)}
+.cfield select{font-size:calc(var(--fs,14px) * 0.8571)}
+.reasoning .rhead{font-size:calc(var(--fs,14px) * 0.8929)}
+.reasoning .rbody{font-size:calc(var(--fs,14px) * 0.8929)}
+.memov .mon{font-size:calc(var(--fs,14px) * 1.3571)}
+.memov .mon small{font-size:calc(var(--fs,14px) * 0.8571)}
+.memov .mol{font-size:calc(var(--fs,14px) * 0.7857)}
+.memnote{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbname{font-size:calc(var(--fs,14px) * 0.8929)}
+.hbgroup .tlc{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbgroup .hbbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+.hbleaf .tlt{font-size:calc(var(--fs,14px) * 0.8929)}
+.hbleaf .tlc{font-size:calc(var(--fs,14px) * 0.7500)}
+.hbleaf .hbtn{font-size:calc(var(--fs,14px) * 0.7857)}
+:root[data-density="compact"] .memov .mon{font-size:calc(var(--fs,14px) * 1.2143)}
+.lookpop .lrow{font-size:calc(var(--fs,14px) * 0.8929)}
+.lookpop .lopt{font-size:calc(var(--fs,14px) * 0.8571)}
+.duo{font-size:calc(var(--fs,14px) * 0.8214)}
+
+/* 暗色下几处**写死深色**的文字（用户截图里几乎看不见的三处） */
+:root[data-theme="dark"] .msg.user .body{color:#f7e6d8}   /* 你的气泡：深橘底要配亮字 */
+:root[data-theme="dark"] .bennilist,
+:root[data-theme="dark"] .bnsec,
+:root[data-theme="dark"] .bennisub,
+:root[data-theme="dark"] .benniblock,
+:root[data-theme="dark"] .bennihead{color:var(--ink-2)}
+:root[data-theme="dark"] .bennihead{color:var(--benni)}
+:root[data-theme="dark"] .msg .body code{color:#f0dcc4}
+
+/* ── 正在做什么（2026-10-28）：一条**不用点开**就能看见的当前动作。
+   过程卡是折叠的、思考块只写"思考中"，所以"它在读哪个文件、跑哪条命令"
+   得有自己固定的一行。动词加粗主色、对象等宽、意图附在最后。 ── */
+.doing{display:flex;align-items:center;gap:8px;margin:8px 0;padding:8px 12px;
+  background:var(--accent-soft);border:1px solid var(--line-soft);
+  border-radius:var(--r-m);font-size:calc(var(--fs,14px) * .92);color:var(--ink-2)}
+.doing[hidden]{display:none}
+.doing .dudot{width:7px;height:7px;border-radius:99px;background:var(--accent);
+  flex:0 0 auto;animation:breathe 1.4s ease-in-out infinite}
+.doing .doverb{font-weight:600;color:var(--accent-ink)}
+.doing .doobj{font-family:ui-monospace,Consolas,monospace;font-size:.92em;color:var(--dim);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46%}
+.doing .dowhy{margin-left:auto;color:var(--faint);font-size:.86em;max-width:44%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.doing .dudot{animation:none}}
+
+/* 思考流与动作行在暗色下也**以白为基准**（用户 2026-10-28）：
+   这些是"它在想什么、在做什么"的正文，不是辅助说明，不能用灰。 */
+:root[data-theme="dark"] .rbody,
+:root[data-theme="dark"] .thinkmini,
+:root[data-theme="dark"] .procrow,
+:root[data-theme="dark"] .procrow .pobj,
+:root[data-theme="dark"] .reasoning .rhead{color:var(--ink-2)}
+
+/* ── 任务委托页（2026-10-29）── */
+.jobpage{flex:1;display:flex;min-height:0;overflow:hidden}
+.jobpage[hidden]{display:none}
+.jlist{width:290px;flex:0 0 auto;border-right:1px solid var(--line-soft);
+  overflow:auto;padding:10px;background:var(--panel-2)}
+.jmain{flex:1;overflow:auto;padding:16px 20px;min-width:0}
+.jtabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.jtab{border:1px solid var(--line-soft);background:var(--panel);color:var(--dim);
+  border-radius:99px;padding:2px 10px;font-size:calc(var(--fs,14px) * .85);cursor:pointer}
+.jtab.on{background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent)}
+.jrow{padding:9px 10px;border-radius:var(--r-m);cursor:pointer;border:1px solid transparent}
+.jrow:hover{background:var(--panel)}
+.jrow.on{background:var(--accent-soft);border-color:var(--line)}
+.jtask{font-size:calc(var(--fs,14px) * .92);color:var(--ink-2);line-height:1.5;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.jmeta{display:flex;gap:8px;align-items:center;margin-top:4px;
+  font-size:calc(var(--fs,14px) * .78);color:var(--faint)}
+.jcrew{background:var(--panel);border:1px solid var(--line-soft);border-radius:4px;padding:0 4px}
+.jvd.ok{color:var(--green)}
+.jvd.no{color:var(--red)}
+.jvd.wait{color:var(--amber)}
+.jhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.jpill{background:var(--panel-2);border:1px solid var(--line-soft);border-radius:99px;
+  padding:1px 9px;font-size:calc(var(--fs,14px) * .8);color:var(--dim)}
+/* 观察哨争用：它是"提示"不是"判决"，所以只描边 + 换字色，不填底色 ——
+   填了红底会和 verdict 的「没过」抢注意力，而这两件事的分量不一样。 */
+.jpill.jwarn{border-color:var(--red);color:var(--red);background:transparent}
+.jcard{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-m);
+  padding:10px 13px;margin:10px 0;box-shadow:var(--sh-1)}
+.jcard.verdict.ok{border-left:3px solid var(--green)}
+.jcard.verdict.no{border-left:3px solid var(--red)}
+.jcard.verdict.wait{border-left:3px solid var(--amber)}
+.jvh{font-weight:650;font-size:calc(var(--fs,14px) * 1.1)}
+.jvtime{margin-left:10px;font-weight:400;font-size:calc(var(--fs,14px) * .8);color:var(--faint)}
+.jvreason{margin-top:5px;color:var(--ink-2);line-height:1.7}
+.jvstop{margin-top:6px;font-size:calc(var(--fs,14px) * .85);color:var(--dim)}
+.jcard.stop{border-left:3px solid var(--amber);color:var(--ink-2)}
+.jcard.stop b,.jcard.notice b{margin-right:8px;color:var(--dim)}
+.jcard.notice{border-left:3px solid var(--amber)}
+.jtable{width:100%;border-collapse:collapse;font-size:calc(var(--fs,14px) * .86);margin-top:12px}
+.jtable th{text-align:left;color:var(--faint);font-weight:500;padding:5px 8px;
+  border-bottom:1px solid var(--line-soft)}
+.jtable td{padding:5px 8px;border-bottom:1px solid var(--line-soft);color:var(--ink-2)}
+.jtable tr[data-rn]{cursor:pointer}
+.jtable tr[data-rn]:hover td{background:var(--panel-2)}
+.jtable tr.jplan td{color:var(--dim);font-size:calc(var(--fs,14px) * .8);
+  border-bottom:1px solid var(--line-soft)}
+.jhint{color:var(--faint);font-size:calc(var(--fs,14px) * .82);margin:8px 0}
+.jbtns{display:flex;gap:8px;margin-top:8px}
+.judge textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);
+  border-radius:var(--r-s);padding:7px 9px;color:var(--ink);font:inherit;margin-top:8px}
+.jbad{color:var(--red)}
+.jempty{color:var(--faint);padding:30px 0;text-align:center}
+.jline{margin:5px 0;line-height:1.7;color:var(--ink-2)}
+
+/* 任务页和技能页一样**独占主区**：输入区、分隔条、执行流标题都藏起来。
+   开着任务页还留一个"开始"按钮和 token 行，看起来像两页叠在一起。 */
+body.jobmode .composer,body.jobmode .cresize,body.jobmode #feedcap{display:none}
+
+/* ── L4 正文流（2026-11-01）──
+   过程放正文，契约/裁定放任务页。这里刻意不用"卡片套卡片"：
+   每一轮是一段正文，不是一条通知。 */
+body.joblive .composer,body.joblive .cresize,body.joblive #feedcap{display:none}
+.jlive{max-width:100%}
+.jlivehead{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:10px;
+  padding:7px 0 9px;margin-bottom:4px;background:var(--bg,transparent);
+  border-bottom:1px solid var(--line-soft)}
+.jlhmain{display:flex;align-items:center;gap:8px;min-width:0;flex:1;flex-wrap:wrap}
+.jltag{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--ink)}
+.jlid{font-size:12.5px;font-weight:600;color:var(--ink-2);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:310px}
+.jlp,.jlm{font-size:12px;color:var(--faint);white-space:nowrap}
+.jlnote{margin:10px 0 2px;padding:8px 11px;border-left:2px solid var(--line);
+  color:var(--ink-2);font-size:12.5px;line-height:1.7}
+.jlnote .pill{margin-left:8px;vertical-align:1px}
+.jlround{padding:18px 0 20px;border-bottom:1px solid var(--line-soft)}
+.jlround:last-child{border-bottom:0}
+.jlrh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
+.jln{font-size:14px;font-weight:650;color:var(--ink)}
+.jlv{color:var(--ink-2)}
+.jlc{color:var(--ink-2)}
+.jlst{margin-left:auto;font-variant-numeric:tabular-nums}
+.jlplan{margin:9px 0 12px;font-size:12.5px;color:var(--dim);line-height:1.7}
+.jlplan b{font-weight:600;color:var(--ink-2);margin-right:5px}
+.jlwhy{font-size:12px;color:var(--faint);line-height:1.65;margin-top:3px}
+.jlout{margin-top:4px}
+.jlfiles{margin:12px 0 4px;font-size:12px;color:var(--faint);line-height:1.7}
+.jlfiles b{font-weight:600;color:var(--ink-2);margin-right:5px}
+.jlsec{margin-top:10px;border-top:1px dashed var(--line-soft);padding-top:7px}
+.jlsec>summary{cursor:pointer;color:var(--dim);font-size:12.5px;line-height:1.8}
+.jlsec>summary:hover{color:var(--ink)}
+.jltester{font-size:12.5px;color:var(--ink-2);padding:6px 0 0}
+.jlwork{padding:5px 0 2px}
+.jltool{display:flex;gap:7px;align-items:baseline;font-size:11.5px;line-height:1.75;
+  color:var(--dim);padding:1px 0;min-width:0}
+.jltool.bad{color:var(--red)}
+.jltk{width:12px;flex:0 0 12px;color:var(--faint)}
+.jltn{flex:0 0 auto;font-family:var(--mono,ui-monospace,Consolas,monospace);color:var(--ink-2)}
+.jltd{min-width:0;overflow-wrap:anywhere}
+.jlthink{margin:4px 0;color:var(--faint);font-size:11.5px}
+.jlthink>summary{cursor:pointer;line-height:1.8}
+.jlthinkbody{white-space:pre-wrap;line-height:1.7;color:var(--dim);padding:3px 0 6px}
+.jlmsg{margin:8px 0;font-size:12.5px;line-height:1.72}
+.jlwho{display:block;font-size:11px;color:var(--faint);margin-bottom:2px}
+.jlmtext{white-space:pre-wrap;color:var(--ink-2)}
+.jlsay{margin:10px 0;font-size:13px;color:var(--ink-2)}
+.jlstatus{font-size:11.5px;color:var(--faint);line-height:1.9;padding:1px 0}
+.jlstatus.ok{color:var(--green)}
+.jlstatus.bad{color:var(--red)}
+.jlstate{font-size:11px;color:var(--faint);margin-left:6px}
+.jlactive .jlrh{color:var(--dim)}
+.jlend{margin:20px 0 8px;padding:12px 0;border-top:1px solid var(--line);
+  color:var(--ink-2);font-size:13px;line-height:1.8}
+.jlend .pill{margin-left:10px;vertical-align:1px}
+.jspacer{flex:1}
+
+/* ── 三条路线通道卡（2026-10-29）── */
+.lanes{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap}
+.lane{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line-soft);
+  border-radius:var(--r-m);padding:10px 12px;box-shadow:var(--sh-1)}
+.lane .lnhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  margin-bottom:5px}
+.lane .lnhead b{font-size:calc(var(--fs,14px) * .95);font-weight:650}
+.lane .lnstatus{font-size:calc(var(--fs,14px) * .8);color:var(--dim);white-space:nowrap}
+.lane .lnline{font-size:calc(var(--fs,14px) * .85);color:var(--ink-2);line-height:1.6}
+.lane .lnwhy{margin-top:5px;font-size:calc(var(--fs,14px) * .78);color:var(--faint);
+  line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+  overflow:hidden}
+.lane.planner{border-top:2px solid var(--amber)}
+.lane.executor{border-top:2px solid var(--accent)}
+.lane.tester{border-top:2px solid var(--benni)}
+
+/* 暗色适配补漏（2026-10-29 对比度扫描实测）：
+   本我旁注的文字、契约卡、记忆树节点、技能数徽章、档按钮、层标签 ——
+   这些颜色写死在亮色里，换主题时不跟着变。 */
+:root[data-theme="dark"] .contractblock,
+:root[data-theme="dark"] .tnode,
+:root[data-theme="dark"] .modebtn,
+:root[data-theme="dark"] .mtier,
+:root[data-theme="dark"] .snum,
+:root[data-theme="dark"] .spk{background:var(--panel-2);color:var(--ink-2)}
+:root[data-theme="dark"] .bnbody,
+:root[data-theme="dark"] .bnsec,
+:root[data-theme="dark"] .tname{color:var(--ink-2)}
+/* 记忆树用量条的槽：#ece4d6 在暗色下是一条亮杠 */
+:root[data-theme="dark"] .membar{background:var(--line)}
+
+/* 第三条通道：规划（琥珀）。它显示的是"定约定到哪一步"，不是秒表 */
+.duo.planner .dudot{background:var(--amber)}
+.duo.planner .dustate{color:var(--dim)}
+
+/* 契约条目文字在暗色下也要近白（实测 #3d4459 对比只有 1.53） */
+:root[data-theme="dark"] .ctclaim,
+:root[data-theme="dark"] .cthead,
+:root[data-theme="dark"] .ctcheck{color:var(--ink-2)}
+
+/* 暗色下的 markdown 表格（用户截图：单元格里的「B1」几乎看不见）。
+   原来是浅底 + 写死深色字，换主题后表格自己没跟上。 */
+:root[data-theme="dark"] .md table{background:transparent}
+:root[data-theme="dark"] .md th{background:var(--panel-2);color:var(--ink-2);
+  border-color:var(--line)}
+:root[data-theme="dark"] .md td{color:var(--ink-2);border-color:var(--line)}
+:root[data-theme="dark"] .md strong{color:var(--ink)}
+:root[data-theme="dark"] .md table tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+
+/* ── 显示偏好面板（2026-10-29）：输出和思考长什么样，用户自己选 ── */
+.disppanel{position:fixed;z-index:60;min-width:280px;max-width:340px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;box-shadow:0 10px 28px rgba(0,0,0,.14)}
+.disppanel .dptitle{font-size:12px;font-weight:600;margin-bottom:6px}
+.disppanel label{display:block;font-size:12px;color:var(--dim);margin:10px 0 4px}
+.disppanel select{width:100%;padding:4px 6px;font-size:12.5px;
+  border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.disppanel .dpnote{font-size:11px;color:var(--dim);line-height:1.55;margin-top:4px}
+
+/* ── 角色分色 + 字号 + 留白（2026-10-29 用户：标签分颜色、字体大一点、两边留白）── */
+
+/* 谁在说，一眼分出来。执行者保持安静（它是主线），规划者和测试者给颜色 */
+.turn[data-role="planner"] .mname{color:#8fb6e8}
+.turn[data-role="planner"] .av{color:#8fb6e8}
+.turn[data-role="reviewer"] .mname{color:var(--benni)}
+.turn[data-role="reviewer"] .av{color:var(--benni)}
+.turn[data-role="executor"] .mname{color:var(--dim)}
+
+/* 正文大一点：13px 在长段落里读起来费眼 */
+.msg .body{font-size:14px;line-height:1.8}
+
+/* 内容区收窄、居中，两边留白。
+   照 WorkBuddy 和其他 agent 的做法：正文不铺满整个窗口，
+   人的视线自然落在中间那一列，而不是被迫扫一整行。 */
+#feed{max-width:880px;width:100%;margin:0 auto;box-sizing:border-box;
+  padding-left:24px;padding-right:24px}
+
+/* ── 批注列的位置还给正文（2026-10-29 用户：「既然已经不需要批注了，
+   这一块空间是否可以还给正文？」）──
+   原来 `.msg.agent .body` 恒为 calc(100% - 182px)，
+   而批注列空的时候（`.bncol:empty` 会 display:none）那个位置也空着 ——
+   右边永远留一条用不上的白。
+   现在：批注列**空着或者不存在**时，正文占满。 */
+.turn:has(.bncol:empty) .msg.agent .body{max-width:100%}
+.turn:not(:has(.bncol)) .msg.agent .body{max-width:100%}
+/* 用户消息也不需要给批注留位 */
+.msg.user{margin-right:0}
+
+/* L4 运行中插话 + Git 模板（2026-11-03） */
+.jlsay{display:flex;gap:8px;align-items:center;margin-top:10px}
+.jlsay input{flex:1;background:var(--panel);border:1px solid var(--line-soft);
+  border-radius:var(--r-s);padding:7px 10px;color:var(--ink);font-size:calc(var(--fs,14px) * .9)}
+.jlsaynote{color:var(--dim);font-size:calc(var(--fs,14px) * .8)}
+#gfdlg{border:1px solid var(--line-soft);border-radius:var(--r-m);padding:18px;
+  width:min(720px,92vw);background:var(--panel);color:var(--ink)}
+#gfdlg textarea{width:100%;background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-s);color:var(--ink);padding:8px;font-family:var(--mono,monospace);
+  font-size:calc(var(--fs,14px) * .85);box-sizing:border-box}
+.gfrow{margin:10px 0;display:flex;gap:8px;align-items:center;flex-direction:column;align-items:stretch}
+.gfrow:last-child{flex-direction:row}
+
+
+/* ── 二维记忆图：项目规则树 + agent 事实 ── */
+.memmap{margin:12px 0 16px;padding:0;border:1px solid var(--line-soft);
+  border-radius:var(--r-m);background:var(--panel)}
+.memmap>summary{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:10px 12px;color:var(--ink);font-weight:650;cursor:pointer}
+.memmap>summary small{color:var(--dim);font-size:calc(var(--fs,14px) * .78);font-weight:400}
+.mmap-scroll{overflow-x:auto;padding:8px 12px 14px}
+.mmap-root{position:relative;width:max-content;min-width:180px;margin:0 auto 18px;
+  padding:8px 14px;border:1px solid var(--accent);border-radius:999px;
+  background:var(--panel-2);color:var(--ink);text-align:center;font-weight:650}
+.mmap-root::after{content:"";position:absolute;top:100%;left:50%;height:18px;border-left:1px solid var(--line)}
+.mmap-branches{position:relative;display:flex;align-items:stretch;gap:12px;min-width:max-content;padding-top:14px}
+.mmap-branches::before{content:"";position:absolute;left:6%;right:6%;top:0;border-top:1px solid var(--line)}
+.mmap-branch{position:relative;flex:1 1 150px;min-width:150px;max-width:230px;
+  padding:9px;border:1px solid var(--line-soft);border-radius:var(--r-s);
+  background:var(--panel-2)}
+.mmap-branch::before{content:"";position:absolute;left:50%;bottom:100%;height:14px;border-left:1px solid var(--line)}
+.mmap-branch.active{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
+.mmap-branch.facts{border-style:dashed}
+.mmap-branchhead{display:flex;flex-direction:column;gap:3px;padding:0 2px 8px;
+  border-bottom:1px solid var(--line-soft);color:var(--ink)}
+.mmap-branchhead small,.mmap-fact small{color:var(--dim);font-size:calc(var(--fs,14px) * .76)}
+.mmap-nodes,.mmap-facts{display:flex;flex-direction:column;gap:5px;padding-top:8px}
+.mmap-node,.mmap-fact{display:flex;align-items:center;justify-content:space-between;gap:6px;
+  min-width:0;padding:5px 7px;border:1px solid var(--line-soft);border-radius:6px;
+  background:var(--panel);color:var(--ink);font-size:calc(var(--fs,14px) * .8)}
+.mmap-node{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mmap-node.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--panel))}
+.mmap-node.fixed{border-style:dotted;color:var(--dim)}
+.mmap-fact{flex-wrap:wrap}
+.mmap-fact b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mmap-fact span{color:var(--dim)}
+.mmap-fact small{flex-basis:100%}
+.mmap-fact.is-missing,.mmap-empty{color:var(--dim);font-style:italic}
+.mmap-empty{align-self:center;padding:10px 14px}
+
+
+/* Hosted original management panels; the managed conversation stays mounted. */
+body.management-only .app{display:none}
+body.management-only[data-management="skills"] .app{display:flex;height:100vh}
+body.management-only .bar,body.management-only #railside,body.management-only #sbar,body.management-only .composer,body.management-only #cresize,body.management-only #feedcap,body.management-only #feed,body.management-only .splitter,body.management-only .shell>.col:first-child{display:none!important}
+body.management-only .shell{display:block;padding:0;height:100%;min-height:0}
+body.management-only .shell>.col:last-child{height:100%}
+body.management-only .skillpage{height:100%;border:0;border-radius:0}
+body.management-only .drawer{inset:0;width:100%;height:100%;border:0;border-radius:0;max-height:none}
+body.management-only #spclose,body.management-only #dclose{display:none}
+
+/* Center the root and its actual branches on the same scrollable canvas. */
+.mmap-canvas{display:flex;flex-direction:column;align-items:center;width:max-content;min-width:100%}
+.mmap-branches{width:max-content;min-width:0;margin:0 auto;justify-content:center}

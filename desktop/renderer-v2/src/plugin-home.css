@@ -1,0 +1,44 @@
+.plugin-home { height:100%; overflow:auto; background:var(--app-bg); color:var(--app-ink); line-height:1.5; }
+.plugin-home-page { box-sizing:border-box; width:min(100%,996px); margin:0 auto; padding:clamp(24px,6vh,64px) clamp(20px,5vw,66px) 40px; }
+.plugin-home-heading,.plugin-home-service>div:not(.plugin-login-prompt) { display:flex; align-items:center; gap:16px; }
+.plugin-home-heading h1 { font-size:clamp(2em,4vw,2.9em); line-height:1.15; letter-spacing:-.035em; margin:0; outline:0; }
+.plugin-home-heading p,.plugin-home-service p,.plugin-home-service small { color:var(--app-muted); }
+.plugin-home-heading p { margin:4px 0 0; }
+.plugin-home-brand { display:grid; place-items:center; width:66px; height:66px; border:1px solid var(--app-line); border-radius:var(--app-card-radius); }
+.plugin-home-brand .application-icon,.plugin-home-brand :is(img,svg) { width:48px; height:48px; border-radius:var(--app-card-radius); }
+.plugin-home button { font:inherit; color:inherit; cursor:pointer; }
+.plugin-home button:focus-visible { outline:2px solid var(--app-accent); outline-offset:3px; }
+.plugin-home-manage { display:flex; align-items:center; gap:7px; margin-inline-start:auto; padding:8px 14px; background:var(--app-panel); border:1px solid var(--app-line); border-radius:var(--app-control-radius); }
+.plugin-home-manage:hover { background:var(--app-hover); }
+.plugin-home h2 { font-size:1.22em; margin:0; }
+.plugin-home-tasks { margin:30px 0 26px; padding:clamp(18px,3vw,32px); border:1px solid var(--app-line); border-radius:var(--app-popover-radius); background:linear-gradient(115deg,color-mix(in srgb,var(--app-panel) 78%,#42658d),color-mix(in srgb,var(--app-panel) 86%,#73659c)); }
+.plugin-home-tasks>p { margin:4px 0 18px; color:var(--app-ink); opacity:.85; }
+.plugin-home-prompt-list { display:grid; gap:8px; }
+.plugin-home-prompt-list :is(button,li) { display:flex; align-items:center; gap:14px; text-align:start; padding:12px 15px; background:var(--app-panel); border:1px solid var(--app-line); border-radius:11px; }
+.plugin-home-prompt-list button:disabled { cursor:default; opacity:.7; }
+.plugin-home-prompt-list button:not(:disabled):hover { background:var(--app-hover); border-color:var(--app-muted); }
+.plugin-home-prompt-list button>svg { flex:none; color:var(--app-muted); }
+.plugin-home-example-list { padding:0; margin:0; list-style:none; overflow-wrap:anywhere; }
+.plugin-home-prompt-list :is(button,li)>span { display:grid; flex:1; gap:3px; min-width:0; }
+.plugin-home-prompt-list small { color:var(--app-muted); }
+.plugin-home-service h2 { padding-bottom:10px; border-bottom:1px solid var(--app-line); }
+.plugin-home-service>div { padding:16px 0 4px; }
+.plugin-home-service small { display:block; overflow-wrap:anywhere; }
+.plugin-home-service-icon { display:grid; place-items:center; width:38px; height:38px; flex:none; border:1px solid var(--app-line); border-radius:var(--app-card-radius); }
+.plugin-home-service-state { margin-inline-start:auto; white-space:nowrap; color:var(--app-muted); font-size:.93em; }
+.plugin-home-service p { font-size:.93em; margin:8px 0; }
+.plugin-login-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:6px 0; }
+.plugin-login-actions code { padding:4px 8px; border:1px solid var(--app-line); border-radius:var(--app-control-radius); background:var(--app-panel); user-select:all; }
+.github-repository-access { margin-top:14px; }
+.github-repository-actions { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
+.github-repository-access ul { margin:8px 0; padding-inline-start:20px; overflow-wrap:anywhere; }
+.plugin-home .github-repository-access li small { display:inline; margin-inline-start:6px; }
+@media(max-width:680px) {
+  .plugin-home-heading { gap:10px; flex-wrap:wrap; }
+  .plugin-home-brand { width:48px; height:48px; }
+  .plugin-home-brand .application-icon,.plugin-home-brand :is(img,svg) { width:35px; height:35px; }
+  .plugin-home-tasks { margin:20px 0; }
+  .plugin-home-service>div { flex-wrap:wrap; gap:8px; }
+  .plugin-home-page { padding-inline:18px; }
+}
+@media(forced-colors:active) { .plugin-home-tasks {background:Canvas} }

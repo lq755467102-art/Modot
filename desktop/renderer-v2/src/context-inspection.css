@@ -1,0 +1,136 @@
+.context-inspection {
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.context-inspection-controls, .context-inspection-controls label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.context-inspection-controls select {
+  max-width: 100%;
+}
+
+.context-inspection-checkpoint-link {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.context-inspection .context-inspection-checkpoint-match {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius:var(--app-control-radius);
+}
+
+.context-inspection details, .context-inspection-snapshot {
+  margin-block: 12px;
+}
+
+.context-inspection-identity {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 12px;
+}
+
+.context-inspection-identity dd {
+  margin: 0;
+}
+
+.context-inspection-history h4 {
+  margin: 14px 0 3px;
+  font-size: 1em;
+}
+
+.context-inspection-history ul {
+  margin-block: 4px;
+  padding-inline-start: 20px;
+}
+
+.context-inspection-history p {
+  margin-block: 4px;
+  color: var(--dim);
+}
+
+.context-inspection-tool-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 2px 20px;
+}
+
+.context-inspection-entries {
+  list-style: none;
+  padding: 0;
+}
+
+.context-inspection-entries > li, .context-inspection-checkpoint {
+  padding-block: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.context-inspection-entry {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.context-inspection-entry span, .context-inspection-entries li > p,
+.context-inspection-identity dt {
+  color: var(--dim);
+}
+
+.context-inspection-entries li > p, .context-inspection-checkpoint p {
+  margin-block: 4px;
+}
+
+.context-result-evidence {
+  margin-block: 8px;
+  padding: 8px 12px 12px;
+  border: 1px solid var(--line);
+  border-radius:var(--app-control-radius);
+}
+
+.context-result-evidence .message-code-scroll {
+  max-height: 30vh;
+}
+
+/* 面板简洁化：控件成行成组，折叠区从「纯文字加三角」变成分区卡片。 */
+.context-inspection-controls {
+  padding: 10px 12px;
+  border: 1px solid var(--line, var(--app-line));
+  border-radius: var(--app-control-radius);
+  background: var(--panel, var(--app-panel));
+}
+.context-inspection-controls > label { flex: 1 1 260px; }
+.context-inspection-controls > label select { flex: 1; min-width: 0; }
+.context-inspection-controls > button { white-space: nowrap; }
+
+.context-inspection details {
+  border: 1px solid var(--line, var(--app-line));
+  border-radius: var(--app-control-radius);
+  background: var(--panel, var(--app-panel));
+  padding: 8px 12px;
+}
+.context-inspection details > summary {
+  cursor: pointer;
+  font-weight: 500;
+  list-style-position: inside;
+}
+.context-inspection details[open] > summary { margin-bottom: 8px; }
+.context-inspection details > pre {
+  max-height: 220px;
+  overflow: auto;
+  overscroll-behavior: auto;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--app-control-radius);
+  background: var(--app-code-bg);
+  font-size: 12px;
+  line-height: 1.6;
+}

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:*; img-src 'self' data: file:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Modot</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="fonts.css">
+
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <span class="brand">Modot</span>
+    <!-- ★ 界面上不写"门禁""总纲""档位"这些内部词。用户：「术语密度太高了，
+         连我都要喘不过气来了。如果发给别人用，上手门槛简直是灾难」。
+         人话在外，原词放 title（hover 才看到），要查的人还是查得到。 -->
+    <span class="pill" id="gate" title="门禁档位（内部名 policy）">权限 <b>—</b></span>
+    <!-- ★ 这一轮是谁在答（2026-10-26）。平常安静显示主模型；**换过一次就变琥珀色**，
+         因为"答得不对劲"时要排除的第一件事就是"换了个人在写"。 -->
+    <span class="pill" id="mdl" hidden title="这一轮在答的模型">模型 —</span>
+    <!-- ★ 配置写错的地方（2026-10-26）。写错了只躺在日志里，等于"改错了也算改过了"，
+         和"配置读了没人用"是同一种毛病：看起来配了，其实没生效。 -->
+    <span class="pill warn" id="cfgw" hidden title="配置写错的地方">配置有问题</span>
+    <!-- ★ 模型设置从右上角挪到输入框上方了（2026-10-26 用户：
+         「模型的配置挪到对话框上面吧，放左上角有点不好找」）。
+         上面那条常驻显示"自我/本我各用哪个模型"，设置就在它旁边。 -->
+    <!-- ★ 工程状态 + 记忆树的入口。这两样不进文件、不进执行流 ——
+         用户：「不要用文件这种只有程序员才回去翻的东西」。 -->
+    <button id="opendisp" class="pill" title="输出和思考长什么样（逐字打 / 整段出；思考块折叠 / 展开 / 不显示）">显示</button>
+    <button id="openstate" class="pill" title="工程状态（Esc 关掉）">状态</button>
+    <span class="spacer"></span>
+  </div>
+
+  <div id="boot" class="boot" hidden></div>
+  <div id="connection-status" class="boot" role="status" hidden>本地服务连接中断，正在重连。已有内容和输入已保留。</div>
+  <div id="pending-status" class="boot" role="status" hidden>有一条已认领但未确认结果的待办。请检查日志和产出。<button id="pending-resolve" class="pill">已核对，归档待办</button></div>
+
+  <div class="shell">
+    <div class="col">
+      <div class="colhead">
+        <select id="proj" title="新会话在哪个文件夹里干活。一个文件夹就是一个项目"></select>
+        <button id="addproj" class="tiny" title="把一个文件夹加为项目">＋</button>
+      </div>
+      <!-- ★ 新建改成"图标 + 文字"的菜单项（2026-10-26 照 WorkBuddy 左栏）：
+           它和"设置/状态"是同一层的东西，不该是一个抢眼的蓝色大按钮。
+           蓝色按钮在一个"列表"里出现，读起来像促销位，不像一句可执行的命令。 -->
+      <button id="newchat" class="sitem">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M8 5.2v5.6M5.2 8h5.6" stroke="currentColor" stroke-width="1.2"
+                stroke-linecap="round"/>
+        </svg>
+        新建会话
+      </button>
+      <!-- ★ 技能入口（2026-10-26）。放在「新建会话」下面、搜索上面：
+           它和"新建"是同一层的东西（都是"往工作台里加点什么"），
+           而不是一个设置项的附注。右边那个数字是已装数量 ——
+           没有数字的话，人不知道点进去会不会是空的。 -->
+      <button id="openskills" class="sitem">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 2.2l4.8 2.7v6.2L8 13.8 3.2 11.1V4.9L8 2.2z"
+                stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M3.4 5.1L8 7.7l4.6-2.6M8 7.7v6" stroke="currentColor"
+                stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+        装了什么<span class="snum" id="skillnum"></span>
+      </button>
+      <!-- ★ 搜索（2026-10-26）：本地过滤，不打接口。会话一多，"往下翻着找"是唯一
+           没有替代品的手动活；而成熟产品（ChatGPT / Codex / Cursor）这一件都有。
+           排在「新会话」之后：主操作要最靠近视线落点，搜索是辅助。 -->
+      <div class="ssearch">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        <input id="sessq" placeholder="搜索会话" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="list" id="sessions"></div>
+      <!-- ★★ 原来"总况"是**最右一整栏**（292px）。它把正文压到 630px，
+           而里面的东西（工作节点时间线、运行日志）是"偶尔查一下"的，不是常看的。
+           用户的原话是「整个可视化还是很粘黏」「say 的右边有留白，完全可以有本我批注」——
+           常看的（批注）应该在正文旁边，偶尔看的（日志）应该收起来。
+           ⇒ 这一栏整体挪到左栏底部，默认收起；批注改走正文右侧轨道（.turn > .bncol）。 -->
+      <!-- ★ 进度栏搬走了（2026-10-26）。原来它常驻在左栏下半部分，
+           而左栏现在要装：新建 / 装了什么 / 搜索 / 项目分组 / 会话列表。
+           用户：「如果左栏不够用了，可以把进度栏做成 workbuddy 这种隐藏在右侧、
+           鼠标放上去才会弹出来的形式」。
+           ⇒ 见 .railside：贴窗口右边缘的一条把手，悬停滑出一栏。
+             它是"偶尔查一下"的东西（我做到哪一步了），不该常驻占宽度。 -->
+    </div>
+
+    <!-- ★ 拖拽条：必须在**左栏和执行流之间**。
+         它上一版被我放到了窗口最右边 —— 那里也能拖，但没人会去那儿找，
+         于是"拖拽功能没有"这个印象完全成立。 -->
+    <div class="splitter" id="splitter" title="拖我调宽度 · 双击复位"></div>
+
+    <div class="col">
+      <div class="flowtabs" id="feedcap">
+        <span class="capwarn" id="capwarn"></span>
+      </div>
+      <div class="feed" id="feed"><div class="empty">说一句话就开始。它在做什么、被什么拦住，都会写在这里。</div>
+        <!-- ★ 正在思考 / 正在说 这两个块是**活的**，必须在执行流里面：
+             挂在外面的话，人看到的是底部一块不断刷新的字，
+             而不是「思考跟着对话一起长出来」。 -->
+        <!-- ★ 活的思考块：结构和正式思考块**完全一致**（WorkBuddy 也是同一个组件
+             的 streaming 态）。不一样的地方只有两处：标题走扫光、正文不渐隐。 -->
+        <!-- ★ 「思考中」默认**收起**（2026-10-27 模拟真人操作时量出来的）：
+             它是实时的草稿，跑的时候会给整段正文，实测占掉**大半屏**。
+             而人这时候真正要看的是"它在想还是在卡"—— 那由标题行的扫光和计时表达，
+             不需要把整段推理铺在正文位置上。想看细节点开这一行。 -->
+        <section class="reasoning streaming collapse" id="thinking" hidden>
+          <header class="rhead loading" id="thead">思考中</header>
+          <div class="rbody" id="tbody"></div>
+        </section>
+        <div class="msg agent" id="streaming" hidden>
+          <div class="av">AI</div>
+          <div class="body md sbody" id="sbody"></div>
+        </div>
+        <!-- ★ 正在做什么（2026-10-28 用户：「思考过程中调用工具的话，看不出来他在干活」）。
+             过程卡是折叠的、思考块只写"思考中"，所以"它在读哪个文件、跑哪条命令"
+             必须有一条**一直看得见**的地方。每次工具调用就更新这一行。 -->
+        <div class="doing" id="doing" hidden></div>
+      </div>
+      <!-- 技能分页与任务页仍占正文的位置；思考块和正文一起被遮住。 -->
+      <div class="jobpage" id="jobpage" hidden>
+        <div class="jlist" id="jlist"></div>
+        <div class="jmain" id="jmain"></div>
+      </div>
+
+      <div class="skillpage" id="skillpage" hidden>
+        <div class="sphead">
+          <!-- ★ 两个页签（2026-10-26 用户：「继续接」之后把这页做成「装了什么」）：
+               技能和外部工具是同一个问题的两半 ——「我这套系统现在多了哪些本事」。
+               原来技能在界面里、MCP 只在配置文件里，等于一半能看见一半看不见。 -->
+          <div class="sptabs" id="sptabs">
+            <button class="sptab on" data-tab="skills">技能<span class="snum" id="tabsk"></span></button>
+            <button class="sptab" data-tab="mcp">外部工具<span class="snum" id="tabmcp"></span></button>
+          </div>
+          <span class="spspace"></span>
+          <button id="spinstall" class="pill" title="装一个技能包（.zip）">装一个</button>
+          <button id="spclose" class="pill">返回对话</button>
+        </div>
+        <div class="splist" id="splist"></div>
+        <dialog id="extensionDetail" class="extension-detail" aria-labelledby="extensionDetailTitle">
+          <header><strong id="extensionDetailTitle"></strong><form method="dialog"><button class="pill">关闭详情</button></form></header>
+          <div id="extensionDetailContent"></div>
+        </dialog>
+      </div>
+      <button id="tobottom" class="tobottom" hidden>↓ 到底部</button>
+
+  <!-- ★★ 输入区：控件在输入框**上方**，不是塞在它旁边。
+       用户原话：「输入框太单薄了，上下文、记忆树模式选择，这些都应该在输入框上的」。
+       这些东西决定"这一句话按什么预算、带不带记忆跑"，属于发出去之前的决策，
+       所以要在输入框的上边、而不是散落在顶栏和底栏两头。 -->
+  <!-- ★ 输入框高度可拖（用户：「底部的输入栏最好也是可以手动调节高度的，就跟左栏一样」）。
+       拖这里改 min-height，输入多行时它仍然会自动往下长。双击复位。 -->
+  <div class="cresize" id="cresize" title="拖我调输入框高度 · 双击复位"></div>
+  <div class="composer">
+    <div class="cmdmenu" id="cmdmenu" hidden></div>
+    <!-- ★ 等人决定的事统一停在这里（2026-10-31 用户：别再进思考流）。
+         闸门拦截卡原来插在正文流里，和"它说了什么"混在一起 ——
+         而"给不给"是**发送侧**的决定，该贴着输入栏，不是阅读侧的内容。 -->
+    <div class="askdock" id="askdock" hidden></div>
+    <!-- ★★ 模型这一行（2026-10-26）。为什么常驻在输入框上方：
+         「这一句是用谁在跑」是发出去之前要看的那一眼，和"记忆容量/深度"是同一类；
+         藏进设置面板之后，只有出事那天才会有人去翻，而那时候已经晚了。
+         ★ 显示的是**配置意图**（选了哪份档案）；右上角那个 `模型` 小条是**运行时事实**
+           （这一轮真正答话的模型，换过模型链会变）。两个都要留着，混在一起就会互相打脸。 -->
+    <div class="mrow">
+      <label class="mfield" title="干活的模型（执行者）">
+        <span class="mrole">执行者</span>
+        <select id="mself"></select>
+      </label>
+      <button id="mswap" class="mswap" title="一键互换：执行者 ⇄ 测试者（连端点与 key 一起换）">⇄</button>
+      <label class="mfield" title="复核的模型（测试者）—— 最好换一家，同厂同源等于没审">
+        <span class="mrole">测试者</span>
+        <select id="mreview"></select>
+      </label>
+      <label class="mfield" title="定方向的模型（规划者）—— 它决定这一轮按什么判完成">
+        <span class="mrole">规划者</span>
+        <select id="mplan"></select>
+      </label>
+      <span class="mspacer"></span>
+      <span class="mwarn" id="mwarn" hidden></span>
+      <button id="mcfg" class="mtiny" title="管理模型档案：增 / 改 / 删 / 导入当前配置">档案</button>
+    </div>
+    <div class="crow">
+      <!-- ★ 记忆容量挪进「上下文用量」面板里当拉条（2026-10-27 用户：
+           「上下文上限也用面板里的拉条解决」）。下拉留在 DOM 里但不再显示 ——
+           发送时读的就是它（`depthOf()`），一个数只能有一个入口。 -->
+      <select id="depth" hidden>
+        <option value="300000">300K</option>
+        <option value="600000">600K</option>
+        <option value="1000000">1M</option>
+      </select>
+
+      <!-- ★ 权限档位改成**能直接选**（2026-10-27 用户：「这个按钮可以直接出下拉选吗」，
+           并把字改成红色）。原来是只读的一行字 —— 档位是启动参数，进程起来就定了，
+           界面只能看不能改；现在服务端开了 `POST /api/policy`，选完只影响后面开始的轮次。 -->
+      <label class="cfield cgate" id="cgatestate"
+             title="这一轮能改什么（门禁档位，内部名 policy）。改到「信任」会先确认一次 —— 底线清单仍然拦凭据读写、写系统目录、改放权配置这三类。">
+        <span>权限</span>
+        <select id="cgatesel">
+          <!-- ★ 占位项（2026-10-27 实测）：状态还没回来时，下拉会先显示第一项，
+               于是屏幕上一瞬间写着「只读」——而真实档位可能是别的。宁可显示「—」。 -->
+          <option value="" selected>—</option>
+          <option value="readonly">只读</option>
+          <option value="workspace">工作目录内</option>
+          <option value="trusted">信任·底线仍在</option>
+        </select>
+      </label>
+      <!-- ★ 模型这个入口（2026-10-27）：收起时只显示"这一轮谁在跑"，点开浮出完整
+           那一行（两个下拉 + 互换 + 档案）。还是原来那些节点，只是收在 `.mrow.open`
+           里 —— 所以 id 和事件绑定一个都没搬动，不存在"绑定丢了"的问题。 -->
+      <button id="mset" class="mset" title="这一轮用谁跑：点开换模型 / 互换执行者测试者">
+        <span>模型</span><b id="msetname">—</b>
+      </button>
+      <!-- ★ 上下文用量（2026-10-27 用户：「用户可以更清楚地看到记忆占了多少比例」）。
+           数字写在按钮上，面板按来源拆开。数据来自**发送那一刻**记下的快照，
+           不是打开面板时现算的 —— 现算就是第二套口径。 -->
+      <button id="ctxbtn" class="cring"
+              title="上下文用量：点开看这一轮发出去的内容按来源拆开">
+        <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+          <circle class="cring-bg" cx="10" cy="10" r="8"></circle>
+          <circle class="cring-fg" id="ctxring" cx="10" cy="10" r="8"></circle>
+        </svg>
+        <span id="ctxpct" class="sr-only">—</span>
+      </button>
+      <span class="cspacer"></span>
+      <span class="chint" id="chint"></span>
+      <!-- ★ 状态 + 暂停从右上角挪到这里（2026-10-25 用户：
+           「这个空闲和暂停是否可以挪到输入框这里，一般来说用户的焦点肯定是在中心这边的，
+             右上角基本都注意不到」）。
+           它们和"这一句按什么预算跑"确实是同一类东西 —— 都是你发出去前后要看的那一眼，
+           所以放同一行，而不是分在屏幕两角。 -->
+      <span class="pill" id="state">空闲</span>
+      <button id="stop" class="danger" disabled>暂停</button>
+    </div>
+    <!-- ★ 附件区：有图才出现。每条 = 缩略图 + 文件名 + ×。
+         下面那行小字是必须的 —— 用户要求"告诉用户这个图片是在会话目录里"：
+         图片会落成 runs/<会话>/img-N.png，删会话时一起删。 -->
+    <div class="attachrow" id="attachrow" hidden></div>
+    <div class="attachnote" id="attachnote" hidden>图片会存进这个会话的目录，删会话时一起删</div>
+    <div class="cmain">
+      <button id="plus" class="plus" title="加图片或技能包（.zip）—— 也可以直接粘贴或拖进来">＋</button>
+      <textarea id="task" rows="1"
+        placeholder="说清这一轮要什么。Enter 开始，Shift+Enter 换行 —— 也可以粘贴或拖图片进来。"></textarea>
+      <button id="go" class="primary">开始</button>
+    </div>
+    <!-- ★ accept 里加上 .zip：技能包就是从这里或拖拽进来的（2026-10-26） -->
+    <input type="file" id="imgpick" accept="image/*,.zip,.skill" multiple hidden>
+  </div>
+    </div>
+  </div>
+
+  <!-- ★★ 进度抽屉（2026-10-26）：贴右边缘的一条**把手**，鼠标放上去滑出一栏。
+       WorkBuddy 的右侧栏就是这个形态（要点开/悬停才出现），
+       它解决的正是"常驻占宽度"这个问题 —— 左栏也因此腾出了地方。
+       ★ 为什么把手要写字（竖排"进度"）：一条没有字的细边没人会去悬停。
+       ★ 钉住（📌）不是装饰：点一个节点会滚到正文，鼠标一移开抽屉就收起，
+         连点第二个就得重新找 —— 钉住之后它留着，人可以挨个看。 -->
+  <div class="railside" id="railside">
+    <div class="railhint" id="railhint">进度<span class="railnum" id="railnum"></span></div>
+    <aside class="raildrawer">
+      <div class="nphead">进度
+        <span class="npnum" id="npcount"></span>
+        <button class="railpin" id="railpin" title="钉住：钉住后不会因为鼠标移开而收起">钉住</button>
+      </div>
+      <div class="npbody" id="nodes"><span class="li" style="color:#9ca3af">还没开始</span></div>
+      <pre id="logbody" hidden></pre>
+    </aside>
+  </div>
+
+  <div class="statusbar" id="sbar"></div>
+
+</div>
+
+<!-- ★★ 需要人回答的时候用**弹窗**，不是流里的一行输入框。
+     两条要求都是用户点名的：
+     ① 「需要人的环节应该弹窗等人回答之后无休止地停止，而不是超时之后自己往下继续」
+        ⇒ 这个框**没有超时**，也没有定时器；关掉它只是把问题收进"待回答"条，问题还在。
+     ② 「该设计成弹窗的部分就用弹窗，不要全部依赖输入框」
+        ⇒ 问题和回答都在这一个框里，不要求人去底部输入框重述一遍。 -->
+<dialog id="askdlg" class="askdlg">
+  <div class="askwrap">
+    <!-- ★ 标题文字单独包一层 span：外面那个 p 里还要放「收起」按钮，
+         而 showAsk 是直接写 .textContent 的 —— 写在 p 上会把按钮一起清掉。 -->
+    <p class="askttl"><span id="askttl">它在问你</span>
+      <button id="askfold" class="askfold" title="先收起，去看前面的上下文；问题不会丢">收起</button></p>
+    <div class="askqs" id="askqs"></div>
+    <!-- ★ 候选按钮（给了 options 时才显示）：横排 2~3 个 -->
+    <div class="askopts" id="askopts"></div>
+    <div class="askorcust" id="askorcust">或者自己输入：</div>
+    <textarea id="askin" rows="2" placeholder="回答完它才继续"></textarea>
+    <div class="askrow">
+      <span class="asknote">停在这里等你 · 不会自己往下走，也不会超时</span>
+      <button id="askgo" class="primary">回答并继续</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- 会话的「⋯」菜单：一个容器复用，不每个会话生成一份（会话可能上百条） -->
+<div class="sessmenu" id="sessmenu" hidden></div>
+
+<!-- 重命名会话。★ 用 dialog 而不是 window.prompt：Electron 里 prompt 是禁用的（返回 undefined），
+     点了没反应还不报错 —— 项目里"添加项目"就是因为这个才自己做了个框。 -->
+<dialog id="renamedlg">
+  <form method="dialog">
+    <p style="margin:0 0 8px;font-size:13px">给这个会话改个名字</p>
+    <input id="renametxt" placeholder="一句话说清它在干什么" maxlength="40">
+    <p style="margin:8px 0 0;font-size:11px;color:#9ca3af">清空就等于恢复成第一句话。</p>
+    <div style="margin-top:12px;text-align:right">
+      <button value="cancel" style="margin-right:6px">取消</button>
+      <button value="ok" class="primary">保存</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg">
+    <form method="dialog">
+      <p style="margin:0 0 8px;font-size:13px">添加一个项目文件夹 —— 会话会在它里面干活。</p>
+      <input id="dlgpath" placeholder="C:\path\to\project">
+      <div style="margin-top:12px;text-align:right">
+        <button value="cancel" style="margin-right:6px">取消</button>
+        <button value="ok" class="primary">确定</button>
+      </div>
+    </form>
+  </dialog>
+<!-- ★★ 模型档案（2026-10-26）：一份档案 = 端点 + key + 模型。
+       为什么从「填两套输入框」改成「列一份清单」：
+       人要的是"我存了几把 key、现在用的是哪一把"，而不是每次重新填四个框。
+       ★ key 一律只显示掩码；这个面板**没有任何地方能读出明文**。 -->
+  <dialog id="cfgdialog">
+    <div class="cfgwrap">
+      <p class="cfgttl">模型档案</p>
+      <p class="cfgnote">一份档案 = 端点 + key + 模型。存在本机的
+        <code id="cfgpath">models.json</code>，
+        <b>不进仓库、不进安装包</b> —— 打包给别人时不会带上你的 key。</p>
+      <div class="plist" id="plist"></div>
+      <hr>
+      <p class="cfgsub" id="cfgedit_ttl">新增一份</p>
+      <label>名字（留空就自动取）<input id="c_name" placeholder="例：DeepSeek 官方"></label>
+      <label>接口地址<input id="c_base" placeholder="https://api.deepseek.com/v1"></label>
+      <label>API Key<input id="c_key" type="password" placeholder="sk-…"></label>
+      <label>模型名<input id="c_model" list="c_modellist" placeholder="deepseek-chat"></label>
+      <!-- ★ 可用模型清单（2026-10-27）：端点自己给的，比任何内置表都准，
+             也不会过期。拉一次填进 datalist，输入框照样能手填 —— 有些网关不给 /models。 -->
+      <datalist id="c_modellist"></datalist>
+      <div class="cfgprobe">
+        <button type="button" id="cprobe" title="问端点它有哪些模型可选">拉取可用模型</button>
+        <span id="cprobe_hint" class="ctxvl"></span>
+      </div>
+      <div class="cfgfoot">
+        <button type="button" id="cfgimport" title="把当前环境变量 / credentials.env 里那套存成一份档案">导入当前配置</button>
+        <button type="button" id="cfgcancel">关闭</button>
+        <button type="button" id="cfgsave" class="primary">保存</button>
+      </div>
+      <input type="hidden" id="c_id">
+    </div>
+  </dialog>
+
+<!-- ★★ 上下文用量面板（2026-10-27）。为什么按来源拆开而不是只给一个百分比：
+       一个"22%"只够让人紧张，不够让人做决定。真正能动手的是那几行 ——
+       "工具定义占了 59%"和"记忆占了 35%" 是两条完全不同的处置（少挂几个工具 /
+       收一收记忆树）。★ 面板里每一项都标"占已用多少"和"占窗口多少"两个数：
+       前者回答"谁在吃这顿饭"，后者回答"还够跑多久"。 -->
+  <dialog id="ctxdialog">
+    <div class="cfgwrap ctxwrap">
+      <div class="ctxhead">
+        <p class="cfgttl">上下文用量</p>
+        <button type="button" id="ctxclose" class="mtiny" title="关闭">×</button>
+      </div>
+      <p class="ctxbig"><b id="ctxnum">—</b><span id="ctxcap"></span></p>
+      <div class="ctxbar" id="ctxbar"></div>
+      <div class="ctxlist" id="ctxlist"></div>
+      <!-- ★ 上限就在面板里调（用户 2026-10-27：「上下文上限也用面板里的拉条解决」）。
+           原来它是输入框下面一个下拉，两处各说一遍同一个数 —— 现在只有这一处。 -->
+      <div class="limit">
+        <p class="limit-t" id="limit_t">—</p>
+        <div class="limit-track" id="limit_track">
+          <div class="limit-fill" id="limit_fill"></div>
+          <span class="limit-dot" style="left:0%"></span>
+          <span class="limit-dot" style="left:50%"></span>
+          <span class="limit-dot" style="left:100%"></span>
+          <span class="limit-knob" id="limit_knob"></span>
+          <input type="range" class="limit-hit" id="limit_hit" min="0" max="2" step="1"
+                 aria-label="上下文上限">
+        </div>
+        <p class="limit-note" id="ctxnote"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="js/protocol.js"></script>
+  <script src="js/event-state.js"></script>
+  <script src="js/base.js"></script>
+  <script src="js/display.js"></script>
+  <script src="js/think.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/panels.js"></script>
+  <script src="js/jobs.js"></script>
+  <script src="js/main.js"></script>
+  
+  
+<!-- ★★ 状态抽屉。顶栏那个「状态」按钮打开它。
+     用户：「这个台账…不要用文件这种只有程序员才回去翻的东西」
+          「记忆树是否也可以可视化」 -->
+<div class="drawer" id="drawer" hidden>
+  <div class="dhead">
+    <div class="dtabs">
+      <button class="dtab active" data-tab="state">工程状态</button>
+      <button class="dtab" data-tab="probe" title="造一个什么都没做的世界，看这一轮的判据还绿不绿">判据体检</button>
+    </div>
+    <button class="dclose" id="dclose" title="关掉（Esc）">×</button>
+  </div>
+  <div class="dbody">
+    <div id="panestate"></div>
+    <div id="paneprobe" hidden></div>
+  </div>
+</div>
+<div id="disppanel" class="disppanel" hidden>
+  <div class="dptitle">显示</div>
+  <label>输出<select id="dp-output">
+    <option value="type">逐字接上（像 WorkBuddy）</option>
+    <option value="block">整段出</option>
+  </select></label>
+  <div class="dpnote">逐字接上：看起来像 WorkBuddy，字一个一个来</div>
+  <label>思考块<select id="dp-think">
+    <option value="collapse">默认折叠</option>
+    <option value="expand">默认展开</option>
+    <option value="hide">不显示</option>
+  </select></label>
+  <div class="dpnote">思考是它在想什么，和正文分开。折叠时点开才看全文</div>
+</div>
+<script src="js/compatibility.js"></script>
+</body>
+</html>

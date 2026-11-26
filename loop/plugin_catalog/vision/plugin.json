@@ -1,0 +1,147 @@
+{
+  "name": "modot-vision",
+  "version": "0.3.0",
+  "description": "视觉核心从授权图片与 3D 打印刀路选择视图，复核易混字符，将转写与证据交回父核心。",
+  "workers": [
+    {
+      "name": "transcribe",
+      "protocol": "modot.worker/1-draft",
+      "description": "从 G-code 或图片生成或挑选视图，一次送审并立即保存候选。父核心可早期委派并验收交付。",
+      "method": "根据委派的 source_path 和 goal 开始。尽快调用 transcribe_image_batch 一次送审原图或 G-code 投影。把完整阅读顺序放第一项，必要时追加一张摆正图或疑难局部。G-code 优先使用 xy，可选 align=principal、旋转或裁切。工具会立即把第一份候选、实际图片依据及不确定字符保存给父核心。拿到完整候选就结束。若候选有疑点，用一次追加批次提供有针对性的局部视图，随后结束。初次失败时可用第二次批次重试。",
+      "requires": [
+        "native-l0",
+        "independent-history",
+        "read-code",
+        "structured-result"
+      ],
+      "optional": [
+        "messages",
+        "cancel"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "授权目录内实际源文件相对路径"
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024,
+            "description": "需要复核的可见文字及其精度要求"
+          }
+        },
+        "required": [
+          "source_path",
+          "goal"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "unreadable"
+            ]
+          },
+          "transcription": {
+            "type": "string",
+            "maxLength": 4000,
+            "description": "纯转写正文，说明在其他字段"
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "view": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "description": "实际采用的平面、层、旋转或裁切"
+                },
+                "image_sha256": {
+                  "type": "string",
+                  "minLength": 64,
+                  "maxLength": 64
+                },
+                "source_sha256": {
+                  "type": "string",
+                  "minLength": 64,
+                  "maxLength": 64
+                },
+                "reading": {
+                  "type": "string",
+                  "maxLength": 1200
+                },
+                "observation": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "view",
+                "image_sha256",
+                "source_sha256",
+                "reading",
+                "observation"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "uncertainties": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "alternatives": {
+                  "type": "array",
+                  "maxItems": 10,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 24
+                  }
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "position",
+                "alternatives",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "status",
+          "transcription",
+          "evidence",
+          "uncertainties"
+        ],
+        "additionalProperties": false
+      },
+      "modelRole": "vision"
+    }
+  ]
+}

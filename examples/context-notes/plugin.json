@@ -1,0 +1,12 @@
+{
+  "name": "session-notes",
+  "version": "1.0.0",
+  "description": "最小上下文插件：按任务保存便签，仅作为有来源的数据提供。不会修改项目文件或判断任务完成。",
+  "contextStores": [
+    {
+      "name": "notes",
+      "description": "保存客观观察；用户要求、实现选择和自检结果分别记录。",
+      "initial": {"observations": []}
+    }
+  ]
+}

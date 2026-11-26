@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HarnessControlProtocol",
+  "type": "object",
+  "$defs": {
+    "EventsPage": {
+      "type": "object",
+      "required": [
+        "events",
+        "has_more",
+        "next_after"
+      ],
+      "properties": {
+        "events": {
+          "type": "array"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_after": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "Action": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "action_id",
+        "state"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string"
+        },
+        "action_id": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "running",
+            "completed",
+            "failed",
+            "waiting_approval",
+            "cancelled_before_start"
+          ]
+        }
+      }
+    },
+    "Operation": {
+      "type": "object",
+      "required": [
+        "id",
+        "state",
+        "path"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "processing",
+            "queued",
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "response": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "Event": {
+      "type": "object",
+      "required": [
+        "seq",
+        "act"
+      ],
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "act": {
+          "type": "string"
+        }
+      }
+    },
+    "Runtime": {
+      "type": "object",
+      "required": [
+        "state",
+        "active"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "running",
+            "stopping",
+            "idle",
+            "unknown",
+            "completed",
+            "failed",
+            "interrupted",
+            "waiting_approval"
+          ]
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "policy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Command": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "task": {
+          "type": "string"
+        },
+        "crew": {
+          "enum": [
+            "l0"
+          ]
+        },
+        "images": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "ctx": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "max_turns": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "min_chars": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "min_reads": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "packageKey": "studio.example.review-board",
+  "pageId": "overview",
+  "title": "审阅记录",
+  "description": "选一条示例加入当前会话草稿，再补上要核对的文件或检查。",
+  "examples": [
+    {
+      "title": "整理本轮检查",
+      "text": "请整理本轮已经执行的检查，列出每项的结果和对应证据。"
+    }
+  ],
+  "actions": ["append-to-draft"]
+}

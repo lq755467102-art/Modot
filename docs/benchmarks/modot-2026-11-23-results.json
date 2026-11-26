@@ -1,0 +1,1056 @@
+{
+  "schemaVersion": 3,
+  "date": "2026-11-23",
+  "products": {
+    "modot": {
+      "version": "0.2.0-pilot.21",
+      "sourceCommit": "57f0d4a3fe1500a3236e051a94dc11637dea4a60",
+      "model": "deepseek-flash",
+      "mode": "L0"
+    },
+    "codex": {
+      "version": "codex-cli 0.171.0-alpha.13",
+      "model": "gpt-6.2-sol",
+      "reasoning": "max",
+      "authType": "ChatGPT subscription"
+    }
+  },
+  "runtime": {
+    "host": "Windows",
+    "node": "v24.22.3",
+    "git": "git version 2.56.0.windows.4",
+    "powerShell": "7.6.9",
+    "isolatedScorerDocker": "26.1.5+dfsg1",
+    "pinnedMergerPythonPandasPyArrow": "3.11.14 2.2.3 17.0.0"
+  },
+  "comparison": {
+    "limitMs": 1200000,
+    "configurations": {
+      "unblockedFirstRun": {
+        "attended": false,
+        "modot": {
+          "approval": "ask",
+          "sandbox": "workspace-write"
+        },
+        "codex": {
+          "approval": "never",
+          "sandbox": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      "matchedFullAccess": {
+        "attended": false,
+        "modot": {
+          "approval": "full",
+          "sandbox": "danger-full-access"
+        },
+        "codex": {
+          "approval": "never",
+          "sandbox": "danger-full-access"
+        }
+      }
+    },
+    "samples": {
+      "unblockedFirstRun": {
+        "caseIds": [
+          "copier",
+          "windows-codegraph",
+          "aider-py",
+          "tb-logs",
+          "pro-v1",
+          "hal-11815",
+          "hal-11880"
+        ],
+        "counts": {
+          "modot": {
+            "passed": 6,
+            "delivered": 6,
+            "completed": 7,
+            "denominator": 7
+          },
+          "codex": {
+            "passed": 6,
+            "delivered": 6,
+            "completed": 7,
+            "denominator": 7
+          }
+        },
+        "bothDelivered": {
+          "caseIds": [
+            "copier",
+            "windows-codegraph",
+            "aider-py",
+            "tb-logs",
+            "hal-11815",
+            "hal-11880"
+          ],
+          "totals": {
+            "modot": {
+              "wallMs": 2518851,
+              "inputTokens": 21175507,
+              "cachedInputTokens": 20725376,
+              "outputTokens": 226041,
+              "totalTokens": 21401548,
+              "apiEquivalentUsd": 0.344472084
+            },
+            "codex": {
+              "wallMs": 2634705,
+              "inputTokens": 8874916,
+              "cachedInputTokens": 8374016,
+              "outputTokens": 100987,
+              "totalTokens": 8975903,
+              "apiEquivalentUsd": 2.8490716
+            }
+          },
+          "fasterModot": 4,
+          "modotTimeReduction": 0.043972285322265714
+        }
+      },
+      "matchedFullAccess": {
+        "caseIds": [
+          "aider-js",
+          "tb-merge",
+          "pro-v2"
+        ],
+        "counts": {
+          "modot": {
+            "passed": 3,
+            "delivered": 3,
+            "completed": 3,
+            "denominator": 3
+          },
+          "codex": {
+            "passed": 3,
+            "delivered": 3,
+            "completed": 3,
+            "denominator": 3
+          }
+        },
+        "bothDelivered": {
+          "caseIds": [
+            "aider-js",
+            "tb-merge",
+            "pro-v2"
+          ],
+          "totals": {
+            "modot": {
+              "wallMs": 453819,
+              "inputTokens": 1760799,
+              "cachedInputTokens": 1705472,
+              "outputTokens": 71682,
+              "totalTokens": 1832481,
+              "apiEquivalentUsd": 0.11284933199999998
+            },
+            "codex": {
+              "wallMs": 1143667,
+              "inputTokens": 2613492,
+              "cachedInputTokens": 2398720,
+              "outputTokens": 44271,
+              "totalTokens": 2657763,
+              "apiEquivalentUsd": 1.112126
+            }
+          },
+          "fasterModot": 3,
+          "modotTimeReduction": 0.6031895647946475
+        }
+      }
+    },
+    "combined": {
+      "caseIds": [
+        "copier",
+        "windows-codegraph",
+        "aider-py",
+        "tb-logs",
+        "pro-v1",
+        "hal-11815",
+        "hal-11880",
+        "aider-js",
+        "tb-merge",
+        "pro-v2"
+      ],
+      "counts": {
+        "modot": {
+          "passed": 9,
+          "delivered": 9,
+          "completed": 10,
+          "denominator": 10
+        },
+        "codex": {
+          "passed": 9,
+          "delivered": 9,
+          "completed": 10,
+          "denominator": 10
+        }
+      },
+      "bothDelivered": {
+        "caseIds": [
+          "copier",
+          "windows-codegraph",
+          "aider-py",
+          "tb-logs",
+          "hal-11815",
+          "hal-11880",
+          "aider-js",
+          "tb-merge",
+          "pro-v2"
+        ],
+        "totals": {
+          "modot": {
+            "wallMs": 2972670,
+            "inputTokens": 22936306,
+            "cachedInputTokens": 22430848,
+            "outputTokens": 297723,
+            "totalTokens": 23234029,
+            "apiEquivalentUsd": 0.457321416
+          },
+          "codex": {
+            "wallMs": 3778372,
+            "inputTokens": 11488408,
+            "cachedInputTokens": 10772736,
+            "outputTokens": 145258,
+            "totalTokens": 11633666,
+            "apiEquivalentUsd": 3.9611975999999998
+          }
+        },
+        "fasterModot": 7,
+        "modotTimeReduction": 0.2132405173445071
+      }
+    },
+    "trials": [
+      {
+        "caseId": "aider-js",
+        "order": [
+          "modot",
+          "codex"
+        ],
+        "limitMs": 1200000,
+        "startingGitTree": "e7a1f2cb1f5fb55e8ed65647706e1d8c994d32d9",
+        "promptSha256": "b641877ec238ca37c2bc9ca2f613041199bc8ba64f6ac1ef04b0b9a2b0431a48",
+        "audit": {
+          "frozenRun": {
+            "mode": "full",
+            "sandboxMode": "danger-full-access"
+          },
+          "approvalRequests": [],
+          "stopCodes": [],
+          "redactedFilesScanned": 2,
+          "credentialMatches": 0
+        },
+        "scoreControls": {
+          "baseline": {
+            "passed": 0,
+            "total": 10,
+            "passedAll": false,
+            "testExit": 1,
+            "outcomeSha256": "5f16de35c034e12e9db96ac31dc19e2288d12f7cc1eefacd28836311b021b07a"
+          },
+          "reference": {
+            "passed": 10,
+            "total": 10,
+            "passedAll": true,
+            "testExit": 0,
+            "outcomeSha256": "67b6315976115f9b2921f3533d9dc6b13297069e19a51bc3bac8c989ef6e8e5a"
+          }
+        },
+        "scorer": {
+          "testsSha256": "746f36e97e497a8021b21cf6fafc1abffe044ae4a90eee381b150810a4140bbb",
+          "dependencyLockSha256": "7b938008a4e5602f5b0306789a55d7e8d32ff37fa7e915a9ee775e7a3b065b8b"
+        }
+      },
+      {
+        "caseId": "tb-merge",
+        "order": [
+          "codex",
+          "modot"
+        ],
+        "limitMs": 1200000,
+        "startingGitTree": "4eab4b85bce638f7bda31ab79ad11f469ab1460b",
+        "promptSha256": "580369b064f2120d03cd75de62934502d5e894850704bb47b1ca6652503b5f72",
+        "audit": {
+          "frozenRun": {
+            "mode": "full",
+            "sandboxMode": "danger-full-access"
+          },
+          "approvalRequests": [],
+          "stopCodes": [],
+          "redactedFilesScanned": 2,
+          "credentialMatches": 0
+        },
+        "scoreControls": {
+          "baseline": {
+            "passed": 0,
+            "total": 3,
+            "passedAll": false,
+            "testExit": 0
+          }
+        },
+        "scorer": {
+          "image": "sha256:5096d3409e5c692afd62a136f90a2e52dd87653aa6637a3e1ca31ad30fab1096 [alexgshaw/multi-source-data-merger@sha256:8b32782078ff7383a1b4e5d3cecca8ce287e30f50bb4c0e5db009a18064e666e]",
+          "testFilesSha256": {
+            "input/terminal-bench-2-1-12b7565679ce5006230b820666353673a133db93/tasks/multi-source-data-merger/tests/test.sh": "d5a00e64413c0e1ae452f38a1aa1a47c3ed7b4416bbfccae1a4c053025a336d1",
+            "input/terminal-bench-2-1-12b7565679ce5006230b820666353673a133db93/tasks/multi-source-data-merger/tests/test_outputs.py": "a070888930cf829aeca039771260b1386bda990ea805f313468d381ba3608ca5"
+          }
+        }
+      },
+      {
+        "caseId": "pro-v2",
+        "order": [
+          "modot",
+          "codex"
+        ],
+        "limitMs": 1200000,
+        "startingGitTree": "ff867aff8c74f27c1354584cbe1c73d4a78344ef",
+        "promptSha256": "5379b1581e024fcf9ba14d29f6b6a7821031a17e1ed0d20b4141aa50c3c282d2",
+        "audit": {
+          "frozenRun": {
+            "mode": "full",
+            "sandboxMode": "danger-full-access"
+          },
+          "approvalRequests": [],
+          "stopCodes": [],
+          "redactedFilesScanned": 2,
+          "credentialMatches": 0
+        },
+        "scoreControls": {
+          "baseline": {
+            "passed": 81,
+            "total": 107,
+            "passedAll": false,
+            "testExit": 1
+          }
+        },
+        "scorer": {
+          "image": "sha256:5343b393c3b353f9bea8f8ae4c4cd9b37bb48a529c56ee968219c79b8dceb709 [ghcr.io/scaleapi/swe-bench_pro-v2@sha256:4cf51f69dad7c8cb966fa2af791058ba72e3b4124461d7418239bda01b5a6a9f]",
+          "testFilesSha256": {
+            "input/pro/v2/tasks/instance_ansible__ansible-d33bedc48fdd933b5abd65a77c081876298e2f07-v0f01c69f1e2528b935359cfe578530722bca2c59/tests/config.json": "52d7bb2e0d472babc4848ee88d9822d1a9ff84f95be21936482005a53901a9f1",
+            "input/pro/v2/tasks/instance_ansible__ansible-d33bedc48fdd933b5abd65a77c081876298e2f07-v0f01c69f1e2528b935359cfe578530722bca2c59/tests/parser.py": "5ea7efbbcec4ef823ad414bfcfffaf1fa7d0f3ab8e748ea465c03bc839b3721b",
+            "input/pro/v2/tasks/instance_ansible__ansible-d33bedc48fdd933b5abd65a77c081876298e2f07-v0f01c69f1e2528b935359cfe578530722bca2c59/tests/run_script.sh": "6266fd04d263adc7fe7356680ccc934e5a1d9668898e553c54671104487dc0f8",
+            "input/pro/v2/tasks/instance_ansible__ansible-d33bedc48fdd933b5abd65a77c081876298e2f07-v0f01c69f1e2528b935359cfe578530722bca2c59/tests/test.sh": "b6f26eecd87c1696a3702ee115d31f9d42f4704cf2116419cd879f66b60976d0",
+            "input/pro/v2/tasks/instance_ansible__ansible-d33bedc48fdd933b5abd65a77c081876298e2f07-v0f01c69f1e2528b935359cfe578530722bca2c59/tests/test_patch.patch": "137e9111031d731aab6a98cfbeace83ba6115d9beb87a5362bb7ec96b76b63d1"
+          }
+        }
+      }
+    ],
+    "runs": [
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "copier",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 2,
+          "total": 2,
+          "skipped": 0
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 792546,
+        "inputTokens": 8940238,
+        "cachedInputTokens": 8794240,
+        "outputTokens": 73318,
+        "totalTokens": 9013556,
+        "apiEquivalentUsd": 0.09227322000000002,
+        "receiptSha256": "5a06e49ebb337e9c758c3614277bf3e6fb61c6418bd9e0a1670376afde857b31",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "copier",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 2,
+          "total": 2,
+          "skipped": 0
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 697620,
+        "inputTokens": 1997310,
+        "cachedInputTokens": 1828608,
+        "outputTokens": 24806,
+        "totalTokens": 2022116,
+        "apiEquivalentUsd": 0.7683248,
+        "receiptSha256": "cfb5b9602d471c1f97d4a5c82d3c2904149c686ab6b0bf624f465c2de817ae63",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "windows-codegraph",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 11,
+          "total": 11,
+          "skipped": 0
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 859007,
+        "inputTokens": 7789578,
+        "cachedInputTokens": 7658240,
+        "outputTokens": 55906,
+        "totalTokens": 7845484,
+        "apiEquivalentUsd": 0.07621901999999998,
+        "receiptSha256": "182e8d641315d7c987eaf69f9ebe044259f50406663fdd84fe1efe51da7c9cd3",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "windows-codegraph",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 11,
+          "total": 11,
+          "skipped": 0
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 850930,
+        "inputTokens": 4026379,
+        "cachedInputTokens": 3881088,
+        "outputTokens": 34482,
+        "totalTokens": 4060861,
+        "apiEquivalentUsd": 1.0235108,
+        "receiptSha256": "30e13d3784426ee13e01b86ea2f45231437fd46e4f17635de9886e376bbf1bae",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "aider-py",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 31,
+          "total": 31,
+          "skipped": 0
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 138615,
+        "inputTokens": 496188,
+        "cachedInputTokens": 470144,
+        "outputTokens": 20599,
+        "totalTokens": 516787,
+        "apiEquivalentUsd": 0.017676432000000002,
+        "receiptSha256": "a68c76bd6f39fa99825d6d8403345e373198143fb012c5cbeaee718bcc1ab25f",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "aider-py",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 31,
+          "total": 31,
+          "skipped": 0
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 168822,
+        "inputTokens": 127301,
+        "cachedInputTokens": 99968,
+        "outputTokens": 7572,
+        "totalTokens": 134873,
+        "apiEquivalentUsd": 0.1403828,
+        "receiptSha256": "0da4cac5cb81b24e398bcdbfd5c52261e48cfb38f4dffe2e3dc70669c6e44db5",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "tb-logs",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 2,
+          "total": 2
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 43979,
+        "inputTokens": 140166,
+        "cachedInputTokens": 125440,
+        "outputTokens": 5300,
+        "totalTokens": 145466,
+        "apiEquivalentUsd": 0.01153044,
+        "receiptSha256": "d4e5ddfa34a9c025a2238fc2fce42006e251af335523855df7443d36c1c0c80a",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "tb-logs",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 2,
+          "total": 2
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 74804,
+        "inputTokens": 98324,
+        "cachedInputTokens": 75776,
+        "outputTokens": 2856,
+        "totalTokens": 101180,
+        "apiEquivalentUsd": 0.0812336,
+        "receiptSha256": "82d9984536f5d445e4a7d5a65a7d72ee41abb7d10ad94218453363ea0c9081b9",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "pro-v1",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 84,
+          "total": 86
+        },
+        "independentlyPassed": false,
+        "normalDelivery": false,
+        "wallMs": 475562,
+        "inputTokens": 4460946,
+        "cachedInputTokens": 4072576,
+        "outputTokens": 58138,
+        "totalTokens": 4519084,
+        "apiEquivalentUsd": 0.21071205599999995,
+        "receiptSha256": "be578a7fe0bef243ce06fba2b47c229e5ae1e5c784ccea38dde14a7650ba4c6e",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "pro-v1",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 84,
+          "total": 86
+        },
+        "independentlyPassed": false,
+        "normalDelivery": false,
+        "wallMs": 845444,
+        "inputTokens": 3308368,
+        "cachedInputTokens": 3171968,
+        "outputTokens": 33908,
+        "totalTokens": 3342276,
+        "apiEquivalentUsd": 0.9290768,
+        "receiptSha256": "76bcc98e3384b230c4a05bb597a35737025bcc782c14812ba7e87929008a17c2",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "hal-11815",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 46,
+          "total": 46
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 411312,
+        "inputTokens": 2280621,
+        "cachedInputTokens": 2211968,
+        "outputTokens": 52346,
+        "totalTokens": 2332967,
+        "apiEquivalentUsd": 0.09668290800000001,
+        "receiptSha256": "d9641900704e2710a26a6f0722176baba4a0773d307fb238ae6150b4154e054a",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "hal-11815",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 46,
+          "total": 46
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 473703,
+        "inputTokens": 1695979,
+        "cachedInputTokens": 1622272,
+        "outputTokens": 17133,
+        "totalTokens": 1713112,
+        "apiEquivalentUsd": 0.4809712,
+        "receiptSha256": "e1f1ef77def9ed5ba76204bf6fe8a0c6e85ff0a984f2e7e34bf17c84421e75bc",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "hal-11880",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 115,
+          "total": 115
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 273392,
+        "inputTokens": 1528716,
+        "cachedInputTokens": 1465344,
+        "outputTokens": 18572,
+        "totalTokens": 1547288,
+        "apiEquivalentUsd": 0.050090064,
+        "receiptSha256": "5047bc26e1d5a6fe04e402d8583450e8649dd0a6addbaa9a70ba8eabe6b3dc36",
+        "effectivePermissions": {
+          "mode": "ask",
+          "sandboxMode": "workspace-write"
+        },
+        "approvalRequests": 0
+      },
+      {
+        "protocol": "unblockedFirstRun",
+        "caseId": "hal-11880",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 115,
+          "total": 115
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 368826,
+        "inputTokens": 929623,
+        "cachedInputTokens": 866304,
+        "outputTokens": 14138,
+        "totalTokens": 943761,
+        "apiEquivalentUsd": 0.35464840000000003,
+        "receiptSha256": "81a3830610cce841c03038a3b7052e8278ab5f49fd2e9fe8cf068fa3b6de15c2",
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "workspace-write",
+          "windowsSandbox": "mxc"
+        }
+      },
+      {
+        "caseId": "aider-js",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 10,
+          "total": 10,
+          "passedAll": true,
+          "verifierMs": 1149
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 75169,
+        "inputTokens": 170786,
+        "cachedInputTokens": 162560,
+        "outputTokens": 6596,
+        "totalTokens": 177382,
+        "apiEquivalentUsd": 0.01135836,
+        "firstVisibleBodyMs": 2077,
+        "observedToolIntervals": {
+          "count": 18,
+          "total": 18,
+          "ms": 35525
+        },
+        "toolCalls": 18,
+        "repeatedChecks": 0,
+        "receiptSha256": "0e739a582e60c31744b55c08f490cf92163c14897083b64d28990af88ad518fa",
+        "redactedEventsSha256": "79ea1308a5f67d5bf2f8e155230dbd9425038ce9f8d721794fedbb663364a3d3",
+        "submissionsSha256": {
+          "grade-school.js": "3a3d79b8b5344679dfdb5d7f0988be71d6166df431e36ab326071aed32496f50"
+        },
+        "effectivePermissions": {
+          "mode": "full",
+          "sandboxMode": "danger-full-access"
+        },
+        "approvalRequests": 0,
+        "context": {
+          "budget_tokens": 1048576,
+          "used_tokens": 22405
+        },
+        "protocol": "matchedFullAccess"
+      },
+      {
+        "caseId": "aider-js",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 10,
+          "total": 10,
+          "passedAll": true,
+          "verifierMs": 1289
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 119775,
+        "inputTokens": 138769,
+        "cachedInputTokens": 94336,
+        "outputTokens": 3539,
+        "totalTokens": 142308,
+        "apiEquivalentUsd": 0.13368960000000002,
+        "firstVisibleBodyMs": 6409,
+        "observedToolIntervals": {
+          "count": 17,
+          "total": 17,
+          "ms": 7431
+        },
+        "toolCalls": 18,
+        "repeatedChecks": 0,
+        "receiptSha256": "946f55bd49bbe337291fe78fb37226230ca644152ed6ae656881c61465777b31",
+        "redactedEventsSha256": "104bffff03aace5d73f07c1ef999ac7780355e2305dea45fbcb478e4216147b4",
+        "submissionsSha256": {
+          "grade-school.js": "5e87c0d832b924563d2442c333712843d46aa21c6ff29b8ec22b78e1b8a24e19"
+        },
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "danger-full-access"
+        },
+        "modelEvidence": "cli_flag",
+        "protocol": "matchedFullAccess"
+      },
+      {
+        "caseId": "tb-merge",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 3,
+          "total": 3,
+          "passedAll": true,
+          "verifierMs": 25686
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 57642,
+        "inputTokens": 126224,
+        "cachedInputTokens": 118400,
+        "outputTokens": 10608,
+        "totalTokens": 136832,
+        "apiEquivalentUsd": 0.015787199999999998,
+        "firstVisibleBodyMs": 2025,
+        "observedToolIntervals": {
+          "count": 12,
+          "total": 12,
+          "ms": 9094
+        },
+        "toolCalls": 12,
+        "repeatedChecks": 0,
+        "receiptSha256": "be1a10ab95d86a3ff441d26f1b7d1b5f067374a05767001692a38a8e7808fde6",
+        "redactedEventsSha256": "8e5638485f23ae994900d0310050b73c341336672ba7e75d30c3fcaeca9fac6a",
+        "submissionsSha256": {
+          "conflicts.json": "c28c5dbbf7b59858c33384bcb385adcc986ebd9e95768944f38c70455c9f7c87",
+          "merged_users.parquet": "a9e3c3d91c47d81069633a99920a4d4074f56ce81ba88be6f36d87eb59d04e72"
+        },
+        "effectivePermissions": {
+          "mode": "full",
+          "sandboxMode": "danger-full-access"
+        },
+        "approvalRequests": 0,
+        "context": {
+          "budget_tokens": 1048576,
+          "used_tokens": 29245
+        },
+        "protocol": "matchedFullAccess"
+      },
+      {
+        "caseId": "tb-merge",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 3,
+          "total": 3,
+          "passedAll": true,
+          "verifierMs": 49531
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 178851,
+        "inputTokens": 138720,
+        "cachedInputTokens": 115200,
+        "outputTokens": 7050,
+        "totalTokens": 145770,
+        "apiEquivalentUsd": 0.12906,
+        "firstVisibleBodyMs": 6346,
+        "observedToolIntervals": {
+          "count": 9,
+          "total": 9,
+          "ms": 5182
+        },
+        "toolCalls": 9,
+        "repeatedChecks": 0,
+        "receiptSha256": "ab916e25c84e67016cbd73b6a86df0748c47334545d6caad80beb9f3844aa547",
+        "redactedEventsSha256": "38e50faf222dfa340db17647d8c26b14e26de9ac364d0b8881bded71fb4e1137",
+        "submissionsSha256": {
+          "conflicts.json": "b36e9898ecb5f1056780359f3cc5ab50f043f1e4e732972781d92aac78ada3ed",
+          "merged_users.parquet": "46967210c8d15675b20c73241704a81eb8ed10dc03c2efa1cd4df5803118cf87"
+        },
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "danger-full-access"
+        },
+        "modelEvidence": "cli_flag",
+        "protocol": "matchedFullAccess"
+      },
+      {
+        "caseId": "pro-v2",
+        "limitMs": 1200000,
+        "product": "modot",
+        "status": "completed",
+        "score": {
+          "passed": 107,
+          "total": 107,
+          "passedAll": true,
+          "verifierMs": 32817
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 321008,
+        "inputTokens": 1463789,
+        "cachedInputTokens": 1424512,
+        "outputTokens": 54478,
+        "totalTokens": 1518267,
+        "apiEquivalentUsd": 0.08570377199999998,
+        "firstVisibleBodyMs": 2068,
+        "observedToolIntervals": {
+          "count": 39,
+          "total": 39,
+          "ms": 84205
+        },
+        "toolCalls": 39,
+        "repeatedChecks": 0,
+        "receiptSha256": "c5cbc2e8efa495651cf59af3629fab16adff02e53f215e8db2a022fde2eb1474",
+        "redactedEventsSha256": "e954c07ae5fad4b38b5e20e4872629be65c1af46eae604dee5e6e828235bb572",
+        "submissionsSha256": {
+          "candidate.patch": "690e31e257e9060088fc6556517831be6c64cd3308e227f0326f326ce3ed62d2"
+        },
+        "effectivePermissions": {
+          "mode": "full",
+          "sandboxMode": "danger-full-access"
+        },
+        "approvalRequests": 0,
+        "context": {
+          "budget_tokens": 1048576,
+          "used_tokens": 137069
+        },
+        "protocol": "matchedFullAccess"
+      },
+      {
+        "caseId": "pro-v2",
+        "limitMs": 1200000,
+        "product": "codex",
+        "status": "completed",
+        "score": {
+          "passed": 107,
+          "total": 107,
+          "passedAll": true,
+          "verifierMs": 32444
+        },
+        "independentlyPassed": true,
+        "normalDelivery": true,
+        "wallMs": 845041,
+        "inputTokens": 2336003,
+        "cachedInputTokens": 2189184,
+        "outputTokens": 33682,
+        "totalTokens": 2369685,
+        "apiEquivalentUsd": 0.8493764,
+        "firstVisibleBodyMs": 6045,
+        "observedToolIntervals": {
+          "count": 55,
+          "total": 55,
+          "ms": 147211
+        },
+        "toolCalls": 60,
+        "repeatedChecks": 4,
+        "receiptSha256": "bec5cf8aab9d655e250ec45cb27481a6233854e8d5d95ba7357fbeeb2b304b24",
+        "redactedEventsSha256": "78d2df3419380c953885155ef78146ace6cf3fa2c78ba4aeda0d91788528dc74",
+        "submissionsSha256": {
+          "candidate.patch": "0973d2eab046d57329640a82d93bbece3d732bfb5707396271447a2a0096af30"
+        },
+        "effectivePermissions": {
+          "approval": "never",
+          "sandboxMode": "danger-full-access"
+        },
+        "modelEvidence": "cli_flag",
+        "protocol": "matchedFullAccess"
+      }
+    ]
+  },
+  "billing": {
+    "currency": "USD",
+    "unitTokens": 1000000,
+    "deepseekFlash": {
+      "offPeak": {
+        "cachedInput": 0.003,
+        "uncachedInput": 0.15,
+        "output": 0.6
+      },
+      "peak": {
+        "cachedInput": 0.006,
+        "uncachedInput": 0.3,
+        "output": 1.2
+      },
+      "pricing": "https://api-docs.deepseek.com/quick_start/pricing/"
+    },
+    "gpt62SolStandardShort": {
+      "cachedInput": 0.1,
+      "uncachedInput": 2,
+      "cacheWrite30m": 2.5,
+      "output": 10,
+      "subscriptionDebitPerTask": null,
+      "pricing": "https://developers.openai.com/api/docs/models/gpt-6.2-sol"
+    }
+  },
+  "sourceVersions": {
+    "windowsDataset": "45c30d227055e19ab2e52a1ed8dd899e1f5bfa67",
+    "aiderPolyglot": "7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f",
+    "terminalBench": "12b7565679ce5006230b820666353673a133db93",
+    "sweBenchProSource": "66f92766bba642462d4bbe5479e83f91f9211862",
+    "sweBenchProData": "2d52cb3df914a3fcf80c7f66738b3a88ae37fc50",
+    "halSource": "16bb03ebc11577fb5ea6dc8bb6c968387085e6aa",
+    "halVerifiedData": "c104f840cc67f8b6eec6f759ebc8b2693d585d4a",
+    "halGradingFork": "5cd4be9fb23971679cbbafe5a0ecade27cef99be"
+  },
+  "cases": {
+    "aider-js": {
+      "name": "Aider Polyglot · JavaScript Grade School",
+      "upstreamCase": "Aider Polyglot javascript/grade-school",
+      "startingGitTree": "e7a1f2cb1f5fb55e8ed65647706e1d8c994d32d9",
+      "promptSha256": "b641877ec238ca37c2bc9ca2f613041199bc8ba64f6ac1ef04b0b9a2b0431a48"
+    },
+    "tb-merge": {
+      "name": "Terminal-Bench 2.1 · 三源数据合并",
+      "upstreamCase": "multi-source-data-merger",
+      "baseCommit": null,
+      "startingGitTree": "4eab4b85bce638f7bda31ab79ad11f469ab1460b",
+      "promptSha256": "580369b064f2120d03cd75de62934502d5e894850704bb47b1ca6652503b5f72"
+    },
+    "pro-v2": {
+      "name": "SWE-bench Pro V2 · Ansible",
+      "upstreamCase": "Ansible config type conversion",
+      "baseCommit": "dcc5dac1846be3bf6e948a2950b93477b9193076",
+      "startingGitTree": "ff867aff8c74f27c1354584cbe1c73d4a78344ef",
+      "promptSha256": "5379b1581e024fcf9ba14d29f6b6a7821031a17e1ed0d20b4141aa50c3c282d2"
+    },
+    "copier": {
+      "name": "Copier Unicode 更新冲突",
+      "upstreamCase": "SWE-bench-Live / Windows copier-org__copier-2007",
+      "baseCommit": "cc9aacb00742ffc792a3556734b020bb783d1e1c",
+      "startingGitTree": "d6a06b3e48106e76fefbdc01c247c41a91b0e892",
+      "promptSha256": "443115ded00fd4b92db09cfc000c2bdd8b0e29bcee13d80d4265ad4632444a9c"
+    },
+    "windows-codegraph": {
+      "name": "SWE-bench Live Windows · CodeGraph",
+      "upstreamCase": "SWE-bench-Live / Windows colbymchenry__codegraph-941",
+      "baseCommit": "e43ac82cdf76998f78bc871a741235a4c02e5bd0",
+      "startingGitTree": "bcfa7b936d7980e88a4bf327c432cc6e4ffbb6b1",
+      "promptSha256": "13bb06fc913f83ba32a267a9b72944105682c783e9786a325f3681b6d63a5c6c"
+    },
+    "aider-py": {
+      "name": "Aider Polyglot · Python Bowling",
+      "upstreamCase": "Aider Polyglot python/bowling",
+      "startingGitTree": "0e33bfce01197cc32bd2158493e769d045213a42",
+      "promptSha256": "2d3cd656d158e26f3a5b7e63d130060d62a1eff4fdfc232c1963b91de5e9c5d6"
+    },
+    "tb-logs": {
+      "name": "Terminal-Bench 2.1 · 日志日期汇总",
+      "upstreamCase": "log-summary-date-ranges",
+      "baseCommit": null,
+      "startingGitTree": "944df3070badeb2d03212d732b425703928e7ee7",
+      "promptSha256": "e7d3fdf0ec8fd50c3bc16ddf193b972acdbd0ee2847460a837368d4c4b70e580"
+    },
+    "pro-v1": {
+      "name": "SWE-bench Pro V1 · Ansible",
+      "upstreamCase": "Ansible config type conversion",
+      "baseCommit": "dcc5dac1846be3bf6e948a2950b93477b9193076",
+      "startingGitTree": "ff867aff8c74f27c1354584cbe1c73d4a78344ef",
+      "promptSha256": "f3bb9debb4a1fc52161831637214e34372a438ab70edf8e524c53c2f46c8bf57"
+    },
+    "hal-11815": {
+      "name": "Princeton HAL Mini · Django 11815",
+      "upstreamCase": "django__django-11815",
+      "baseCommit": "e02f67ef2d03d48128e7a118bf75f0418e24e8ac",
+      "startingGitTree": "8430cb2f3f1806789da2328fbfceba20942cede1",
+      "promptSha256": "e022afa957e8b3db88243013133760019ad87c3d207851d0da7af9fdd8483efd"
+    },
+    "hal-11880": {
+      "name": "Princeton HAL Mini · Django 11880",
+      "upstreamCase": "django__django-11880",
+      "baseCommit": "06909fe084f87a65459a83bd69d7cdbe4fce9a7c",
+      "startingGitTree": "6966e9d3189249a2332a1352596058b57ad96452",
+      "promptSha256": "e602e90dd73a70f9faf006238dfda2347f4aa08bb29365ae2611b3ea92f3eff4"
+    }
+  },
+  "evidenceSha256": {
+    "matchedPermissionsProof": "b7f6a71f2cd663d3fcda457dc7fd20885bfb8f690b2624511ffa5621095873ba",
+    "matchedPermissionsAudit": "498ab6f7da04dfb6ae1f2118b80f76605b0d00f48527221adc21c9b279b5c006",
+    "matchedPermissionsGraderArchive": "0f075415257a9c788b5b983b82b145009496e2d210b5e1fe6659b1eff622c3f5",
+    "firstRunSourceArchives": {
+      "copier": "7468a6af187814448a0c1d4710c700e0d6adeb3f686561cb84e31a3abfe6d461",
+      "live": "9e2fcbe7427e8e710fb7e0bef31a89e2be9af43a55a1d349c35cd95bd30fcc95",
+      "container": "180af18b4d278e6b7884e3885ec6dbccf7dfe6d08a7c47e4c8963832fe5f8c3b"
+    }
+  }
+}

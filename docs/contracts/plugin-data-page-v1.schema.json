@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modot Plugin Data Page v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "packageKey", "pageId", "title", "description"],
+  "properties": {
+    "version": { "const": 1 },
+    "packageKey": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "pageId": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "minLength": 1, "maxLength": 600 },
+    "examples": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "text"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "text": { "type": "string", "minLength": 1, "maxLength": 2000 }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "maxItems": 1,
+      "items": { "enum": ["append-to-draft"] }
+    }
+  }
+}

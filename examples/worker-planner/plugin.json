@@ -1,0 +1,36 @@
+{
+  "name": "modot-planner",
+  "version": "0.1.0",
+  "description": "官方规划者样例。执行者需要比较路线或梳理依赖时，可委派一次只读规划。",
+  "workers": [{
+    "name": "plan",
+    "protocol": "modot.worker/1-draft",
+    "description": "根据已给目标、当前阶段和边界，提出可取舍的路线、依赖及未解问题。",
+    "method": "从 goalRef 指向的原始目标和当前阶段出发。沿用提供的事实及来源，必要时只读获准材料。给执行者可实施的下一步，说明依赖、取舍与假设。只有证据支持的路线才列为选项，信息不足就写入 openQuestions。用 submit_worker_result 返回建议，主队列和项目文件由执行者维护。",
+    "requires": ["native-l0", "independent-history", "structured-result"],
+    "optional": ["read-code", "messages", "resume", "cancel"],
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "goalRef": {"type": "string", "minLength": 1, "description": "原始目标的摘录及来源"},
+        "stage": {"type": "string", "minLength": 1},
+        "scope": {"type": "string", "minLength": 1},
+        "facts": {"type": "array", "items": {"type": "string"}, "description": "已有事实及依据"}
+      },
+      "required": ["goalRef", "stage", "scope"], "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "options": {"type": "array", "items": {
+          "type": "object", "properties": {
+            "steps": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+            "basis": {"type": "string", "minLength": 1, "description": "依据、依赖与取舍"}
+          }, "required": ["steps", "basis"], "additionalProperties": false
+        }},
+        "openQuestions": {"type": "array", "items": {"type": "string"}, "description": "未证实的假设或风险"}
+      },
+      "required": ["options", "openQuestions"], "additionalProperties": false
+    }
+  }]
+}

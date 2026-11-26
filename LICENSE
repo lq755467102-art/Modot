@@ -1,0 +1,56 @@
+Modot Source-Available License 1.0
+
+Copyright (c) 2026 Modot contributors
+
+1. Covered material
+
+These terms apply to the Modot code and documentation supplied under this
+license, to the extent the Modot copyright holders can license them. They do
+not affect permissions already received under earlier licenses. Third-party
+components remain available under their own licenses.
+
+2. Use and free distribution
+
+You may use, copy, and modify the covered material for personal use or for
+your organization's internal work, including internal work at a for-profit
+organization. You may also copy and modify the material to distribute free
+copies or variants, or to offer their functionality to others at no charge.
+You may publish a free variant's source or keep your additions closed source.
+
+For any distribution that contains covered material, retain the copyright
+notice and a copy of this license. Credit Modot and link to the upstream
+repository in a place recipients can find, such as the README, an About
+screen, or the download page. Give equivalent credit when providing hosted
+access. You may choose terms for your additions, subject to this license for
+the Modot material they contain.
+
+3. Separate written permission
+
+Obtain written permission from the relevant Modot copyright holders before
+selling or reselling the software or a variant, charging others for access
+to its functionality, or including it as part of a paid product or service.
+This includes making Modot functionality available in a paid closed-source
+product. Access that requires a purchase or paid subscription counts as
+paid access.
+
+Using Modot internally to create work you sell is permitted. Fees charged by
+an independent model provider for your own model usage are outside these
+terms. Distributing the software or supplying its functionality to clients
+remains subject to the rules above. Contact the Modot maintainers for
+written permission.
+
+4. Rights retained
+
+The licenses of third-party components govern those components, including
+any right to study, modify, reverse engineer for debugging, and replace
+libraries that those licenses provide. Attribution does not grant use of
+Modot branding to imply sponsorship or endorsement.
+
+5. Warranty and liability
+
+THE COVERED MATERIAL IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE COVERED MATERIAL OR ITS USE.

@@ -1,0 +1,16 @@
+{
+  "name": "review-board",
+  "version": "2.0.0",
+  "description": "工作室第二版保留概览，新增历史页声明，并撤去第一版的便笺工具。",
+  "extensions": {
+    "modot.catalog-preview": {
+      "version": 1,
+      "packageKey": "studio.example.review-board",
+      "pages": [
+        "overview",
+        "history"
+      ],
+      "icons": { "default": "./icons/default.png" }
+    }
+  }
+}

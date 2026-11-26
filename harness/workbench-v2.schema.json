@@ -1,0 +1,7513 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WorkbenchV2",
+  "$defs": {
+    "WorkroomProject": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkroomRoot": {
+      "type": "object",
+      "required": [
+        "resourceId",
+        "originResourceId",
+        "name",
+        "path",
+        "checkout"
+      ],
+      "properties": {
+        "resourceId": {
+          "type": "string"
+        },
+        "originResourceId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "checkout": {
+          "enum": [
+            "local",
+            "worktree"
+          ]
+        }
+      }
+    },
+    "WorkroomLocation": {
+      "type": "object",
+      "required": [
+        "resourceId",
+        "directory"
+      ],
+      "properties": {
+        "resourceId": {
+          "type": "string"
+        },
+        "directory": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkroomContext": {
+      "type": "object",
+      "required": [
+        "project",
+        "conversationId",
+        "scopeRevision",
+        "roots",
+        "status",
+        "notice"
+      ],
+      "properties": {
+        "project": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorkroomProject"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conversationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scopeRevision": {
+          "type": "string"
+        },
+        "roots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorkroomRoot"
+          }
+        },
+        "importLocation": {
+          "$ref": "#/$defs/WorkroomLocation"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "no_project",
+            "no_code",
+            "readonly"
+          ]
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "WorkroomOpened": {
+      "type": "object",
+      "required": [
+        "workspaceId",
+        "projectId",
+        "resourceId",
+        "path",
+        "checkout",
+        "scopeRevision"
+      ],
+      "properties": {
+        "workspaceId": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "checkout": {
+          "enum": [
+            "local",
+            "worktree"
+          ]
+        },
+        "scopeRevision": {
+          "type": "string"
+        }
+      }
+    },
+    "LinkedWorkroomFile": {
+      "type": "object",
+      "required": [
+        "conversationId",
+        "resourceId",
+        "path",
+        "scopeRevision",
+        "revision",
+        "mode",
+        "mimeType",
+        "absolutePath",
+        "defaultOpen"
+      ],
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "scopeRevision": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "edit",
+            "readonly",
+            "binary"
+          ]
+        },
+        "mimeType": {
+          "type": "string"
+        },
+        "absolutePath": {
+          "type": "string"
+        },
+        "defaultOpen": {
+          "type": "boolean"
+        }
+      }
+    },
+    "LegacyHistory": {
+      "type": "object",
+      "required": [
+        "id",
+        "workspaceId",
+        "cwd",
+        "hashes",
+        "reason",
+        "unsupported"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cwd": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        },
+        "unsupported": {
+          "type": "boolean"
+        },
+        "legacyTrace": {
+          "type": "boolean"
+        },
+        "runtime": {
+          "type": "string"
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "migratedBy": {
+          "type": "string"
+        }
+      }
+    },
+    "MigrationPlan": {
+      "type": "object",
+      "required": [
+        "id",
+        "state",
+        "created",
+        "candidates",
+        "planHash",
+        "notice"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LegacyHistory"
+          }
+        },
+        "planHash": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "backup": {
+          "type": "string"
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ManagementEntry": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "state",
+        "entry",
+        "legacyWrites",
+        "paths"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "entry": {
+          "type": "string"
+        },
+        "legacyWrites": {
+          "type": "boolean"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ManagementView": {
+      "type": "object",
+      "required": [
+        "format",
+        "inventory",
+        "history",
+        "plans",
+        "notice"
+      ],
+      "properties": {
+        "format": {
+          "type": "object"
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ManagementEntry"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LegacyHistory"
+          }
+        },
+        "plans": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "notice": {
+          "type": "string"
+        },
+        "totalHistory": {
+          "type": "number"
+        }
+      }
+    },
+    "LegacyEventPage": {
+      "type": "object",
+      "required": [
+        "item",
+        "events",
+        "total",
+        "generation",
+        "catchingUp"
+      ],
+      "properties": {
+        "item": {
+          "$ref": "#/$defs/LegacyHistory"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EventRow"
+          }
+        },
+        "total": {
+          "type": "number"
+        },
+        "generation": {
+          "type": "string"
+        },
+        "catchingUp": {
+          "type": "boolean"
+        },
+        "historyNotice": {
+          "type": "string"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "beforeOffset": {
+          "type": "number"
+        }
+      }
+    },
+    "HumanAction": {
+      "type": "object",
+      "required": [
+        "id",
+        "actor",
+        "source",
+        "principal",
+        "path",
+        "state",
+        "started",
+        "requestVersion",
+        "notice"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "principal": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "started": {
+          "type": "number"
+        },
+        "requestVersion": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "position": {
+          "type": "number"
+        },
+        "workspaceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conversationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "receiptId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expectedRevision": {
+          "type": "string"
+        },
+        "effect": {
+          "type": "object"
+        },
+        "actualProcess": {
+          "type": "object"
+        },
+        "httpStatus": {
+          "type": "number"
+        },
+        "finished": {
+          "type": "number"
+        }
+      }
+    },
+    "HumanActionPage": {
+      "type": "object",
+      "required": [
+        "items",
+        "hasMore",
+        "nextBefore",
+        "notice"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HumanAction"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextLayer": {
+      "type": "object",
+      "required": [
+        "scope",
+        "label",
+        "values"
+      ],
+      "properties": {
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "ContextModel": {
+      "type": "object",
+      "required": [
+        "name",
+        "endpoint",
+        "source"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextSource": {
+      "type": "object",
+      "required": [
+        "name",
+        "status",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "origin": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "chars": {
+          "type": "number"
+        },
+        "callId": {
+          "type": "string"
+        },
+        "actionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "actionRunId": {
+          "type": "string"
+        },
+        "spillHash": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextChoice": {
+      "type": "object",
+      "required": [
+        "id",
+        "runId",
+        "role",
+        "at",
+        "model"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "at": {
+          "type": "number"
+        },
+        "model": {
+          "$ref": "#/$defs/ContextModel"
+        }
+      }
+    },
+    "ContextPreferences": {
+      "type": "object",
+      "required": [
+        "effective",
+        "sources",
+        "layers",
+        "revision",
+        "notice"
+      ],
+      "properties": {
+        "effective": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "sources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextLayer"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "InputBudget": {
+      "type": "object",
+      "required": [
+        "fixed",
+        "current",
+        "history",
+        "sources",
+        "method",
+        "estimated",
+        "userLimit",
+        "modelWindow",
+        "reservedOutput",
+        "inputLimit",
+        "historyThreshold",
+        "deferred",
+        "requestedGroups"
+      ],
+      "properties": {
+        "fixed": {
+          "type": "number"
+        },
+        "current": {
+          "type": "number"
+        },
+        "history": {
+          "type": "number"
+        },
+        "sources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "method": {
+          "type": "string"
+        },
+        "estimated": {
+          "type": "boolean"
+        },
+        "userLimit": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "modelWindow": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "reservedOutput": {
+          "type": "number"
+        },
+        "inputLimit": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "historyThreshold": {
+          "type": "number"
+        },
+        "deferred": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requestedGroups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        },
+        "stage": {
+          "type": "string"
+        },
+        "providerInput": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "decisionTokens": {
+          "type": "number"
+        },
+        "decisionMethod": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextCapacity": {
+      "type": "object",
+      "required": [
+        "estimated",
+        "method",
+        "inputTokens",
+        "toolTokens",
+        "protocolTokens",
+        "reservedOutput",
+        "outputReservationKnown",
+        "safetyReserve",
+        "estimatedTotal",
+        "capacity",
+        "state"
+      ],
+      "properties": {
+        "estimated": {
+          "type": "boolean"
+        },
+        "method": {
+          "type": "string"
+        },
+        "inputTokens": {
+          "type": "number"
+        },
+        "toolTokens": {
+          "type": "number"
+        },
+        "protocolTokens": {
+          "type": "number"
+        },
+        "reservedOutput": {
+          "type": "number"
+        },
+        "outputReservationKnown": {
+          "type": "boolean"
+        },
+        "safetyReserve": {
+          "type": "number"
+        },
+        "estimatedTotal": {
+          "type": "number"
+        },
+        "capacity": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "state": {
+          "type": "string"
+        },
+        "imageTokens": {
+          "type": "number"
+        },
+        "imageCount": {
+          "type": "number"
+        },
+        "systemTokens": {
+          "type": "number"
+        },
+        "breakdown": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "budget": {
+          "$ref": "#/$defs/InputBudget"
+        }
+      }
+    },
+    "ContextCheckpoint": {
+      "type": "object",
+      "required": [
+        "id",
+        "runId",
+        "role",
+        "at",
+        "strategy",
+        "before",
+        "after",
+        "actionReferences",
+        "preservedUserMessages"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "at": {
+          "type": "number"
+        },
+        "strategy": {
+          "type": "string"
+        },
+        "before": {
+          "$ref": "#/$defs/ContextCapacity"
+        },
+        "after": {
+          "$ref": "#/$defs/ContextCapacity"
+        },
+        "actionReferences": {
+          "type": "number"
+        },
+        "preservedUserMessages": {
+          "type": "number"
+        }
+      }
+    },
+    "ContextDelivery": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "confirmed",
+            "unconfirmed"
+          ]
+        },
+        "evidence": {
+          "enum": [
+            "provider_response"
+          ]
+        }
+      }
+    },
+    "ContextEvidenceSource": {
+      "type": "object",
+      "required": [
+        "runId",
+        "role"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "checkpointId": {
+          "type": "string"
+        },
+        "messageIndex": {
+          "type": "number"
+        },
+        "contentField": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "snapshotId": {
+          "type": "string"
+        },
+        "actionId": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextEvidencePage": {
+      "type": "object",
+      "required": [
+        "kind",
+        "source",
+        "text",
+        "nextOffset",
+        "hasMore",
+        "version"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "checkpoint_message",
+            "tool_result"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/ContextEvidenceSource"
+        },
+        "text": {
+          "type": "string"
+        },
+        "nextOffset": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextSnapshot": {
+      "type": "object",
+      "required": [
+        "id",
+        "runId",
+        "role",
+        "at",
+        "state",
+        "model",
+        "requestVersion",
+        "systemVersion",
+        "messageCount",
+        "sources",
+        "results",
+        "preferences"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "at": {
+          "type": "number"
+        },
+        "state": {
+          "type": "string"
+        },
+        "model": {
+          "$ref": "#/$defs/ContextModel"
+        },
+        "requestVersion": {
+          "type": "string"
+        },
+        "systemVersion": {
+          "type": "string"
+        },
+        "messageCount": {
+          "type": "number"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextSource"
+          }
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextSource"
+          }
+        },
+        "preferences": {
+          "$ref": "#/$defs/ContextPreferences"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "resourceScope": {
+          "type": "object"
+        },
+        "toolNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "omittedResults": {
+          "type": "number"
+        },
+        "capacity": {
+          "$ref": "#/$defs/ContextCapacity"
+        },
+        "checkpointId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "delivery": {
+          "$ref": "#/$defs/ContextDelivery"
+        }
+      }
+    },
+    "ContextView": {
+      "type": "object",
+      "required": [
+        "snapshot",
+        "snapshots",
+        "preferences",
+        "authority",
+        "managementNotice",
+        "offset",
+        "hasMore",
+        "totalSnapshots"
+      ],
+      "properties": {
+        "snapshot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContextSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextChoice"
+          }
+        },
+        "preferences": {
+          "$ref": "#/$defs/ContextPreferences"
+        },
+        "authority": {
+          "type": "object"
+        },
+        "managementNotice": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "totalSnapshots": {
+          "type": "number"
+        },
+        "preferenceChanges": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextCheckpoint"
+          }
+        },
+        "checkpointOffset": {
+          "type": "number"
+        },
+        "checkpointsHasMore": {
+          "type": "boolean"
+        },
+        "totalCheckpoints": {
+          "type": "number"
+        }
+      }
+    },
+    "ExecutionConfig": {
+      "type": "object",
+      "required": [
+        "revision",
+        "crew",
+        "maxTurns",
+        "modelCalls",
+        "charter"
+      ],
+      "properties": {
+        "revision": {
+          "type": "number"
+        },
+        "crew": {
+          "enum": [
+            "l0",
+            "l4"
+          ]
+        },
+        "maxTurns": {
+          "type": "number"
+        },
+        "modelCalls": {
+          "type": "number"
+        },
+        "charter": {
+          "enum": [
+            "legacy",
+            "off"
+          ]
+        },
+        "contextLimit": {
+          "type": "number"
+        },
+        "parallelRoles": {
+          "type": "boolean"
+        },
+        "backgroundPlanner": {
+          "type": "boolean"
+        },
+        "workerContinuation": {
+          "enum": [
+            "parent-run",
+            "manual",
+            "wake"
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "execute",
+            "delegation_draft"
+          ]
+        },
+        "delegationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subtaskId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "SubtaskOrigin": {
+      "type": "object",
+      "required": [
+        "parentId",
+        "taskId",
+        "runId"
+      ],
+      "properties": {
+        "parentId": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        }
+      }
+    },
+    "SubtaskBudget": {
+      "type": "object",
+      "required": [
+        "sourceRunId",
+        "limit"
+      ],
+      "properties": {
+        "sourceRunId": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        }
+      }
+    },
+    "Subtask": {
+      "type": "object",
+      "required": [
+        "id",
+        "parentId",
+        "parentRunId",
+        "childId",
+        "goal",
+        "kind",
+        "state",
+        "reason",
+        "budget"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "parentId": {
+          "type": "string"
+        },
+        "parentRunId": {
+          "type": "string"
+        },
+        "childId": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "code",
+            "report"
+          ]
+        },
+        "state": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "budget": {
+          "$ref": "#/$defs/SubtaskBudget"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProjectResource"
+          }
+        }
+      }
+    },
+    "SubtaskPage": {
+      "type": "object",
+      "required": [
+        "tasks",
+        "concurrency",
+        "maximumTasks",
+        "budgetNotice"
+      ],
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Subtask"
+          }
+        },
+        "concurrency": {
+          "type": "number"
+        },
+        "maximumTasks": {
+          "type": "number"
+        },
+        "budgetNotice": {
+          "type": "string"
+        }
+      }
+    },
+    "SubtaskOverviewItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "nickname",
+        "runId",
+        "state",
+        "title",
+        "summary",
+        "created"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "resultDelivery": {
+          "enum": [
+            "available",
+            "notified",
+            "delivered"
+          ]
+        }
+      }
+    },
+    "SubtaskOverview": {
+      "type": "object",
+      "required": [
+        "tasks"
+      ],
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SubtaskOverviewItem"
+          }
+        }
+      }
+    },
+    "IntegrationFile": {
+      "type": "object",
+      "required": [
+        "path",
+        "baseHash",
+        "currentHash",
+        "sourceHash",
+        "mergedHash",
+        "conflict",
+        "choice",
+        "kind"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "baseHash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currentHash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceHash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mergedHash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conflict": {
+          "type": "boolean"
+        },
+        "choice": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
+    },
+    "IntegrationCheck": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "IntegrationPlan": {
+      "type": "object",
+      "required": [
+        "id",
+        "parentId",
+        "taskId",
+        "resourceId",
+        "sourceRevision",
+        "targetRevision",
+        "sourceBaseline",
+        "sourceHead",
+        "sourceBranch",
+        "targetHead",
+        "targetBranch",
+        "files",
+        "commits",
+        "state",
+        "planHash",
+        "revision",
+        "applied",
+        "conflicts",
+        "created"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "parentId": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "sourceRevision": {
+          "type": "string"
+        },
+        "targetRevision": {
+          "type": "string"
+        },
+        "sourceBaseline": {
+          "type": "string"
+        },
+        "sourceHead": {
+          "type": "string"
+        },
+        "sourceBranch": {
+          "type": "string"
+        },
+        "targetHead": {
+          "type": "string"
+        },
+        "targetBranch": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IntegrationFile"
+          }
+        },
+        "commits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "state": {
+          "type": "string"
+        },
+        "planHash": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "applied": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alreadyPresent": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conflicts": {
+          "type": "number"
+        },
+        "created": {
+          "type": "number"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "targetStale": {
+          "type": "boolean"
+        },
+        "resultRevision": {
+          "type": "string"
+        },
+        "currentTargetRevision": {
+          "type": "string"
+        },
+        "targetCheck": {
+          "$ref": "#/$defs/IntegrationCheck"
+        },
+        "childId": {
+          "type": "string"
+        },
+        "sourceChecks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "sourceChecksNotice": {
+          "type": "string"
+        },
+        "sourceChecksMore": {
+          "type": "boolean"
+        },
+        "cleanup": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "abortRequested": {
+          "type": "boolean"
+        }
+      }
+    },
+    "IntegrationSummary": {
+      "type": "object",
+      "required": [
+        "id",
+        "taskId",
+        "state",
+        "planHash",
+        "fileCount",
+        "appliedCount"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "planHash": {
+          "type": "string"
+        },
+        "conflicts": {
+          "type": "number"
+        },
+        "created": {
+          "type": "number"
+        },
+        "targetStale": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "number"
+        },
+        "fileCount": {
+          "type": "number"
+        },
+        "appliedCount": {
+          "type": "number"
+        }
+      }
+    },
+    "IntegrationPage": {
+      "type": "object",
+      "required": [
+        "plans",
+        "hasMore",
+        "nextBefore"
+      ],
+      "properties": {
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IntegrationSummary"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "IntegrationFilePage": {
+      "type": "object",
+      "required": [
+        "planId",
+        "planHash",
+        "path",
+        "view",
+        "text",
+        "next",
+        "totalChars",
+        "notice"
+      ],
+      "properties": {
+        "planId": {
+          "type": "string"
+        },
+        "planHash": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "view": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "next": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "totalChars": {
+          "type": "number"
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "ExecutionRun": {
+      "type": "object",
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/$defs/ExecutionConfig"
+        },
+        "usedCalls": {
+          "type": "number"
+        },
+        "byRole": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "reviewerReserve": {
+          "type": "number"
+        },
+        "exhaustedRole": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "charterEffective": {
+          "type": "string"
+        }
+      }
+    },
+    "ExecutionRoute": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "planner",
+        "reviewer",
+        "mechanism"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "planner": {
+          "type": "boolean"
+        },
+        "reviewer": {
+          "type": "boolean"
+        },
+        "mechanism": {
+          "type": "string"
+        }
+      }
+    },
+    "ExecutionView": {
+      "type": "object",
+      "required": [
+        "next",
+        "current",
+        "routes",
+        "permissions",
+        "budgetNotice",
+        "migration"
+      ],
+      "properties": {
+        "next": {
+          "$ref": "#/$defs/ExecutionConfig"
+        },
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExecutionRun"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExecutionRoute"
+          }
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "nextReviewerReserve": {
+          "type": "number"
+        },
+        "budgetNotice": {
+          "type": "string"
+        },
+        "migration": {
+          "type": "string"
+        }
+      }
+    },
+    "DelegationCriterion": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "manual",
+            "code_check",
+            "artifact_contains"
+          ]
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "argv": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contains": {
+          "type": "string"
+        }
+      }
+    },
+    "DelegationSpec": {
+      "type": "object",
+      "required": [
+        "goal",
+        "boundaries",
+        "criteria",
+        "maxRounds",
+        "modelCalls"
+      ],
+      "properties": {
+        "goal": {
+          "type": "string"
+        },
+        "boundaries": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DelegationCriterion"
+          }
+        },
+        "maxRounds": {
+          "type": "number"
+        },
+        "modelCalls": {
+          "type": "number"
+        }
+      }
+    },
+    "DelegationVersion": {
+      "type": "object",
+      "required": [
+        "id",
+        "spec",
+        "actor",
+        "at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "spec": {
+          "$ref": "#/$defs/DelegationSpec"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "at": {
+          "type": "number"
+        }
+      }
+    },
+    "DelegationBudget": {
+      "type": "object",
+      "required": [
+        "chargedCalls",
+        "remainingCalls",
+        "remainingRounds",
+        "unconfirmed"
+      ],
+      "properties": {
+        "chargedCalls": {
+          "type": "number"
+        },
+        "remainingCalls": {
+          "type": "number"
+        },
+        "remainingRounds": {
+          "type": "number"
+        },
+        "unconfirmed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "DelegationRound": {
+      "type": "object",
+      "required": [
+        "runId",
+        "state",
+        "allocatedCalls",
+        "version"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "allocatedCalls": {
+          "type": "number"
+        },
+        "version": {
+          "type": "string"
+        },
+        "observedCalls": {
+          "type": "number"
+        },
+        "chargedCalls": {
+          "type": "number"
+        }
+      }
+    },
+    "DelegationEvaluationItem": {
+      "type": "object",
+      "required": [
+        "criterion",
+        "claim",
+        "result"
+      ],
+      "properties": {
+        "criterion": {
+          "$ref": "#/$defs/DelegationCriterion"
+        },
+        "claim": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "result": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "weakCheck": {
+          "type": "boolean"
+        },
+        "target": {
+          "type": "object"
+        }
+      }
+    },
+    "DelegationEvaluation": {
+      "type": "object",
+      "required": [
+        "criteria",
+        "allChecksMet",
+        "signature"
+      ],
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DelegationEvaluationItem"
+          }
+        },
+        "allChecksMet": {
+          "type": "boolean"
+        },
+        "signature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "Delegation": {
+      "type": "object",
+      "required": [
+        "id",
+        "conversationId",
+        "revision",
+        "state",
+        "versions",
+        "pendingVersion",
+        "activeVersion",
+        "rounds",
+        "progress",
+        "decision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "state": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DelegationVersion"
+          }
+        },
+        "pendingVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "activeVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rounds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DelegationRound"
+          }
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "decision": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "decisionStale": {
+          "type": "boolean"
+        },
+        "budget": {
+          "$ref": "#/$defs/DelegationBudget"
+        },
+        "evaluation": {
+          "$ref": "#/$defs/DelegationEvaluation"
+        },
+        "mandate": {
+          "type": "object"
+        },
+        "reconcileRunId": {
+          "type": "string"
+        }
+      }
+    },
+    "DelegationCurrent": {
+      "type": "object",
+      "required": [
+        "current"
+      ],
+      "properties": {
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Delegation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "GitHead": {
+      "type": "object",
+      "required": [
+        "available"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "GitFile": {
+      "type": "object",
+      "required": [
+        "path",
+        "status"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "oldPath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "GitState": {
+      "type": "object",
+      "required": [
+        "available",
+        "files",
+        "revision"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GitFile"
+          }
+        }
+      }
+    },
+    "GitChangesPage": {
+      "type": "object",
+      "required": [
+        "git",
+        "changeCount",
+        "nextOffset",
+        "snapshot"
+      ],
+      "properties": {
+        "git": {
+          "$ref": "#/$defs/GitState"
+        },
+        "changeCount": {
+          "type": "number"
+        },
+        "nextOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "snapshot": {
+          "type": "string"
+        }
+      }
+    },
+    "Capabilities": {
+      "type": "object",
+      "required": [
+        "files",
+        "checks",
+        "pty",
+        "debug",
+        "git"
+      ],
+      "properties": {
+        "files": {
+          "type": "boolean"
+        },
+        "checks": {
+          "type": "boolean"
+        },
+        "pty": {
+          "type": "boolean"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "git": {
+          "type": "boolean"
+        }
+      }
+    },
+    "WorkspaceSummary": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "path",
+        "kind",
+        "capabilities"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "capabilities": {
+          "$ref": "#/$defs/Capabilities"
+        }
+      }
+    },
+    "Workspace": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "path",
+        "kind",
+        "git",
+        "capabilities"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "capabilities": {
+          "$ref": "#/$defs/Capabilities"
+        },
+        "git": {
+          "$ref": "#/$defs/GitState"
+        }
+      }
+    },
+    "Runtime": {
+      "type": "object",
+      "required": [
+        "state",
+        "active"
+      ],
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "policy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "run_id": {
+          "type": "string"
+        }
+      }
+    },
+    "Thread": {
+      "type": "object",
+      "required": [
+        "id",
+        "taskId",
+        "workspaceId",
+        "title",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "implementation",
+            "question",
+            "discussion",
+            "review"
+          ]
+        },
+        "runtime": {
+          "$ref": "#/$defs/Runtime"
+        },
+        "acceptedAt": {
+          "type": "number"
+        },
+        "acceptedRevision": {
+          "type": "string"
+        },
+        "acceptanceNote": {
+          "type": "string"
+        },
+        "archived": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FileContent": {
+      "type": "object",
+      "required": [
+        "path",
+        "text",
+        "revision",
+        "bom",
+        "eol"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "bom": {
+          "type": "boolean"
+        },
+        "eol": {
+          "enum": [
+            "CRLF",
+            "LF"
+          ]
+        }
+      }
+    },
+    "WorkspaceTextPage": {
+      "type": "object",
+      "required": [
+        "path",
+        "text",
+        "revision",
+        "nextOffset",
+        "hasMore",
+        "sizeBytes"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "nextOffset": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "sizeBytes": {
+          "type": "number"
+        }
+      }
+    },
+    "WorkspaceBytePage": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "revision",
+        "sizeBytes",
+        "offset",
+        "nextOffset",
+        "hasMore",
+        "hex",
+        "reason"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "bytes"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sizeBytes": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "nextOffset": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "hex": {
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "",
+            "image_limit",
+            "invalid_image",
+            "decoder_unavailable"
+          ]
+        }
+      }
+    },
+    "WorkspaceImagePreview": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "revision",
+        "sizeBytes",
+        "format",
+        "width",
+        "height",
+        "firstFrame",
+        "png"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "image"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sizeBytes": {
+          "type": "number"
+        },
+        "format": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "firstFrame": {
+          "type": "boolean"
+        },
+        "png": {
+          "type": "string"
+        }
+      }
+    },
+    "EvidenceQuestionSource": {
+      "type": "object",
+      "required": [
+        "conversationId",
+        "actionId",
+        "snapshotHash"
+      ],
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "actionId": {
+          "type": "string"
+        },
+        "snapshotHash": {
+          "type": "string"
+        },
+        "runId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outputHash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "ForkSource": {
+      "type": "object",
+      "required": [
+        "conversationId",
+        "title",
+        "before",
+        "seq",
+        "generation"
+      ],
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "before": {
+          "type": "number"
+        },
+        "seq": {
+          "type": "number"
+        },
+        "generation": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "DiscussionSource": {
+      "type": "object",
+      "required": [
+        "conversationId",
+        "title",
+        "hash",
+        "snapshotHash",
+        "contextMode"
+      ],
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "snapshotHash": {
+          "type": "string"
+        },
+        "contextMode": {
+          "type": "string"
+        },
+        "at": {
+          "type": "number"
+        }
+      }
+    },
+    "DiscussionBackground": {
+      "type": "object",
+      "required": [
+        "text",
+        "nextOffset",
+        "source",
+        "notice",
+        "historical",
+        "totalChars"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "nextOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/DiscussionSource"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "historical": {
+          "type": "boolean"
+        },
+        "totalChars": {
+          "type": "number"
+        }
+      }
+    },
+    "Conversation": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "workspaceId",
+        "projectId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "null"
+        },
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scheduledPlanId": {
+          "type": "string"
+        },
+        "archived": {
+          "type": "boolean"
+        },
+        "deletionPending": {
+          "type": "boolean"
+        },
+        "pinned": {
+          "type": "boolean"
+        },
+        "organizationRevision": {
+          "type": "number"
+        },
+        "projectName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created": {
+          "type": "number"
+        },
+        "runtime": {
+          "$ref": "#/$defs/Runtime"
+        },
+        "readonlyEvidence": {
+          "type": "boolean"
+        },
+        "questionOf": {
+          "$ref": "#/$defs/EvidenceQuestionSource"
+        },
+        "subtaskOf": {
+          "$ref": "#/$defs/SubtaskOrigin"
+        },
+        "forkOf": {
+          "$ref": "#/$defs/ForkSource"
+        },
+        "discussionOf": {
+          "$ref": "#/$defs/DiscussionSource"
+        },
+        "eventCursor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "PluginSkill": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "path",
+        "hash"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "modelInvocable": {
+          "type": "boolean"
+        },
+        "userInvocable": {
+          "type": "boolean"
+        },
+        "unsupported": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PluginServer": {
+      "type": "object",
+      "required": [
+        "name",
+        "transport",
+        "supported",
+        "reason",
+        "displayURL"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "transport": {
+          "type": "string"
+        },
+        "supported": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "displayURL": {
+          "type": "string"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "connected": {
+          "type": "boolean"
+        },
+        "githubAppConfigured": {
+          "type": "boolean"
+        },
+        "githubAccountConnected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "GitHubInstallation": {
+      "type": "object",
+      "required": [
+        "id",
+        "owner",
+        "manageUrl"
+      ],
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "manageUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "GitHubAccount": {
+      "type": "object",
+      "required": [
+        "login",
+        "installations",
+        "installUrl",
+        "nextPage",
+        "revision"
+      ],
+      "properties": {
+        "login": {
+          "type": "string"
+        },
+        "installations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GitHubInstallation"
+          }
+        },
+        "installUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nextPage": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "number"
+        }
+      }
+    },
+    "GitHubRepository": {
+      "type": "object",
+      "required": [
+        "fullName",
+        "private"
+      ],
+      "properties": {
+        "fullName": {
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        }
+      }
+    },
+    "GitHubRepositoryPage": {
+      "type": "object",
+      "required": [
+        "installationId",
+        "repositories",
+        "nextPage",
+        "revision"
+      ],
+      "properties": {
+        "installationId": {
+          "type": "number"
+        },
+        "repositories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GitHubRepository"
+          }
+        },
+        "nextPage": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "number"
+        }
+      }
+    },
+    "PluginHook": {
+      "type": "object",
+      "required": [
+        "event",
+        "entry",
+        "matcher",
+        "timeout"
+      ],
+      "properties": {
+        "event": {
+          "type": "string"
+        },
+        "entry": {
+          "type": "string"
+        },
+        "matcher": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "number"
+        }
+      }
+    },
+    "PluginContextStore": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "initial"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "initial": {}
+      }
+    },
+    "PluginWorker": {
+      "type": "object",
+      "required": [
+        "name",
+        "protocol",
+        "description",
+        "method",
+        "inputSchema",
+        "outputSchema",
+        "requires"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "inputSchema": {
+          "type": "object"
+        },
+        "outputSchema": {
+          "type": "object"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "modelRole": {
+          "enum": [
+            "vision"
+          ]
+        }
+      }
+    },
+    "TaskCoreModel": {
+      "type": "object",
+      "required": [
+        "role",
+        "model",
+        "provider"
+      ],
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        }
+      }
+    },
+    "VisionCorePreset": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision",
+        "enabled",
+        "model",
+        "modelState"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TaskCoreModel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modelState": {
+          "enum": [
+            "ready",
+            "worker_model_missing",
+            "worker_model_same"
+          ]
+        }
+      }
+    },
+    "PluginPackage": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "description",
+        "format",
+        "skills",
+        "servers",
+        "unsupported",
+        "compatibility",
+        "fingerprint",
+        "bytes",
+        "fileCount",
+        "omitted",
+        "notice"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginSkill"
+          }
+        },
+        "servers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginServer"
+          }
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginHook"
+          }
+        },
+        "contextStores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginContextStore"
+          }
+        },
+        "workers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginWorker"
+          }
+        },
+        "workersEnabled": {
+          "type": "boolean"
+        },
+        "memoryProvider": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "memoryEnabled": {
+          "type": "boolean"
+        },
+        "unsupported": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "compatibility": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "number"
+        },
+        "fileCount": {
+          "type": "number"
+        },
+        "omitted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notice": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "skillsEnabled": {
+          "type": "boolean"
+        },
+        "remoteEnabled": {
+          "type": "boolean"
+        },
+        "writeEnabled": {
+          "type": "boolean"
+        },
+        "hooksEnabled": {
+          "type": "boolean"
+        },
+        "contextEnabled": {
+          "type": "boolean"
+        },
+        "installedAt": {
+          "type": "number"
+        },
+        "removed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PluginPage": {
+      "type": "object",
+      "required": [
+        "plugins",
+        "hasMore",
+        "next",
+        "total"
+      ],
+      "properties": {
+        "plugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginPackage"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "next": {
+          "type": "number"
+        },
+        "total": {
+          "type": "number"
+        }
+      }
+    },
+    "PluginInstallRevision": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        }
+      }
+    },
+    "InstalledContribution": {
+      "type": "object",
+      "required": [
+        "kind",
+        "localId",
+        "controlledBy",
+        "independentlySwitchable",
+        "supported",
+        "enabled",
+        "status"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "localId": {
+          "type": "string"
+        },
+        "controlledBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "independentlySwitchable": {
+          "type": "boolean"
+        },
+        "supported": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "authentication": {
+          "type": "string"
+        },
+        "availability": {
+          "type": "string"
+        },
+        "transport": {
+          "type": "string"
+        },
+        "writeEnabled": {
+          "type": "boolean"
+        },
+        "identityScope": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string"
+        },
+        "matcher": {
+          "type": "string"
+        },
+        "entry": {
+          "type": "string"
+        },
+        "pageRevision": {
+          "type": "number"
+        },
+        "pageTitle": {
+          "type": "string"
+        }
+      }
+    },
+    "InstalledContributionPackage": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision",
+        "name",
+        "version",
+        "format",
+        "installed",
+        "sourcePath",
+        "packageKey",
+        "contributions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "installed": {
+          "type": "boolean"
+        },
+        "sourcePath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "packageKey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contributions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InstalledContribution"
+          }
+        },
+        "iconThemes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "default",
+              "light",
+              "dark"
+            ]
+          }
+        }
+      }
+    },
+    "PluginDataPageExample": {
+      "type": "object",
+      "required": [
+        "title",
+        "text"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "PluginDataPageDescriptor": {
+      "type": "object",
+      "required": [
+        "version",
+        "packageKey",
+        "pageId",
+        "title",
+        "description",
+        "examples",
+        "actions"
+      ],
+      "properties": {
+        "version": {
+          "enum": [
+            1
+          ]
+        },
+        "packageKey": {
+          "type": "string"
+        },
+        "pageId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginDataPageExample"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "append-to-draft"
+            ]
+          }
+        }
+      }
+    },
+    "PluginDataPageView": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision",
+        "pageId",
+        "pageRevision",
+        "page"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "pageId": {
+          "type": "string"
+        },
+        "pageRevision": {
+          "type": "number"
+        },
+        "page": {
+          "$ref": "#/$defs/PluginDataPageDescriptor"
+        }
+      }
+    },
+    "PluginDataPageState": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision",
+        "pageId",
+        "pageRevision",
+        "enabled"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "pageId": {
+          "type": "string"
+        },
+        "pageRevision": {
+          "type": "number"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PluginDataPageDraft": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision",
+        "pageId",
+        "pageRevision",
+        "conversationId",
+        "exampleIndex",
+        "title",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "pageId": {
+          "type": "string"
+        },
+        "pageRevision": {
+          "type": "number"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "exampleIndex": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "PluginContributionIcon": {
+      "type": "object",
+      "required": [
+        "id",
+        "fingerprint",
+        "revision",
+        "theme",
+        "resolvedTheme",
+        "mime",
+        "width",
+        "height",
+        "data"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "theme": {
+          "enum": [
+            "default",
+            "light",
+            "dark"
+          ]
+        },
+        "resolvedTheme": {
+          "enum": [
+            "default",
+            "light",
+            "dark"
+          ]
+        },
+        "mime": {
+          "enum": [
+            "image/png"
+          ]
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "data": {
+          "type": "string"
+        }
+      }
+    },
+    "InstalledContributionPage": {
+      "type": "object",
+      "required": [
+        "plugins",
+        "total",
+        "snapshot",
+        "hasMore",
+        "nextCursor"
+      ],
+      "properties": {
+        "plugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InstalledContributionPackage"
+          }
+        },
+        "total": {
+          "type": "number"
+        },
+        "snapshot": {
+          "type": "string"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextCursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "PluginReplacement": {
+      "type": "object",
+      "required": [
+        "requestId",
+        "previous",
+        "installed"
+      ],
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "previous": {
+          "$ref": "#/$defs/PluginInstallRevision"
+        },
+        "installed": {
+          "$ref": "#/$defs/PluginInstallRevision"
+        }
+      }
+    },
+    "ApplicationSlot": {
+      "type": "object",
+      "required": [
+        "available",
+        "format",
+        "category",
+        "maxArchiveBytes"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "format": {
+          "enum": [
+            "vsix"
+          ]
+        },
+        "category": {
+          "type": "string"
+        },
+        "maxArchiveBytes": {
+          "type": "number"
+        }
+      }
+    },
+    "ApplicationChild": {
+      "type": "object",
+      "required": [
+        "packageId",
+        "parentId",
+        "slot",
+        "revision",
+        "enabled",
+        "canRun",
+        "version",
+        "sha256",
+        "extensionId",
+        "name"
+      ],
+      "properties": {
+        "packageId": {
+          "type": "string"
+        },
+        "parentId": {
+          "type": "string"
+        },
+        "slot": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "canRun": {
+          "type": "boolean"
+        },
+        "version": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "extensionId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "ApplicationSlotScope": {
+      "type": "object",
+      "required": [
+        "projectId",
+        "conversationId",
+        "resourceId",
+        "checkout",
+        "scopeRevision"
+      ],
+      "properties": {
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conversationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "checkout": {
+          "enum": [
+            "local",
+            "worktree"
+          ]
+        },
+        "scopeRevision": {
+          "type": "string"
+        }
+      }
+    },
+    "ApplicationChildren": {
+      "type": "object",
+      "required": [
+        "children",
+        "slots"
+      ],
+      "properties": {
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplicationChild"
+          }
+        },
+        "slots": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ApplicationSlot"
+          }
+        },
+        "scope": {
+          "$ref": "#/$defs/ApplicationSlotScope"
+        }
+      }
+    },
+    "PluginTool": {
+      "type": "object",
+      "required": [
+        "spec",
+        "schemaHash",
+        "callable",
+        "notice"
+      ],
+      "properties": {
+        "spec": {
+          "type": "object"
+        },
+        "schemaHash": {
+          "type": "string"
+        },
+        "callable": {
+          "type": "boolean"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "requiresHuman": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PluginToolsPage": {
+      "type": "object",
+      "required": [
+        "ok",
+        "pluginId",
+        "fingerprint",
+        "revision",
+        "server",
+        "protocol",
+        "catalogHash",
+        "tools",
+        "next",
+        "hasMore",
+        "total",
+        "notice"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "pluginId": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "server": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "catalogHash": {
+          "type": "string"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginTool"
+          }
+        },
+        "next": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "total": {
+          "type": "number"
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "ProjectResource": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "path",
+        "kind",
+        "permission"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "documents",
+            "code",
+            "attachment"
+          ]
+        },
+        "permission": {
+          "enum": [
+            "none",
+            "read"
+          ]
+        },
+        "worktreeOf": {
+          "type": "string"
+        },
+        "write": {
+          "type": "boolean"
+        },
+        "execute": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "resources"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ProjectResource"
+          }
+        },
+        "folderResourceId": {
+          "type": "string"
+        },
+        "removed": {
+          "type": "boolean"
+        },
+        "visibilityRevision": {
+          "type": "number"
+        }
+      }
+    },
+    "ProjectDirectory": {
+      "type": "object",
+      "required": [
+        "projects"
+      ],
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Project"
+          }
+        },
+        "removedProjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Project"
+          }
+        }
+      }
+    },
+    "ResourceSnapshot": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "permission",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "permission": {
+          "type": "string"
+        },
+        "write": {
+          "type": "boolean"
+        },
+        "execute": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "ScopeSnapshot": {
+      "type": "object",
+      "required": [
+        "at",
+        "projectId",
+        "resources"
+      ],
+      "properties": {
+        "at": {
+          "type": "number"
+        },
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResourceSnapshot"
+          }
+        },
+        "unavailable": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResourceSnapshot"
+          }
+        }
+      }
+    },
+    "ConversationScope": {
+      "type": "object",
+      "required": [
+        "projectId",
+        "resources",
+        "loaded",
+        "revision"
+      ],
+      "properties": {
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "folderResourceId": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProjectResource"
+          }
+        },
+        "historicCode": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProjectResource"
+          }
+        },
+        "loaded": {
+          "type": "boolean"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "lastRun": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScopeSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ProcessRun": {
+      "type": "object",
+      "required": [
+        "id",
+        "workspaceId",
+        "kind",
+        "argv",
+        "state",
+        "exitCode",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "argv": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "state": {
+          "type": "string"
+        },
+        "exitCode": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "string"
+        }
+      }
+    },
+    "Attachment": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "mime",
+        "bytes",
+        "hash",
+        "status",
+        "permission"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "number"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "permission": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "lastReadAt": {
+          "type": "number"
+        },
+        "document": {
+          "$ref": "#/$defs/DocumentParse"
+        }
+      }
+    },
+    "MessageAttachment": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "mime",
+        "bytes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        }
+      }
+    },
+    "DocumentParse": {
+      "type": "object",
+      "required": [
+        "state",
+        "attempt",
+        "sourceHash"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "ready",
+            "partial",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "attempt": {
+          "type": "string"
+        },
+        "sourceHash": {
+          "type": "string"
+        },
+        "parserVersion": {
+          "type": "string"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "error": {
+          "type": "string"
+        },
+        "count": {
+          "type": "number"
+        },
+        "created": {
+          "type": "number"
+        }
+      }
+    },
+    "DocumentSource": {
+      "type": "object",
+      "required": [
+        "id",
+        "hash",
+        "locator",
+        "parserVersion"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "parserVersion": {
+          "type": "string"
+        }
+      }
+    },
+    "TableSheet": {
+      "type": "object",
+      "required": [
+        "locator",
+        "name",
+        "rowsRead",
+        "columnsRead",
+        "partial"
+      ],
+      "properties": {
+        "locator": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rowsRead": {
+          "type": "number"
+        },
+        "columnsRead": {
+          "type": "number"
+        },
+        "partial": {
+          "type": "boolean"
+        }
+      }
+    },
+    "DocumentPreview": {
+      "type": "object",
+      "required": [
+        "text",
+        "source",
+        "locations",
+        "warnings",
+        "partial"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/DocumentSource"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "nextOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "nextLocationOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "totalChars": {
+          "type": "number"
+        },
+        "totalLocations": {
+          "type": "number"
+        },
+        "sheets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TableSheet"
+          }
+        }
+      }
+    },
+    "EventRow": {
+      "type": "object",
+      "required": [
+        "seq",
+        "act"
+      ],
+      "properties": {
+        "seq": {
+          "type": "number"
+        },
+        "inputBudget": {
+          "$ref": "#/$defs/InputBudget"
+        },
+        "sourceOffset": {
+          "type": "number"
+        },
+        "act": {
+          "type": "string"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "question": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tool": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "action_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MessageAttachment"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "ArtifactSource": {
+      "type": "object",
+      "required": [
+        "actor",
+        "taskId",
+        "threadId",
+        "actionId",
+        "runId"
+      ],
+      "properties": {
+        "actor": {
+          "enum": [
+            "agent",
+            "user"
+          ]
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "actionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sessionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tool": {
+          "type": "string"
+        }
+      }
+    },
+    "ArtifactInput": {
+      "type": "object",
+      "required": [
+        "id",
+        "hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "ArtifactVersion": {
+      "type": "object",
+      "required": [
+        "id",
+        "hash",
+        "bytes",
+        "mime",
+        "extension",
+        "created",
+        "source",
+        "state"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "number"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "extension": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "source": {
+          "$ref": "#/$defs/ArtifactSource"
+        },
+        "inputResource": {
+          "$ref": "#/$defs/ArtifactInput"
+        },
+        "state": {
+          "enum": [
+            "creating",
+            "ready",
+            "failed",
+            "interrupted",
+            "unknown",
+            "missing"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "Artifact": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "permission",
+        "versions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "permission": {
+          "enum": [
+            "read",
+            "none"
+          ]
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ArtifactVersion"
+          }
+        }
+      }
+    },
+    "ArtifactRead": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "version",
+        "fileName"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "$ref": "#/$defs/ArtifactVersion"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "dataUrl": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        },
+        "protectedRoot": {
+          "type": "string"
+        },
+        "totalChars": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "nextOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "ArtifactPublished": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "$ref": "#/$defs/ArtifactVersion"
+        }
+      }
+    },
+    "DebugFrame": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "line"
+      ],
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "line": {
+          "type": "number"
+        },
+        "source": {
+          "type": "object"
+        },
+        "column": {
+          "type": "number"
+        }
+      }
+    },
+    "AgentDebugger": {
+      "type": "object",
+      "required": [
+        "id",
+        "conversationId",
+        "resourceId",
+        "workspaceId",
+        "revision",
+        "source",
+        "state",
+        "program",
+        "stack",
+        "output",
+        "created"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/ArtifactSource"
+        },
+        "state": {
+          "type": "string"
+        },
+        "program": {
+          "type": "string"
+        },
+        "stack": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DebugFrame"
+          }
+        },
+        "output": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "evidenceTruncated": {
+          "type": "boolean"
+        },
+        "lastEvidence": {
+          "type": "object"
+        },
+        "lastSource": {
+          "$ref": "#/$defs/ArtifactSource"
+        }
+      }
+    },
+    "ApplicationPreview": {
+      "type": "object",
+      "required": [
+        "id",
+        "conversationId",
+        "resourceId",
+        "workspaceId",
+        "revision",
+        "port",
+        "url",
+        "source",
+        "state",
+        "created"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "port": {
+          "type": "number"
+        },
+        "url": {
+          "type": "string"
+        },
+        "readyUrl": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/ArtifactSource"
+        },
+        "state": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "processId": {
+          "type": "string"
+        },
+        "canStop": {
+          "type": "boolean"
+        },
+        "process": {
+          "$ref": "#/$defs/ProcessRun"
+        },
+        "log": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "httpStatus": {
+          "type": "number"
+        }
+      }
+    },
+    "RepositoryImport": {
+      "type": "object",
+      "required": [
+        "id",
+        "state",
+        "url",
+        "destination"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "running",
+            "stopping",
+            "completed",
+            "failed",
+            "cancelled",
+            "interrupted"
+          ]
+        },
+        "url": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "project": {
+          "$ref": "#/$defs/Project"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "head": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "shallow": {
+          "type": "boolean"
+        },
+        "isolation": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "CodeResult": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "previousRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "projectRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fileChangeRevision": {
+          "type": "string"
+        },
+        "backupId": {
+          "type": "string"
+        },
+        "changeId": {
+          "type": "string"
+        },
+        "projectBaseline": {
+          "type": "string"
+        },
+        "projectBaselineReason": {
+          "type": "string"
+        },
+        "historyCoverage": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "process": {
+          "$ref": "#/$defs/ProcessRun"
+        },
+        "text": {
+          "type": "string"
+        },
+        "next": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "outputLimitBytes": {
+          "type": "number"
+        },
+        "outputNotice": {
+          "type": "string"
+        },
+        "git": {
+          "$ref": "#/$defs/GitState"
+        },
+        "projectRevisionAfter": {
+          "type": "string"
+        }
+      }
+    },
+    "CodeOperation": {
+      "type": "object",
+      "required": [
+        "id",
+        "operation",
+        "resourceId",
+        "workspaceId",
+        "source",
+        "started",
+        "beforeRevision",
+        "state"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/ArtifactSource"
+        },
+        "started": {
+          "type": "number"
+        },
+        "beforeRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fileOnly": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "string"
+        },
+        "finished": {
+          "type": "number"
+        },
+        "result": {
+          "$ref": "#/$defs/CodeResult"
+        }
+      }
+    },
+    "SourceVersion": {
+      "type": "object",
+      "required": [
+        "kind",
+        "hash"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "hash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bytes": {
+          "type": "number"
+        },
+        "bom": {
+          "type": "boolean"
+        },
+        "eol": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        }
+      }
+    },
+    "ChangeTotals": {
+      "type": "object",
+      "required": [
+        "additions",
+        "deletions",
+        "uncounted"
+      ],
+      "properties": {
+        "additions": {
+          "type": "number"
+        },
+        "deletions": {
+          "type": "number"
+        },
+        "uncounted": {
+          "type": "number"
+        }
+      }
+    },
+    "SourceChangeFile": {
+      "type": "object",
+      "required": [
+        "path",
+        "before",
+        "after",
+        "status",
+        "attribution"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "before": {
+          "$ref": "#/$defs/SourceVersion"
+        },
+        "after": {
+          "$ref": "#/$defs/SourceVersion"
+        },
+        "staged": {
+          "$ref": "#/$defs/SourceVersion"
+        },
+        "status": {
+          "type": "string"
+        },
+        "attribution": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additions": {
+          "type": "number"
+        },
+        "deletions": {
+          "type": "number"
+        }
+      }
+    },
+    "SourceChange": {
+      "type": "object",
+      "required": [
+        "id",
+        "conversationId",
+        "resourceId",
+        "source",
+        "operation",
+        "started",
+        "state",
+        "files",
+        "fileCount",
+        "fileOffset",
+        "hasMoreFiles"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "started": {
+          "type": "number"
+        },
+        "state": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceChangeFile"
+          }
+        },
+        "fileCount": {
+          "type": "number"
+        },
+        "fileOffset": {
+          "type": "number"
+        },
+        "hasMoreFiles": {
+          "type": "boolean"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "coverage": {
+          "type": "string"
+        },
+        "unsupported": {
+          "type": "number"
+        },
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "before": {
+          "type": "string"
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "baseline": {
+          "type": "string"
+        },
+        "finished": {
+          "type": "number"
+        },
+        "totals": {
+          "$ref": "#/$defs/ChangeTotals"
+        },
+        "projectBaseline": {
+          "type": "string"
+        },
+        "projectBaselineReason": {
+          "type": "string"
+        }
+      }
+    },
+    "SourceChangeSummaryFile": {
+      "type": "object",
+      "required": [
+        "index",
+        "path",
+        "status"
+      ],
+      "properties": {
+        "index": {
+          "type": "number"
+        },
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "SourceChangeSummary": {
+      "type": "object",
+      "required": [
+        "id",
+        "source",
+        "operation",
+        "state",
+        "files",
+        "access"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "started": {
+          "type": "number"
+        },
+        "state": {
+          "type": "string"
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "fileCount": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceChangeSummaryFile"
+          }
+        },
+        "filesExcerpt": {
+          "type": "boolean"
+        },
+        "access": {
+          "type": "string"
+        }
+      }
+    },
+    "SourceChangePage": {
+      "type": "object",
+      "required": [
+        "changes",
+        "hasMore",
+        "nextBefore",
+        "notice"
+      ],
+      "properties": {
+        "changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceChangeSummary"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "SourceFilePage": {
+      "type": "object",
+      "required": [
+        "text",
+        "next",
+        "hasMore",
+        "revision",
+        "complete",
+        "path",
+        "view"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "next": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "view": {
+          "type": "string"
+        },
+        "additions": {
+          "type": "number"
+        },
+        "deletions": {
+          "type": "number"
+        },
+        "totalLines": {
+          "type": "number"
+        },
+        "oldLineStart": {
+          "type": "number"
+        },
+        "newLineStart": {
+          "type": "number"
+        },
+        "inHunk": {
+          "type": "boolean"
+        },
+        "lineStart": {
+          "type": "number"
+        },
+        "columnStart": {
+          "type": "number"
+        },
+        "totalTextLines": {
+          "type": "number"
+        },
+        "oldTextLines": {
+          "type": "number"
+        },
+        "newTextLines": {
+          "type": "number"
+        },
+        "totalHunks": {
+          "type": "number"
+        },
+        "currentHunk": {
+          "type": "number"
+        }
+      }
+    },
+    "SourceSearchMatch": {
+      "type": "object",
+      "required": [
+        "offset",
+        "end",
+        "line",
+        "column",
+        "preview",
+        "previewClipped"
+      ],
+      "properties": {
+        "offset": {
+          "type": "number"
+        },
+        "end": {
+          "type": "number"
+        },
+        "line": {
+          "type": "number"
+        },
+        "column": {
+          "type": "number"
+        },
+        "preview": {
+          "type": "string"
+        },
+        "previewClipped": {
+          "type": "boolean"
+        }
+      }
+    },
+    "SourceSearchPage": {
+      "type": "object",
+      "required": [
+        "matches",
+        "next",
+        "hasMore",
+        "complete",
+        "revision",
+        "path",
+        "view"
+      ],
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceSearchMatch"
+          }
+        },
+        "next": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "view": {
+          "type": "string"
+        }
+      }
+    },
+    "SourceRangeSource": {
+      "type": "object",
+      "required": [
+        "id",
+        "state",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "SourceRangeIssue": {
+      "type": "object",
+      "required": [
+        "code",
+        "path",
+        "changeId"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "changeId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "SourceRange": {
+      "type": "object",
+      "required": [
+        "id",
+        "conversationId",
+        "resourceId",
+        "scope",
+        "runId",
+        "baseline",
+        "files",
+        "issues",
+        "incomplete",
+        "derived",
+        "notice",
+        "fileOffset",
+        "fileCount",
+        "hasMoreFiles",
+        "issueOffset",
+        "totalIssues",
+        "hasMoreIssues",
+        "sourceCount",
+        "sources",
+        "sourcesExcerpt",
+        "separatedExternalEdits",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "runId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "baseline": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceChangeFile"
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceRangeIssue"
+          }
+        },
+        "incomplete": {
+          "type": "boolean"
+        },
+        "derived": {
+          "type": "boolean"
+        },
+        "notice": {
+          "type": "string"
+        },
+        "fileOffset": {
+          "type": "number"
+        },
+        "fileCount": {
+          "type": "number"
+        },
+        "hasMoreFiles": {
+          "type": "boolean"
+        },
+        "issueOffset": {
+          "type": "number"
+        },
+        "totalIssues": {
+          "type": "number"
+        },
+        "hasMoreIssues": {
+          "type": "boolean"
+        },
+        "sourceCount": {
+          "type": "number"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceRangeSource"
+          }
+        },
+        "sourcesExcerpt": {
+          "type": "boolean"
+        },
+        "separatedExternalEdits": {
+          "type": "number"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "workspaceRevision": {
+          "type": "string"
+        },
+        "totals": {
+          "$ref": "#/$defs/ChangeTotals"
+        },
+        "projectBaseline": {
+          "type": "string"
+        },
+        "projectBaselineReason": {
+          "type": "string"
+        }
+      }
+    },
+    "RunChangeFile": {
+      "type": "object",
+      "required": [
+        "path",
+        "status",
+        "attribution",
+        "beforeKind",
+        "afterKind",
+        "additions",
+        "deletions",
+        "resourceId",
+        "resourceName",
+        "changeId",
+        "revision",
+        "fileIndex"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "attribution": {
+          "type": "string"
+        },
+        "beforeKind": {
+          "type": "string"
+        },
+        "afterKind": {
+          "type": "string"
+        },
+        "additions": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "deletions": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "resourceName": {
+          "type": "string"
+        },
+        "changeId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "fileIndex": {
+          "type": "number"
+        }
+      }
+    },
+    "RunChangeSummary": {
+      "type": "object",
+      "required": [
+        "runId",
+        "files",
+        "fileCount",
+        "nextOffset",
+        "frames",
+        "totals",
+        "incomplete"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RunChangeFile"
+          }
+        },
+        "fileCount": {
+          "type": "number"
+        },
+        "nextOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "frames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "changedFileFrames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "totals": {
+          "$ref": "#/$defs/ChangeTotals"
+        },
+        "incomplete": {
+          "type": "boolean"
+        }
+      }
+    },
+    "EvidenceAction": {
+      "type": "object",
+      "required": [
+        "id",
+        "identityKind",
+        "tool",
+        "role",
+        "runId",
+        "state",
+        "firstPosition",
+        "summary",
+        "missingFields"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "identityKind": {
+          "type": "string"
+        },
+        "tool": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "type": "string"
+        },
+        "firstPosition": {
+          "type": "number"
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "missingFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "input": {},
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "startedAt": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "finishedAt": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "output": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "impact": {
+          "type": "object"
+        },
+        "approvalRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "projection": {
+          "type": "object"
+        },
+        "evidenceRevision": {
+          "type": "string"
+        }
+      }
+    },
+    "RestorationPlan": {
+      "type": "object",
+      "required": [
+        "id",
+        "conversationId",
+        "resourceId",
+        "sourceOperationId",
+        "path",
+        "state",
+        "currentRevision",
+        "restoreRevision",
+        "projectRevision",
+        "branch",
+        "head",
+        "planRevision",
+        "diff",
+        "diffTruncated",
+        "projectAdvanced",
+        "protected",
+        "warning",
+        "writeMethod"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "sourceOperationId": {
+          "type": "string"
+        },
+        "sourceActionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "authorized",
+            "applying",
+            "completed",
+            "failed",
+            "unknown",
+            "expired",
+            "revoked"
+          ]
+        },
+        "currentRevision": {
+          "type": "string"
+        },
+        "restoreRevision": {
+          "type": "string"
+        },
+        "projectRevision": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "head": {
+          "type": "string"
+        },
+        "planRevision": {
+          "type": "string"
+        },
+        "diff": {
+          "type": "string"
+        },
+        "diffTruncated": {
+          "type": "boolean"
+        },
+        "projectAdvanced": {
+          "type": "boolean"
+        },
+        "workspaceComparison": {
+          "enum": [
+            "matches",
+            "changed",
+            "unavailable"
+          ]
+        },
+        "protected": {
+          "type": "boolean"
+        },
+        "warning": {
+          "type": "string"
+        },
+        "writeMethod": {
+          "type": "string"
+        },
+        "approvedAt": {
+          "type": "number"
+        },
+        "expiresAt": {
+          "type": "number"
+        },
+        "observedFileRevision": {
+          "type": "string"
+        },
+        "fileMatches": {
+          "type": "boolean"
+        },
+        "verification": {
+          "type": "string"
+        },
+        "result": {
+          "$ref": "#/$defs/CodeResult"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "RestorationBaseline": {
+      "type": "object",
+      "required": [
+        "text",
+        "next",
+        "hasMore",
+        "hash",
+        "historical"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "next": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "historical": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RestorationSummary": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "state",
+        "actor",
+        "position"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "position": {
+          "type": "number"
+        },
+        "sourceOperationId": {
+          "type": "string"
+        },
+        "created": {
+          "type": "number"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "RestorationPage": {
+      "type": "object",
+      "required": [
+        "plans",
+        "hasMore",
+        "nextBefore"
+      ],
+      "properties": {
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RestorationSummary"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "CorrectionTarget": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "action",
+            "artifact",
+            "code"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "runId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceKind": {
+          "type": "string"
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "fileIndex": {
+          "type": "number"
+        },
+        "path": {
+          "type": "string"
+        },
+        "side": {
+          "type": "string"
+        },
+        "line": {
+          "type": "number"
+        },
+        "endLine": {
+          "type": "number"
+        },
+        "resourceId": {
+          "type": "string"
+        }
+      }
+    },
+    "Correction": {
+      "type": "object",
+      "required": [
+        "id",
+        "position",
+        "text",
+        "target",
+        "state",
+        "acceptedAt",
+        "queuedAt",
+        "note"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "position": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/CorrectionTarget"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "applying",
+            "applied_at_boundary",
+            "superseded",
+            "unable"
+          ]
+        },
+        "acceptedAt": {
+          "type": "number"
+        },
+        "queuedAt": {
+          "type": "number"
+        },
+        "appliedAt": {
+          "type": "number"
+        },
+        "note": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        }
+      }
+    },
+    "CorrectionPage": {
+      "type": "object",
+      "required": [
+        "corrections",
+        "hasMore",
+        "nextBefore"
+      ],
+      "properties": {
+        "corrections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Correction"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "EvidencePage": {
+      "type": "object",
+      "required": [
+        "actions",
+        "hasMore",
+        "nextBefore",
+        "gapCount",
+        "duplicateCount",
+        "outOfOrderCount",
+        "malformedCount",
+        "sequenceConflicts",
+        "catchingUp"
+      ],
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceAction"
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "gapCount": {
+          "type": "number"
+        },
+        "duplicateCount": {
+          "type": "number"
+        },
+        "outOfOrderCount": {
+          "type": "number"
+        },
+        "malformedCount": {
+          "type": "number"
+        },
+        "sequenceConflicts": {
+          "type": "number"
+        },
+        "catchingUp": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ShellTranscript": {
+      "type": "object",
+      "required": [
+        "command",
+        "state",
+        "exitCode"
+      ],
+      "properties": {
+        "command": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exitCode": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timedOut": {
+          "type": "boolean"
+        },
+        "processState": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "EvidenceOutput": {
+      "type": "object",
+      "required": [
+        "text",
+        "next",
+        "hasMore",
+        "complete"
+      ],
+      "properties": {
+        "terminal": {
+          "$ref": "#/$defs/ShellTranscript"
+        },
+        "text": {
+          "type": "string"
+        },
+        "next": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "number"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "evidenceRevision": {
+          "type": "string"
+        }
+      }
+    },
+    "DeliveryTarget": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "artifact",
+            "code"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      }
+    },
+    "RequirementCoverage": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "target",
+        "note",
+        "status",
+        "stale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "automatic",
+            "model",
+            "human"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/DeliveryTarget"
+        },
+        "note": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "actionId": {
+          "type": "string"
+        },
+        "evidenceRevision": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        }
+      }
+    },
+    "DeliveryRequirement": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "revision",
+        "actor",
+        "coverage",
+        "uncovered"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "coverage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequirementCoverage"
+          }
+        },
+        "uncovered": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "DeliveryDecision": {
+      "type": "object",
+      "required": [
+        "id",
+        "decision",
+        "target",
+        "reason",
+        "stale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "accept",
+            "reject"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/DeliveryTarget"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "at": {
+          "type": "number"
+        },
+        "acknowledgedGaps": {
+          "type": "boolean"
+        },
+        "scopeUnknown": {
+          "type": "boolean"
+        }
+      }
+    },
+    "DeliveryFinding": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "target",
+        "state",
+        "stale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/DeliveryTarget"
+        },
+        "state": {
+          "enum": [
+            "open",
+            "closed"
+          ]
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "scopeUnknown": {
+          "type": "boolean"
+        }
+      }
+    },
+    "DeliveryOverview": {
+      "type": "object",
+      "required": [
+        "revision",
+        "target",
+        "requirements",
+        "decisions",
+        "findings",
+        "execution",
+        "hasMore",
+        "nextBefore",
+        "gaps",
+        "gapsProvisional"
+      ],
+      "properties": {
+        "revision": {
+          "type": "number"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DeliveryTarget"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DeliveryRequirement"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DeliveryDecision"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DeliveryFinding"
+          }
+        },
+        "execution": {
+          "$ref": "#/$defs/Runtime"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "gaps": {
+          "type": "boolean"
+        },
+        "gapsProvisional": {
+          "type": "boolean"
+        },
+        "requirementsRevision": {
+          "type": "string"
+        },
+        "coverageRevision": {
+          "type": "string"
+        },
+        "totalRequirements": {
+          "type": "number"
+        },
+        "openFindings": {
+          "type": "number"
+        },
+        "findingsHasMore": {
+          "type": "boolean"
+        },
+        "findingsNextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "decisionsHasMore": {
+          "type": "boolean"
+        },
+        "decisionsNextBefore": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "DeliveryUpdated": {
+      "type": "object",
+      "required": [
+        "revision",
+        "record"
+      ],
+      "properties": {
+        "revision": {
+          "type": "number"
+        },
+        "record": {
+          "type": "object"
+        }
+      }
+    },
+    "StageSource": {
+      "type": "object",
+      "required": [
+        "seq",
+        "position",
+        "kind",
+        "runId"
+      ],
+      "properties": {
+        "seq": {
+          "type": "number"
+        },
+        "position": {
+          "type": "number"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "RoleProgress": {
+      "type": "object",
+      "required": [
+        "state",
+        "reason",
+        "lastSeq",
+        "attempts",
+        "source"
+      ],
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "lastSeq": {
+          "type": "number"
+        },
+        "attempts": {
+          "type": "number"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StageSource"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "StageJudgment": {
+      "type": "object",
+      "required": [
+        "role",
+        "text",
+        "source"
+      ],
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/StageSource"
+        }
+      }
+    },
+    "StageRun": {
+      "type": "object",
+      "required": [
+        "id",
+        "firstPosition",
+        "goal",
+        "roles",
+        "judgments",
+        "blocker",
+        "outcome",
+        "modelCalls",
+        "actionCount",
+        "failedActions",
+        "unknownActions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "firstPosition": {
+          "type": "number"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "goalExcerpt": {
+          "type": "boolean"
+        },
+        "crew": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parallelRoles": {
+          "type": "boolean"
+        },
+        "latestCandidate": {
+          "type": "object"
+        },
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/RoleProgress"
+          }
+        },
+        "judgments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StageJudgment"
+          }
+        },
+        "blocker": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "modelCalls": {
+          "type": "number"
+        },
+        "actionCount": {
+          "type": "number"
+        },
+        "failedActions": {
+          "type": "number"
+        },
+        "unknownActions": {
+          "type": "number"
+        }
+      }
+    },
+    "StageSummary": {
+      "type": "object",
+      "required": [
+        "kind",
+        "text"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "fallback": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CompletionGap": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id",
+        "role",
+        "text",
+        "state"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "EvidenceTarget": {
+      "type": "object",
+      "required": [
+        "kind",
+        "conversationId",
+        "runId",
+        "actionId",
+        "evidenceRevision",
+        "version"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "action",
+            "check-log"
+          ]
+        },
+        "conversationId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "actionId": {
+          "type": "string"
+        },
+        "evidenceRevision": {
+          "type": "string"
+        },
+        "version": {
+          "$ref": "#/$defs/DeliveryTarget"
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "workspaceId": {
+          "type": "string"
+        },
+        "reviewRecordId": {
+          "type": "string"
+        }
+      }
+    },
+    "EvidenceTargetResult": {
+      "type": "object",
+      "required": [
+        "conversationId",
+        "runId",
+        "kind",
+        "id",
+        "archived",
+        "target",
+        "reason"
+      ],
+      "properties": {
+        "conversationId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "archived": {
+          "type": "boolean"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceTarget"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "CompletionFacts": {
+      "type": "object",
+      "required": [
+        "run",
+        "checks",
+        "acceptance"
+      ],
+      "properties": {
+        "run": {
+          "type": "string"
+        },
+        "checks": {
+          "type": "string"
+        },
+        "acceptance": {
+          "type": "string"
+        }
+      }
+    },
+    "CompletionStatus": {
+      "type": "object",
+      "required": [
+        "status",
+        "label",
+        "completed",
+        "pending"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "completed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CompletionGap"
+          }
+        },
+        "checkSummary": {
+          "type": "string"
+        },
+        "facts": {
+          "$ref": "#/$defs/CompletionFacts"
+        }
+      }
+    },
+    "StageCoverage": {
+      "type": "object",
+      "required": [
+        "fromPosition",
+        "throughPosition",
+        "sourceBytes",
+        "currentSourceBytes",
+        "maxSeq"
+      ],
+      "properties": {
+        "fromPosition": {
+          "type": "number"
+        },
+        "throughPosition": {
+          "type": "number"
+        },
+        "sourceBytes": {
+          "type": "number"
+        },
+        "currentSourceBytes": {
+          "type": "number"
+        },
+        "maxSeq": {
+          "type": "number"
+        }
+      }
+    },
+    "StageOverview": {
+      "type": "object",
+      "required": [
+        "run",
+        "runtime",
+        "summary",
+        "checksMissing",
+        "evidenceIncomplete",
+        "previousSummaryStale",
+        "evidenceRange",
+        "isDelegated"
+      ],
+      "properties": {
+        "run": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StageRun"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runtime": {
+          "$ref": "#/$defs/Runtime"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StageSummary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checksMissing": {
+          "type": "boolean"
+        },
+        "completion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompletionStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currentRunPending": {
+          "type": "boolean"
+        },
+        "currentRunUnknown": {
+          "type": "boolean"
+        },
+        "evidenceIncomplete": {
+          "type": "boolean"
+        },
+        "previousSummaryStale": {
+          "type": "boolean"
+        },
+        "evidenceRange": {
+          "$ref": "#/$defs/StageCoverage"
+        },
+        "isDelegated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "MemoryNode": {
+      "type": "object",
+      "required": [
+        "id",
+        "tree",
+        "layer",
+        "title",
+        "body",
+        "version",
+        "selected",
+        "reason",
+        "adapter"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "tree": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "version": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "selected": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "adapter": {
+          "type": "string"
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "legacyId": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "priority": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "weight": {
+          "type": "number"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "storeRevision": {
+          "type": "number"
+        },
+        "entryType": {
+          "type": "string"
+        },
+        "learning": {
+          "type": "object"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "habitProposal": {
+          "type": "object"
+        }
+      }
+    },
+    "MemoryRequest": {
+      "type": "object",
+      "required": [
+        "id",
+        "runId",
+        "role",
+        "at",
+        "loaded"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "at": {
+          "type": "number"
+        },
+        "loaded": {
+          "type": "boolean"
+        }
+      }
+    },
+    "MemoryProviderIdentity": {
+      "type": "object",
+      "required": [
+        "id",
+        "generation",
+        "adapter",
+        "fingerprint"
+      ],
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "generation": {
+          "type": "number"
+        },
+        "adapter": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "MemoryProviderView": {
+      "type": "object",
+      "required": [
+        "identity",
+        "available",
+        "capabilities"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/MemoryProviderIdentity"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "MemoryProviderChoice": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "adapter",
+        "builtin",
+        "installed",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "adapter": {
+          "type": "string"
+        },
+        "builtin": {
+          "type": "boolean"
+        },
+        "installed": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "MemoryProviderSettings": {
+      "type": "object",
+      "required": [
+        "providerId",
+        "revision",
+        "generation",
+        "builtinInstalled",
+        "providers",
+        "notice"
+      ],
+      "properties": {
+        "providerId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": "number"
+        },
+        "generation": {
+          "type": "number"
+        },
+        "builtinInstalled": {
+          "type": "boolean"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MemoryProviderChoice"
+          }
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "MemoryView": {
+      "type": "object",
+      "required": [
+        "revision",
+        "workspaceContextId",
+        "projectId",
+        "conversationId",
+        "mode",
+        "nodes",
+        "selectionVersion",
+        "conflicts",
+        "history",
+        "notice",
+        "requests",
+        "sessionMemory"
+      ],
+      "properties": {
+        "revision": {
+          "type": "number"
+        },
+        "scopeRevisions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "provider": {
+          "$ref": "#/$defs/MemoryProviderView"
+        },
+        "workspaceContextId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conversationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mode": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MemoryNode"
+          }
+        },
+        "selectionVersion": {
+          "type": "string"
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "notice": {
+          "type": "string"
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MemoryRequest"
+          }
+        },
+        "sessionMemory": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "totalNodes": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextOffset": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "MemoryInventory": {
+      "type": "object",
+      "required": [
+        "projects",
+        "conversations"
+      ],
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "conversations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "ConversationRecord": {
+      "type": "object",
+      "required": [
+        "status",
+        "resourceId",
+        "relativePath",
+        "historyRevision",
+        "syncedRevision",
+        "errorCode",
+        "hasHistoricalTruncation",
+        "sizeBytes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "empty",
+            "pending",
+            "saved",
+            "blocked",
+            "not_applicable"
+          ]
+        },
+        "resourceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relativePath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "historyRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "syncedRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "errorCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hasHistoricalTruncation": {
+          "type": "boolean"
+        },
+        "sizeBytes": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "ConversationRecordPage": {
+      "type": "object",
+      "required": [
+        "text",
+        "revision",
+        "nextOffset",
+        "hasMore",
+        "sizeBytes"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "nextOffset": {
+          "type": "number"
+        },
+        "hasMore": {
+          "type": "boolean"
+        },
+        "sizeBytes": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

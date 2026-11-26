@@ -1,0 +1,35 @@
+.repository-import-recovery > summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--app-muted);
+  font-size: 13px;
+}
+.repository-import-recovery > summary:is(:hover, :focus-visible) { color: var(--app-ink); }
+.repository-import-recovery[open] > summary { margin-bottom: 6px; }
+.repository-import-help {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--app-line);
+  border-radius: 10px;
+  background: var(--app-panel);
+  color: var(--app-ink);
+  font-size: 13px;
+}
+.repository-import-help p,
+.repository-import-help small { margin: 4px 0; }
+.repository-import-help small { display: block; color: var(--app-muted); }
+.repository-import-path,
+.repository-approval-scope dd { overflow-wrap: anywhere; }
+.repository-import-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 7px 0 0; }
+.repository-import-actions button {
+  color: var(--app-ink);
+  background: var(--app-panel);
+  border: 1px solid var(--app-line);
+  border-radius: 7px;
+  padding: 4px 9px;
+}
+.repository-import-actions button:enabled:hover { background: var(--app-selected); }
+.repository-import-actions button:disabled { opacity: .6; }
+.repository-approval-scope { margin: 8px 0; min-width: 0; }
+.repository-approval-scope dt { font-weight: 600; }
+.repository-approval-scope dd { margin: 2px 0 6px; }

@@ -1,0 +1,8 @@
+{
+  "name": "modot-testing-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "theiaExtensions": [{ "frontend": "frontend.js", "backend": "backend.js" }],
+  "peerDependencies": { "@theia/core": "1.77.0", "@theia/test": "1.77.0" }
+}

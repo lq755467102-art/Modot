@@ -1,0 +1,5 @@
+{
+  "name": "public-web",
+  "version": "1.0.0",
+  "description": "通过已启用的 Exa MCP 服务检索公开资料、按 URL 读取网页。"
+}

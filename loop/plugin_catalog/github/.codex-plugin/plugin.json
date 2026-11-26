@@ -1,0 +1,6 @@
+{
+  "name": "github-mcp",
+  "version": "1.0.0",
+  "description": "GitHub 官方远程 MCP 连接。当前宿主未配置 GitHub OAuth 应用；安装后需在扩展页用访问令牌连接，安装本身不会授权账户。来源：https://github.com/github/github-mcp-server",
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "release-notes",
+  "description": "从历史包格式读取一项发布说明技能。",
+  "skills": "./skills/"
+}

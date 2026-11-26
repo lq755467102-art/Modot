@@ -1,0 +1,14 @@
+.conversation-image-dialog.image-reader-dialog { width:min(1100px,calc(100vw - 42px));box-sizing:border-box; }
+.image-reader { min-width:0; }
+.image-view-controls { display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-block:6px 10px;font-size:12px; }
+.image-view-controls button { font:inherit; }
+.image-view-controls [role=status] { color:var(--dim);overflow-wrap:anywhere; }
+.image-viewport { width:100%;height:min(58vh,700px);min-height:120px;overflow:auto;overscroll-behavior:contain;background:var(--code-surface,var(--panel));cursor:grab; }
+.image-viewport:focus-visible { outline:2px solid var(--link,#3685ec);outline-offset:2px; }
+.image-viewport.is-dragging { cursor:grabbing; }
+.image-viewport-stage { display:grid;place-items:center; }
+.image-reader .image-viewport img { display:block;max-width:none;max-height:none;flex:none;user-select:none; }
+.image-reader-hint { display:block;margin-top:8px;color:var(--dim);overflow-wrap:anywhere; }
+.image-artifact-tab {min-width:0;padding:12px;}
+.image-artifact-tab h2 {margin-block:0;font-size:1rem;overflow-wrap:anywhere;}
+.image-artifact-tab header small {color:var(--app-muted);overflow-wrap:anywhere;}

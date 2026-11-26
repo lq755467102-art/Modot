@@ -1,0 +1,36 @@
+{
+  "input": {
+    "source_path": "front-panel.gcode",
+    "goal": "照面板文字原样转写，保留大小写与连字符。"
+  },
+  "output": {
+    "status": "partial",
+    "transcription": "AB-01",
+    "evidence": [
+      {
+        "view": "xy 全景",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "reading": "AB-01",
+        "observation": "读到五个字符，连字符清楚。"
+      },
+      {
+        "view": "xy 裁切右半边",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "reading": "-O1",
+        "observation": "倒数第二位的笔画中间没有可见斜线。"
+      }
+    ],
+    "uncertainties": [
+      {
+        "position": "第 4 位",
+        "alternatives": [
+          "0",
+          "O"
+        ],
+        "reason": "两个读图结果不一致。"
+      }
+    ]
+  }
+}

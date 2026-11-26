@@ -1,0 +1,44 @@
+.workroom-link-surface,
+.workroom-web-page,
+.workroom-linked-file {
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  min-height:0;
+}
+.workroom-file-view,.workroom-web-page,.workroom-linked-file {flex:1;min-height:0;min-width:0;overflow:hidden;}
+.workroom-file-view[hidden],.workroom-web-page[hidden] {display:none;}
+.workroom-web-tabs {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  overflow:auto;
+  padding:5px 8px;
+  border-bottom:1px solid var(--app-divider);
+  background:var(--app-panel);
+}
+.workroom-web-tabs div {display:flex;align-items:center;flex:none;max-width:240px;}
+.workroom-web-tabs button,
+.workroom-web-page .browser-pane button,
+.workroom-linked-file > header button {
+  padding:4px 8px;
+  border:0;
+  border-radius:5px;
+  background:transparent;
+  color:var(--app-ink);
+  font:inherit;
+}
+.workroom-web-tabs button:first-child {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.workroom-web-tabs button[aria-current="page"],.workroom-web-tabs [data-current=true] {background:var(--app-hover);border-radius:5px;}
+:is(.workroom-web-tabs,.workroom-web-page,.workroom-linked-file > header) button:enabled:hover {background:var(--app-hover);}
+.workroom-web-tabs button :is(svg),.workroom-web-page .browser-pane button :is(svg) {width:15px;height:15px;vertical-align:middle;}
+.workroom-web-page .browser-pane {display:flex;flex-direction:column;flex:1;min-height:0;background:var(--app-bg);}
+.workroom-web-page .browser-pane > header,.workroom-web-page .browser-pane form,.workroom-web-page .browser-pane nav,
+.workroom-linked-file > header {display:flex;align-items:center;gap:6px;min-width:0;}
+.workroom-web-page .browser-pane > header,.workroom-linked-file > header {justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--app-divider);}
+.workroom-web-page .browser-pane h2 {font-size:14px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.workroom-web-page :is(.browser-toolbar,.browser-new-tab) {padding:6px 12px;}
+.workroom-web-page .browser-pane input {flex:1;min-width:0;padding:4px 8px;color:var(--app-ink);background:var(--app-panel);border:1px solid var(--app-divider);border-radius:5px;}
+.workroom-web-page .browser-content {flex:1;min-height:0;}
+.workroom-web-page .browser-pane :is([role=alert],[role=status]) {margin:5px 0;overflow-wrap:anywhere;}
+.workroom-linked-file > header strong {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}

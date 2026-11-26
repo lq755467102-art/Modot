@@ -1,0 +1,13 @@
+# Windows x64 CPython 3.13 runtime used by the acceptance candidate.
+pywinpty==3.1.2
+debugpy==1.8.22
+Pillow==12.3.0
+pypdf==6.21.4
+openpyxl==3.1.5
+et_xmlfile==2.0.0
+defusedxml==0.7.1
+# PyAV comes from the verified video wheel in installer/video-runtime.json.
+PyYAML==6.0.3
+tzdata==2026.6
+dulwich==1.2.21
+urllib3==2.8.0

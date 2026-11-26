@@ -1,0 +1,49 @@
+.github-workroom {
+  --room-paper:var(--app-bg);
+  --room-pane:var(--app-panel);
+  --room-mark:var(--app-muted);
+  --room-active:light-dark(#245ec2,#94b6fa);
+  display:flex;flex-direction:column;height:100%;min-width:0;min-height:0;
+}
+.github-workroom [hidden] {display:none!important}
+.github-workroom-toolbar {
+  display:flex;align-items:center;gap:10px;padding:6px 12px;min-height:42px;
+  border-bottom:1px solid var(--app-divider);background:var(--app-panel)
+}
+.github-workroom-toolbar h1 {font-size:16px;margin:0}
+.github-workroom-toolbar nav,.github-workroom-chat-control {display:flex;align-items:center;gap:4px;min-width:0}
+.github-workroom-chat-control {margin-inline-start:auto;flex:none}
+.github-workroom-toolbar button,.github-workroom-open button,.github-workroom .workroom-chat-unbound button {
+  display:inline-flex;align-items:center;gap:5px;padding:5px 8px;
+  color:var(--app-ink);background:transparent;border:1px solid transparent;border-radius:6px;font:inherit;cursor:pointer;
+}
+.github-workroom-toolbar button:hover,.github-workroom-toolbar :is([aria-current="page"],[aria-expanded="true"]) {background:var(--app-hover)}
+.github-workroom-toolbar svg {width:15px;height:15px}
+.github-workroom-body,.github-workroom-content {display:flex;flex:1;min-height:0;min-width:0}
+.github-workroom-content {flex-direction:column}
+.github-workroom-connections {min-height:0;overflow:auto}
+.github-workroom .workroom-input-host .composer-toolbar {padding-inline-start:0}
+.github-workroom .workroom-chat-unbound button,.github-workroom-open button {border-color:var(--app-divider)}
+.github-workroom-open {display:grid;place-items:center;flex:1}
+.github-quote-status {margin:0;padding:6px 12px;color:var(--app-muted);font-size:12px}
+.github-repository-toolbar,.github-login-controls {
+  display:flex;flex-wrap:wrap;align-items:center;gap:5px;
+}
+.github-repository-toolbar {padding:6px 12px;border-bottom:1px solid var(--app-divider)}
+.github-login-controls {margin-inline-start:auto}
+.github-repository-toolbar :is(select,button),.github-browser-external {
+  border:1px solid var(--app-divider);border-radius:5px;padding:4px 7px;
+  background:var(--app-panel);color:var(--app-ink);font:inherit;max-width:100%;
+}
+.github-repository-toolbar button:enabled,.github-browser-external {cursor:pointer}
+.github-repository-toolbar button:enabled:hover,.github-browser-external:hover {background:var(--app-hover)}
+.github-browser-external {margin-block-start:5px}
+.github-login-help {padding:0 16px;color:var(--app-muted)}
+
+@media (max-width:900px) {
+  .github-workroom-body>.workroom-chat-drawer {position:relative;inset:auto;width:auto;box-shadow:none}
+}
+@media (max-width:760px) {
+  .github-workroom-body:has(>.workroom-chat-drawer:not([hidden]))>.github-workroom-content {display:none}
+  .github-workroom-body>.workroom-chat-drawer {flex:1;border-inline-start:0}
+}

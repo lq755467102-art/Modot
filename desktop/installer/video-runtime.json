@@ -1,0 +1,14 @@
+{
+  "name": "PyAV",
+  "version": "19.0.2+modot.lgpl21.1",
+  "ffmpeg": "9.0.2",
+  "ffmpegLicense": "LGPL-2.1-or-later",
+  "wheel": {
+    "file": "av-19.0.2+modot.lgpl21.1-cp312-abi3-win_amd64.whl",
+    "sha256": "939a784ce6902077becd82c554eb336ee32860da60761e46e33363a1d7bb240b"
+  },
+  "sources": {
+    "file": "modot-video-lgpl21-source-and-notices.zip",
+    "sha256": "30cf136409a39898c0307a47a5e3fa52b18511f1fe650a8d32b2159202594704"
+  }
+}

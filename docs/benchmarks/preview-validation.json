@@ -1,0 +1,217 @@
+{
+  "date": "2026-11-23",
+  "version": "0.2.0-preview.1",
+  "upstreamDevelopmentCommit": "4faa78861aac6a4c65e945be4539e7bb7d93df75",
+  "platform": "Windows 11 x64 build 26300",
+  "electronVersion": "45.0.0",
+  "python": "3.13.17",
+  "nodeBuild": "24.22.1",
+  "install": {
+    "previousExecutableIntact": true,
+    "badArchiveRejectedExit": 2,
+    "installedAppSha256": "9eb2f63d06837122c8ae332635ce8251c26395438327007cbe25cd652f843b77",
+    "installerBytes": 142507963,
+    "cachedInstallExit": 0,
+    "installerSha256": "be66f67e135aa0e64ee11369c71326f1184e9a7c5e96dcbbe0e19789aa8f8db6",
+    "installedLogicalBytes": 625988545,
+    "signatureStatus": "NotSigned",
+    "onlineInstallationCompleted": true,
+    "installedTreeMatchesStagedFiles": 2671,
+    "installedFileMismatches": 0,
+    "separateUserDataReopen": {
+      "installedChatReopened": true,
+      "originalCSVAnswerVisible": true,
+      "archivedAnswers": 1
+    },
+    "additionalDownloads": [
+      {
+        "name": "av-19.0.2-cp312-abi3-win_amd64.whl",
+        "bytes": 28150949
+      },
+      {
+        "name": "MinGit-2.56.1-64-bit.zip",
+        "bytes": 39849768
+      }
+    ]
+  },
+  "sourceTests": {
+    "backendTotal": 354,
+    "backendPassed": 354,
+    "wallSeconds": 172.343,
+    "groupedByModule": {
+      "test_agent_code": 14,
+      "test_app_formatting_slot": 5,
+      "test_attachments": 9,
+      "test_context_checkpoints": 8,
+      "test_context_history_fixes": 12,
+      "test_context_modes": 2,
+      "test_conversations": 9,
+      "test_documents": 9,
+      "test_evidence_questions": 6,
+      "test_history_compaction": 19,
+      "test_history_retrieval": 16,
+      "test_image_event_cards": 3,
+      "test_index_privacy": 3,
+      "test_installed_contributions": 12,
+      "test_l0_contract_notes": 11,
+      "test_l0_core_slimming": 9,
+      "test_l0_foundation": 16,
+      "test_l0_tool_slimming": 12,
+      "test_memory_default": 26,
+      "test_memory_providers": 16,
+      "test_memory_runtime": 24,
+      "test_memory_trees": 14,
+      "test_native_children": 10,
+      "test_native_entry": 11,
+      "test_permission_safety": 29,
+      "test_public_preview": 2,
+      "test_task_history_boundary": 7,
+      "test_video_attachments": 3,
+      "test_worker_examples": 2,
+      "test_worker_lifetime": 8,
+      "test_worker_plugins": 19,
+      "test_workroom_loading": 8
+    },
+    "log": "preview-test-cases.json",
+    "typescriptCheck": true,
+    "viteProductionBuild": true,
+    "generatedProtocolMatches": true,
+    "lockfileInstalls": true,
+    "cleanVenvAndIsolatedInterpreter": true
+  },
+  "testsScope": "All test_*.py modules shipped in tools, plus the installer checks and one live provider task; not every private development suite or feature.",
+  "signing": {
+    "missingSigningIdentityBlockedBuild": true,
+    "localInstallerRejectedByPublisherGate": true,
+    "trustedCertificatePositiveCase": "pending publisher certificate"
+  },
+  "privateDataChecks": {
+    "historicalGitNotCopied": true,
+    "knownLocalCredentialsFoundInStagedFiles": 0,
+    "patternScanReviewedException": "localStorage preference legacy-left-width-v2; generic-api-key heuristic",
+    "rawProviderTracesIncluded": false
+  },
+  "installedModelTask": {
+    "model": "deepseek-flash",
+    "input": "two-row synthetic CSV",
+    "expectedCommit": "MICA-4826",
+    "expectedMilliseconds": 16735,
+    "renderedBoth": true,
+    "untilValueVisibleMs": 4086,
+    "finalStatus": "success",
+    "modelTurns": 2,
+    "persistedAnswerMatched": true
+  },
+  "memory": {
+    "protocol": "Fresh isolated profile, hidden renderer; sample every two seconds, five samples after ten seconds of idle and five with one synthetic project and chat opened. Includes all descendant processes. MiB = bytes / 1048576. The first-composer measurement is for this single startup with CDP attached.",
+    "firstComposerMs": 2286,
+    "idle": {
+      "samples": [
+        {
+          "sample": 1,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 116088832,
+          "privateWorkingSetBytes": 157863936,
+          "workingSetBytes": 465035264,
+          "privateBytes": 309084160
+        },
+        {
+          "sample": 2,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 114913280,
+          "privateWorkingSetBytes": 156688384,
+          "workingSetBytes": 463962112,
+          "privateBytes": 307535872
+        },
+        {
+          "sample": 3,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 115154944,
+          "privateWorkingSetBytes": 156930048,
+          "workingSetBytes": 464273408,
+          "privateBytes": 307703808
+        },
+        {
+          "sample": 4,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 114348032,
+          "privateWorkingSetBytes": 156123136,
+          "workingSetBytes": 463638528,
+          "privateBytes": 306438144
+        },
+        {
+          "sample": 5,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 114679808,
+          "privateWorkingSetBytes": 156454912,
+          "workingSetBytes": 464130048,
+          "privateBytes": 306802688
+        }
+      ],
+      "medianMiB": {
+        "privateWorkingSetBytes": 149.4,
+        "workingSetBytes": 442.6,
+        "privateBytes": 293.3
+      }
+    },
+    "projectOpen": {
+      "samples": [
+        {
+          "sample": 1,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 139186176,
+          "privateWorkingSetBytes": 181465088,
+          "workingSetBytes": 493912064,
+          "privateBytes": 363556864
+        },
+        {
+          "sample": 2,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 141803520,
+          "privateWorkingSetBytes": 184107008,
+          "workingSetBytes": 496635904,
+          "privateBytes": 366141440
+        },
+        {
+          "sample": 3,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 138297344,
+          "privateWorkingSetBytes": 180584448,
+          "workingSetBytes": 493748224,
+          "privateBytes": 361934848
+        },
+        {
+          "sample": 4,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 133177344,
+          "privateWorkingSetBytes": 175505408,
+          "workingSetBytes": 489709568,
+          "privateBytes": 354930688
+        },
+        {
+          "sample": 5,
+          "processes": 7,
+          "sameExecutableProcesses": 4,
+          "sameExecutablePrivateWorkingSetBytes": 136540160,
+          "privateWorkingSetBytes": 178868224,
+          "workingSetBytes": 493203456,
+          "privateBytes": 358137856
+        }
+      ],
+      "medianMiB": {
+        "privateWorkingSetBytes": 172.2,
+        "workingSetBytes": 470.9,
+        "privateBytes": 345.2
+      }
+    }
+  }
+}
