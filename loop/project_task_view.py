@@ -1,7 +1,7 @@
 """Bind an isolated checkout to the live L0 run and its existing project authority."""
 
-from contextlib import nullcontext
-from contextvars import copy_context
+from contextlib import contextmanager, nullcontext
+from contextvars import ContextVar, copy_context
 import threading
 from pathlib import Path
 from uuid import uuid4
@@ -12,6 +12,25 @@ from .tools import current_call, current_stop
 _lock = threading.RLock()
 _views = {}
 _gates = {}
+_check_views = ContextVar('standalone_check_views', default=None)
+
+
+@contextmanager
+def check_scope(session, resource):
+    if lookup(session, resource) is not None:
+        yield
+        return
+    # An ordinary hosted check has no task transaction to publish. Drop its
+    # private mount as soon as the command has finished, even if the host stays up.
+    owned = {}
+    token = _check_views.set(owned)
+    try:
+        yield
+    finally:
+        _check_views.reset(token)
+        for view in owned.values():
+            if view.record['phase'] == 'open' and not view.record.get('mounts'):
+                view.discard()
 
 
 def store():
@@ -20,7 +39,7 @@ def store():
 
 def action_gate(resource):
     source = current_call() or {}
-    if not source.get('nativeExecutor') or not source.get('runId'):
+    if not source.get('nativeExecutor') or not source.get('runId') or _check_views.get() is not None:
         return nullcontext()
     key = source.get('sessionId'), source['runId'], resource
     with _lock:
@@ -31,8 +50,24 @@ def lookup(conversation, resource):
     source = current_call() or {}
     if source.get('sessionId') != conversation:
         return None
+    return for_run(conversation, source.get('runId'), resource)
+
+
+def for_run(conversation, run, resource):
     with _lock:
-        return _views.get((conversation, source.get('runId'), resource))
+        active = _check_views.get()
+        return (_views if active is None else active).get((conversation, run, resource))
+
+
+def check_state(ws, view, *, fingerprint_folder=True):
+    if view is None:
+        return W.check_source_state(ws, fingerprint_folder=fingerprint_folder)
+    view.guard()
+    state = W.file_workspace_state(ws)
+    if not view.generation and state.get('available'):
+        # An empty overlay on a Git checkout tests that checkout's actual revision.
+        return W.check_source_state(ws)
+    return dict(state, revision=view.revision(), folderObservation=True)
 
 
 def for_action(root, thread, resource, ws, source, capability):
@@ -40,7 +75,9 @@ def for_action(root, thread, resource, ws, source, capability):
     if not source.get('nativeExecutor') or not key[1]:
         return None
     with _lock:
-        v = _views.get(key)
+        active = _check_views.get()
+        views = _views if active is None else active
+        v = views.get(key)
         if v is not None:
             v.guard()
             return v
@@ -65,7 +102,7 @@ def for_action(root, thread, resource, ws, source, capability):
         v.publish_guard = publish_guard
         v.path_guard = lambda name, write: baseline.hit('write' if write else 'read', v.project / name, root=v.project)
         v.metadata = thread, resource, ws, source
-        _views[key] = v
+        views[key] = v
         return v
 
 
@@ -118,6 +155,14 @@ def _publish(v):
 
 
 def settle(session, run, status):
+    from . import check_sessions
+    # A check may have yielded during preparation, before entering its action gate.
+    # Its owner must finish recording the actual result before publishing or discarding this view.
+    for job in check_sessions.owned_jobs():
+        if (job.context['sessionId'], job.context['runId']) == (session, run):
+            if status != 'success':
+                job.cancel.set()
+            job.done.wait()
     outcomes = []
     with _lock:
         selected = [(k,v) for k,v in list(_views.items()) if k[:2] == (session,run)]

@@ -1017,7 +1017,7 @@ def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
     if project_view is not None:
         if not managed or project_view.project != Path(w['path']).resolve():
             raise Problem('invalid_scope', '项目暂存必须用对应的隔离执行环境', 403)
-        revision = project_view.revision()
+        revision = expected_revision or project_view.revision()
     if not revision and (managed or capture_host_revision):
         revision = current_revision(w)
     if not managed and source and source.get("tool") == "run_project_shell" and git_exe():

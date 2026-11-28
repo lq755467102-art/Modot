@@ -517,7 +517,8 @@ def review_check_receipt(root, resource_id, args, *, prior_operations=()):
     thread, _, ws, source = context_resource(root, resource_id, 'execute')
     if not source.get('nativeExecutor') or not source.get('logicalTaskId') or source.get('role') != 'executor':
         return None
-    state = W.check_source_state(ws)
+    from . import project_task_view
+    state = project_task_view.check_state(ws, project_task_view.lookup(thread['id'], resource_id))
     revision = W.selected_check_revision(state, includes_record(args))
     if (not revision or not (state.get('head') or state.get('folderObservation')) or state.get('protected') or state['branch'] == '(detached)'
             or args.get('expected_revision') not in (None, revision)):
@@ -722,7 +723,11 @@ def executor_verification(ident, run_id, *, task=None, prior_run_ids=(), include
                 has_checks = any(op["operation"] == "check" and op["workspaceId"] == workspace_id for op in ops)
                 if has_checks:
                     ws = conversation_record.check_workspace(ws, projects.conversation(ident), resource_id)
-                state = W.check_source_state(ws, fingerprint_folder=has_checks)
+                from . import project_task_view
+                view = project_task_view.for_run(ident, run_id, resource_id)
+                check_original = any(op['operation'] == 'check' and not str(op.get('beforeRevision')).startswith('stage:')
+                                     for op in ops)
+                state = project_task_view.check_state(ws, view, fingerprint_folder=has_checks and check_original)
             except (W.Problem, OSError):
                 pass
         checks = []
@@ -1646,7 +1651,7 @@ def _invoke(root, operation, resource_id, **args):
             elif not os.path.lexists(selected / ".git"):
                 extra = {}
                 if args.get('include_check_revision'):
-                    check_state = (dict(revision=project_view.revision()) if project_view else W.check_source_state(ws))
+                    check_state = project_task_view.check_state(ws, project_view)
                     extra['checkRevision'] = check_state['revision']
                     if check_state.get('recordRevision'):
                         extra['recordCheckRevision'] = check_state['recordRevision']
@@ -1658,7 +1663,8 @@ def _invoke(root, operation, resource_id, **args):
                 page,
                 ok=True,
                 git=git,
-                **({'checkRevision': project_view.revision()} if project_view else {}),
+                **({'checkRevision': project_view.revision() if project_view.generation else git['revision']}
+                   if project_view else {}),
                 projectRevision=git["revision"] or "non-git",
             )
         # File edits share the checkout gate, but serialize capture/write/receipt
@@ -1678,7 +1684,7 @@ def _invoke(root, operation, resource_id, **args):
             isolated_check = operation == "check" and args.get("capture_changes", False) is False
             with W.git_observation.phase('preflight'):
                 if project_view is not None and (operation == 'check' or operation == 'restore' and args.get('source_operation_id')):
-                    state = dict(W.file_workspace_state(ws), revision=project_view.revision(), folderObservation=True)
+                    state = project_task_view.check_state(ws, project_view)
                 elif isolated_check or operation == "restore":
                     state = W.check_source_state(ws)
                     if isolated_check:
@@ -2110,8 +2116,8 @@ def _invoke(root, operation, resource_id, **args):
                     )
                 revision_start = time.monotonic()
                 with W.git_observation.phase('after_exit'):
-                    result["projectRevisionAfter"] = (project_view.revision() if project_view is not None else
-                        W.selected_check_revision(W.check_source_state(ws), W.record_revision(state["revision"])))
+                    result["projectRevisionAfter"] = W.selected_check_revision(
+                        project_task_view.check_state(ws, project_view), W.record_revision(state["revision"]))
                 process = result["process"]
                 cancelled = cancelled or bool(process.get('stopRequested')) or bool(background and background.cancel.is_set())
                 timed_out = timed_out or cutoff is not None and process.get("exitCode") == 124 and stopped()

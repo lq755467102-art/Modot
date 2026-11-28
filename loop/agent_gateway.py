@@ -158,6 +158,11 @@ def dispatch(ident, body, validate_live=lambda: None, server=None):
         if operation.startswith('check-'):
             from . import check_sessions
             validate_live()
+            # Only the task process owns its edited checkout. Authenticate the
+            # action here before the runner starts or controls its own check.
+            if (body.get('taskOwnsCheck') is True and context.get('nativeExecutor')
+                    and operation in check_sessions.TASK_CHECKS):
+                return dict(ok=True, checkOwner='task', actionId=context['actionId'])
             if operation in {'check-start', 'check-join', 'check-environments', 'check-settle'}:
                 directory = server._resolve_sid(ident) if server else None
                 if not directory:
@@ -236,12 +241,15 @@ def _request(operation, **args):
             "code": "host_required",
             "error": "此操作需要应用后端拥有的运行服务，请从 Electron 会话启动",
         }
+    body = {"operation": operation, "context": context, "args": args}
+    if operation.startswith("check-") and context.get("nativeExecutor"):
+        from . import check_sessions
+        if check_sessions.task_owns_check(operation, context, args):
+            body["taskOwnsCheck"] = True
     ident = request_id(context)
     request = urllib.request.Request(
         endpoint,
-        data=json.dumps(
-            {"operation": operation, "context": context, "args": args}
-        ).encode(),
+        data=json.dumps(body).encode(),
         headers={
             "Content-Type": "application/json",
             "X-Harness-Agent-Token": capability,
@@ -257,7 +265,7 @@ def _request(operation, **args):
         with urllib.request.build_opener(urllib.request.ProxyHandler({})).open(
             request, timeout=270 if remaining is None else min(270, remaining)
         ) as response:
-            return json.loads(response.read(1024 * 1024))
+            result = json.loads(response.read(1024 * 1024))
     except urllib.error.HTTPError as error:
         try:
             return dict(json.loads(error.read(8192)), ok=False)
@@ -269,3 +277,20 @@ def _request(operation, **args):
             "code": "unknown",
             "error": "运行操作回执未确认，请用对应 inspect 工具核对；不会自动重放启动命令",
         }
+    if not body.pop("taskOwnsCheck", False):
+        return result
+    if not (isinstance(result, dict) and result.get("ok") is True and result.get("checkOwner") == "task"
+            and result.get("actionId") == context["actionId"] and result.get("request_id") == ident):
+        if isinstance(result, dict) and result.get("ok") is False:
+            return result
+        return dict(ok=False, code="check_owner_unconfirmed", error="宿主未确认本轮暂存检查的归属，请核对原动作回执。")
+    from . import code_service
+    from .tools import current_stop
+    stopped = current_stop()
+    def validate_live():
+        if stopped and stopped():
+            raise W.Problem("expired_run", "本轮已停止", 403)
+    try:
+        return dispatch(context["sessionId"], body, validate_live, code_service.RuntimeView())
+    except W.Problem as error:
+        return dict(ok=False, code=error.code, error=error.message)
