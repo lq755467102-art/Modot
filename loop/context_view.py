@@ -11,6 +11,7 @@ from .context_surface import ContextSurface
 from .context_manager import HistoryCapacityBlocked, RequestBody, fingerprint, runtime_update_name, validate_pairs
 from .filelock import atomic_json, read_text
 from . import history_compaction as H
+from . import input_budget
 
 LEGACY_SUMMARY_INSTRUCTION = '''Extract an effective engineering checkpoint from the accepted conversation above.
 Use these headings, concise bullets, and (none) for empty sections:
@@ -196,6 +197,7 @@ def project(session, role, body, *, work_summary=None):
     if work_summary is None:
         session._history_usage_checkpoint = (saved or {}).get('checkpointId')
     retired = saved['sourceCount'] if saved else 0
+    submission = input_budget.submission_index(source)
     state = work_summary if work_summary is not None else _state(session)
     replacements = state.get('toolResults', {})
     scope = request_scope(session, role)
@@ -230,7 +232,7 @@ def project(session, role, body, *, work_summary=None):
         if i < retired and message.get('role') == 'assistant' and not calls:
             i += 1
             continue
-        if (i < retired and saved and saved.get('summaryFormat') == H.FORMAT
+        if (i < retired and i != submission and saved and saved.get('summaryFormat') == H.FORMAT
                 and message.get('role') == 'user' and name is None):
             i += 1
             continue
@@ -423,13 +425,19 @@ def _summary_boundaries(body, capacity, positions, *, retain_tokens=None):
     retain_tokens = int((capacity or sum(costs))*.16) if retain_tokens is None else retain_tokens
     end=H.range_end(messages,costs,retain_tokens)
     if end is None:return []
+    submission = input_budget.submission_index(body)
     # Auxiliary overflow can reduce the old prefix, never cut a call group.
     boundaries=[];pending=set()
     for i,m in enumerate(messages[:end]):
         pending.update(c['id'] for c in m.get('tool_calls') or [])
         if m.get('role')=='tool':pending.discard(m.get('tool_call_id'))
-        if not pending and i in positions and m.get('role') not in {'system','developer'}:
+        if not pending and i != submission and i in positions and m.get('role') not in {'system','developer'}:
             boundaries.append(i+1)
+    if submission is not None:
+        groups, _ = input_budget.layout(body)
+        older = [boundary for boundary in boundaries if boundary <= submission and groups[boundary - 1] == "history"]
+        if older:
+            return older
     return boundaries
 
 
@@ -479,7 +487,9 @@ def summarize(provider, session, role, body, should_stop, capacity=0, *, retain_
         # Summarize the actual old prefix, including tool evidence and scripts;
         # retain recent messages unchanged. Do not infer facts from progress text.
         from . import working_corrections
-        selected = working_corrections.for_summary(session,role,body['messages'][:end])
+        submission = input_budget.submission_index(body)
+        historical = [message for i, message in enumerate(body['messages'][:end]) if i != submission]
+        selected = working_corrections.for_summary(session,role,historical)
         validate_pairs(selected)
         if should_stop and should_stop():
             raise Interrupted('用户停止，未提炼工作结论')
@@ -600,7 +610,7 @@ def compact(provider, session, role, body, should_stop, capacity, *, policy=None
         # history; never publish an intermediate pointer or replay a tool.
         measured = H.measured(provider,native_receipts(session,result),capacity)
         retries = 0
-        while policy['threshold'] and measured['tokens'] >= policy['threshold']:
+        while not input_budget.fits_after_compaction(result, measured['tokens'], policy, capacity):
             if retries and measured['source'] != 'unmeasured_input_bound':
                 raise HistoryCapacityBlocked('context_blocked: 两次历史摘要后仍超过 DSH 触发阈值，原始记录保留')
             previous_cut = result.work_summary['sourceCount']
@@ -613,11 +623,13 @@ def compact(provider, session, role, body, should_stop, capacity, *, policy=None
     cutoff = getattr(result,'work_summary',{}).get('sourceCount',0) if strategy=='effective-work-checkpoint' else 0
     positions=getattr(body,'source_positions',{})
     retired=max((i+1 for i,origin in positions.items() if origin<cutoff),default=0)
-    users=[i for i,m in enumerate(body['messages'][:retired]) if m['role']=='user'
+    submission = input_budget.submission_index(body)
+    users=[i for i,m in enumerate(body['messages'][:retired]) if i != submission and m['role']=='user'
            and runtime_update_name(m,body.parts.get(i,())) is None]
     if retired and checkpoint_id:
         result.work_summary['archive']=dict(checkpoint_id=checkpoint_id,
-            first_message_index=next((i for i,m in enumerate(body['messages'][:retired]) if m['role'] not in {'system','developer'}),0),
+            first_message_index=next((i for i,m in enumerate(body['messages'][:retired])
+                                      if i != submission and m['role'] not in {'system','developer'}),0),
             end_message_index=retired,user_message_indices=users)
         row=result.work_summary
         result=project(session,role,session._context_view_source,work_summary=row)

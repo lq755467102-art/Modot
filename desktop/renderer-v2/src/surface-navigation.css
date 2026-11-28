@@ -185,6 +185,10 @@
   background:color-mix(in srgb,var(--app-accent) 10%,var(--panel));
   color:var(--ink);
 }
+.conversation-item[data-followup-receipt] .msg.user { flex-direction:column;align-items:flex-end;gap:.25em; }
+.conversation-item[data-followup-receipt] .msg.user .body { white-space:pre-wrap;overflow-wrap:anywhere; }
+.followup-delivery { display:flex;align-items:center;gap:.4em;color:var(--dim); }
+.followup-delivery button { padding:0 .3em;background:transparent;border:0;color:inherit; }
 .restored-legacy .conversation-reading .md table { border-color:var(--app-line); }
 .restored-legacy .conversation-reading .md :is(th,td) { border-color:var(--app-divider);color:var(--ink); }
 .restored-legacy .conversation-reading .md th { background:var(--app-selected); }

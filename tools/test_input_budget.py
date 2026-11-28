@@ -7,18 +7,12 @@ from unittest.mock import patch
 from loop import context_manager as C
 from loop.context_inspection import request_owner
 from loop.provider import Msg
-from tools import test_context_refresh
+from tools.context_budget_fixture import request_fixture
 
 
 class InputBudgetTests(unittest.TestCase):
     def setUp(self):
-        fixture = test_context_refresh.RequestProjection()
-        fixture.setUp()
-        self.addCleanup(fixture.doCleanups)
-        self.session, self.provider = fixture.session, fixture.provider
-        del self.provider.count_input_tokens
-        self.events = fixture.fixture.events
-        self.provider.max_tokens = 256
+        self.session, self.provider, self.events = request_fixture(self)
         C.bind_capacity(self.session, self.provider, 4096)
 
     def test_fixed_overflow_names_the_source_before_any_model_request(self):

@@ -52,7 +52,8 @@ obj('InputBudget','fixed current history sources method estimated userLimit mode
     fixed=N,current=N,history=N,sources={'type':'object','additionalProperties':N},method=S,estimated=B,
     userLimit={'type':['number','null']},modelWindow={'type':['number','null']},reservedOutput=N,
     inputLimit={'type':['number','null']},historyThreshold=N,deferred=array(S),requestedGroups=array(S),
-    reason=S,stage=S,providerInput={'type':['number','null']},decisionTokens=N,decisionMethod=S)
+    reason=S,stage=S,providerInput={'type':['number','null']},decisionTokens=N,decisionMethod=S,
+    submissionImages=N,submissionImageTokens=N,submissionTokens=N)
 obj('ContextCapacity','estimated method inputTokens toolTokens protocolTokens reservedOutput outputReservationKnown safetyReserve estimatedTotal capacity state',estimated=B,method=S,inputTokens=N,toolTokens=N,protocolTokens=N,reservedOutput=N,outputReservationKnown=B,safetyReserve=N,estimatedTotal=N,capacity={'type':['number','null']},state=S,imageTokens=N,imageCount=N,systemTokens=N,breakdown={'type':'object','additionalProperties':N},budget=ref('InputBudget'))
 obj('ContextCheckpoint','id runId role at strategy before after actionReferences preservedUserMessages',id=S,runId=S,role=S,at=N,strategy=S,before=ref('ContextCapacity'),after=ref('ContextCapacity'),actionReferences=N,preservedUserMessages=N)
 obj('ContextDelivery','status',status={'enum':['confirmed','unconfirmed']},evidence={'enum':['provider_response']})

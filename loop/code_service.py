@@ -1286,7 +1286,7 @@ def _read_code_page(result, args):
 
 # 搜索页证明各已读文件的版本，不构造整仓一致快照；续查绑定查询、文件列表和当前文件指纹。
 def _search_code(ws, args, stopped):
-    from . import baseline
+    from . import baseline, project_text
 
     query = args.get("query")
     path = args.get("relative_path", ".")
@@ -1328,11 +1328,19 @@ def _search_code(ws, args, stopped):
     query_key = W.digest(json.dumps([str(root), scope.relative_to(root).as_posix(), query], ensure_ascii=False).encode())
     listing_key = W.digest(json.dumps(paths, ensure_ascii=False).encode())
     first_line, expected_file = 1, None
-    if cursor is not None:
+    prior_skips = 0
+    stream_cursor = cursor if cursor and cursor.startswith("s1.") else None
+    if stream_cursor:
+        offset, _, _, _, prior_skips = project_text.positions(stream_cursor, "s1", 5)
+        if offset >= len(paths):
+            raise W.Problem('search_cursor_stale', '搜索文件列表已变化，请重新搜索', 409)
+    elif cursor is not None:
         try:
             state = json.loads(base64.urlsafe_b64decode(cursor.encode()))
             index, line = state['index'], state['line']
+            prior_skips = state.get('skips', 0)
             if (state.get('version') != 1 or type(index) is not int or not 0 <= index < len(paths)
+                    or type(prior_skips) is not int or not 0 <= prior_skips <= index
                     or type(line) is not int or not 1 <= line <= W.LIMIT + 1
                     or state.get('revision') is not None and not isinstance(state['revision'], str)):
                 raise ValueError('invalid position')
@@ -1347,14 +1355,27 @@ def _search_code(ws, args, stopped):
     parents = {}
     matches, scanned, size, result_chars = [], 0, 0, 0
     revisions = {}
-    deadline = time.monotonic() + 5
+    skipped = {}
+    deadline = time.monotonic() + project_text.SCAN_SECONDS
 
-    def page(index=None, line=1, revision=None, reason=None):
+    def skip(reason):
+        skipped[reason] = skipped.get(reason, 0) + 1
+
+    def page(index=None, line=1, revision=None, reason=None, stream_position=None):
+        skips = prior_skips + sum(skipped.values())
         result = dict(ok=True, matches=matches, filesScanned=scanned, truncated=index is not None,
-                      fileRevisions=revisions, consistency='per_file')
+                      fileRevisions=revisions, consistency='per_file', scannedBytes=size,
+                      pageCoverage='partial' if index is not None else 'has_skips' if skips else 'complete')
+        if skips:
+            result.update(skippedFileCount=skips, skippedByReason=skipped, coverageNote='跳过的文件未验证是否命中；原因按本页统计')
+        if stream_position:
+            result.update(nextCursor=stream_position, truncationReason=reason)
+            return result
         if index is not None:
             position = dict(version=1, query=query_key, listing=listing_key,
                             index=index, line=line, revision=revision)
+            if skips:
+                position['skips'] = skips
             result.update(nextCursor=base64.urlsafe_b64encode(json.dumps(position).encode()).decode(),
                           truncationReason=reason)
             # Legacy offsets address files, and must not skip remaining matches
@@ -1368,9 +1389,10 @@ def _search_code(ws, args, stopped):
             raise W.Problem("cancelled", "代码搜索已取消", 409)
         if index < offset:
             continue
-        if index > offset and (index - offset >= 12000 or size >= 48 * 1024 * 1024 or time.monotonic() >= deadline):
-            reason = 'files' if index-offset >= 12000 else 'bytes' if size >= 48*1024*1024 else 'time'
+        if index > offset and (index - offset >= 12000 or size >= project_text.SCAN_BYTES or time.monotonic() >= deadline):
+            reason = 'files' if index-offset >= 12000 else 'bytes' if size >= project_text.SCAN_BYTES else 'time'
             return page(index, reason=reason)
+        continuing = index == offset and (expected_file or stream_cursor)
         try:
             path = Path(relative)
             if path.parent not in parents:
@@ -1378,35 +1400,66 @@ def _search_code(ws, args, stopped):
                 parents[path.parent] = parent if parent == root / path.parent else None
             parent = parents[path.parent]
             if parent is None:
-                if index == offset and expected_file:
+                if continuing:
                     raise W.Problem('resource_denied', '续查文件路径已不在可读取范围内', 403)
+                skip('unavailable')
                 continue
             candidate = parent / path.name
             if not candidate.is_relative_to(scope) or protected(candidate):
-                if index == offset and expected_file:
+                if continuing:
                     raise W.Problem('resource_denied', '续查文件已不在可读取范围内', 403)
+                skip('unavailable')
                 continue
             info = candidate.lstat()
-            if (not stat.S_ISREG(info.st_mode) or info.st_size > W.LIMIT
+            if (not stat.S_ISREG(info.st_mode)
                     or getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
-                if index == offset and expected_file:
+                if continuing:
                     raise W.Problem('search_cursor_stale', '续查文件类型或大小已变化，请重新搜索', 409)
+                skip('not_regular')
                 continue
-            raw = candidate.read_bytes()
+            if info.st_size > W.LIMIT:
+                if index == offset and expected_file:
+                    raise W.Problem('search_cursor_stale', '续查文件大小已变化，请重新搜索', 409)
+                found, revision, consumed, reason, position = project_text.search(
+                    ws, relative, query, context_lines, limit-len(matches), 14000-result_chars,
+                    project_text.SCAN_BYTES-size, deadline, stopped, index, query_key+listing_key,
+                    prior_skips + sum(skipped.values()), stream_cursor if index == offset else None)
+                size += consumed
+                scanned += 1
+                if found:
+                    matches.extend(found)
+                    revisions[relative] = revision
+                    result_chars += sum(len(json.dumps(m, ensure_ascii=False)) for m in found) + len(relative)+len(revision)+16
+                if position:
+                    return page(index, reason=reason, stream_position=position)
+                continue
+            if index == offset and stream_cursor:
+                raise W.Problem('search_cursor_stale', '续查文件大小已变化，请重新搜索', 409)
+            with candidate.open('rb') as stream:
+                raw = stream.read(W.LIMIT + 1)
+            if len(raw) > W.LIMIT:
+                raise W.Problem('search_cursor_stale', '搜索期间文件大小改变，请重新搜索', 409)
             revision = W.digest(raw) if index == offset and expected_file else None
             if index == offset and expected_file and revision != expected_file:
                 raise W.Problem('search_cursor_stale', '续查文件已变化，请从新版本重新搜索', 409)
             size += len(raw)
             if b"\0" in raw:
+                skip('binary')
                 continue
             text = raw.decode("utf-8-sig")
-        except W.Problem:
-            if index == offset and expected_file:
+        except W.Problem as error:
+            if error.code in ('binary','encoding'):
+                size += getattr(error, 'scanned_bytes', 0)
+                skip(error.code)
+                continue
+            if continuing or error.code in ('cancelled','revision_conflict','search_cursor_stale'):
                 raise
+            skip('unavailable')
             continue
-        except (OSError, UnicodeError):
-            if index == offset and expected_file:
+        except (OSError, UnicodeError) as error:
+            if continuing:
                 raise W.Problem('search_cursor_stale', '续查文件已变化或不可读取，请重新搜索', 409)
+            skip('encoding' if isinstance(error, UnicodeError) else 'unavailable')
             continue
         scanned += 1
         checked_match = False
@@ -1483,7 +1536,7 @@ def _invoke(root, operation, resource_id, **args):
     try:
         allowed_args = {
             "initialize": {"branch", "expected_revision"},
-            "inspect": {"relative_path", "offset", "line", "line_count", "definition", "include_check_revision"},
+            "inspect": {"relative_path", "offset", "line", "line_count", "definition", "include_check_revision", "cursor"},
             "search": {"query", "relative_path", "limit", "offset", "context_lines", "cursor"},
             "output": {"process_id", "after", "query", "stream"},
             "branch": {"branch", "expected_revision"},
@@ -1518,7 +1571,9 @@ def _invoke(root, operation, resource_id, **args):
         if operation == 'check':
             args['directory'] = check_directory(thread, resource_id, ws, args)
         if operation == "search":
-            return _search_code(ws, args, stopped)
+            result = _search_code(ws, args, stopped)
+            context_resource(root, resource_id, register_workspace=False)
+            return result
         if operation == "output":
             process = W.process_record(args["process_id"])
             if process["conversationId"] != thread["id"] or process["workspaceId"] != ws["id"]:
@@ -1530,6 +1585,9 @@ def _invoke(root, operation, resource_id, **args):
             return dict(output_page(thread["id"], args["process_id"], args.get("after", 0), args.get('stream')), ok=True)
         if operation == "inspect":
             path = args.get("relative_path")
+            if 'cursor' in args and (not isinstance(args['cursor'], str) or not path or path == '.'
+                                      or set(args) & {'line','offset','line_count','definition','include_check_revision'}):
+                raise W.Problem('invalid_cursor', '按行续读只传资源、文件相对路径和上次的 nextCursor')
             if (type(args.get('include_check_revision', False)) is not bool
                     or args.get('include_check_revision') and path not in (None, '', '.')):
                 raise W.Problem('invalid_arguments', 'include_check_revision 只用于资源根目录')
@@ -1542,10 +1600,11 @@ def _invoke(root, operation, resource_id, **args):
                     or "line_count" in args and (line is None or type(count) is not int or not 1 <= count <= 2000)):
                 raise W.Problem("invalid_arguments", "line（从1开始）与 offset（字符偏移）不能同时提供；line_count 仅与 line 一起使用，允许1–2000")
             result = projects.read_resource(
-                thread["id"], resource_id, path if path is not None else ".", offset, confirm=True, line=line
+                thread["id"], resource_id, path if path is not None else ".", offset, confirm=True, line=line,
+                text_page=args, stopped=stopped
             )
             require_running()
-            page = _read_code_page(result, args)
+            page = result if result.get('readMode') == 'stream' else _read_code_page(result, args)
             if "text" in page:
                 return dict(page, ok=True)
             selected = Path(ws['path']).resolve()

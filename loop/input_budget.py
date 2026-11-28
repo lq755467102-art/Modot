@@ -26,6 +26,12 @@ _CATALOGUES = {
 }
 
 
+def submission_index(body):
+    """The immutable human send for this run, marked by the host outside the wire payload."""
+    return next((i for i, parts in body.parts.items()
+                 if any(kind == "currentSend" for kind, _ in parts)), None)
+
+
 def layout(body):
     """Classify rows by host annotations and the latest real user input."""
     messages = body["messages"]
@@ -45,8 +51,11 @@ def layout(body):
         elif role == "user":
             latest = i
     fixed.update(runtime.values())
+    start = submission_index(body)
+    if start is None:
+        start = latest
     groups = [
-        "fixed" if i in fixed else "current" if i not in projected and latest is not None and i >= latest else "history"
+        "fixed" if i in fixed else "current" if i not in projected and start is not None and i >= start else "history"
         for i in range(len(messages))
     ]
     return groups, latest
@@ -60,7 +69,24 @@ def subset(body, rows):
 
 def required_rows(body):
     groups, latest = layout(body)
-    return [i for i, group in enumerate(groups) if group == "fixed" or i == latest]
+    submission = submission_index(body)
+    return [i for i, group in enumerate(groups) if group == "fixed" or i in (submission, latest)]
+
+
+def only_submission_remains(body):
+    """A checkpoint pointer cannot make a new submission useful to summarize again."""
+    if submission_index(body) is None:
+        return False
+    required = set(required_rows(body))
+    return all(i in required or any(kind == "contextView" for kind, _ in body.parts.get(i, ()))
+               for i in range(len(body["messages"])))
+
+
+def fits_after_compaction(body, tokens, policy, capacity):
+    if not policy["threshold"] or tokens < policy["threshold"]:
+        return True
+    limit = input_limit(capacity, policy.get("apiWindow"), policy.get("reservedOutput", 0))
+    return limit is not None and tokens < limit and only_submission_remains(body)
 
 
 def input_limit(capacity, window, output):
@@ -72,6 +98,9 @@ def input_limit(capacity, window, output):
 
 def _requested_text(body):
     _, latest = layout(body)
+    current = submission_index(body)
+    if current is not None:
+        latest = current
     if latest is None:
         return ""
     content = body["messages"][latest].get("content")
@@ -242,6 +271,12 @@ def report(session, body, capacity, policy):
         sources["baseTools"] = assess(dict(messages=[], tools=base))["toolTokens"]
         sources["extraTools"] = parts["toolDefinitions"] - sources["baseTools"]
     window, output = policy.get("apiWindow"), inspected["reservedOutput"]
+    current = submission_index(body)
+    submission = {}
+    if current is not None:
+        single = assess(dict(messages=[body["messages"][current]]), groups=["current"])
+        submission = dict(submissionImages=single["imageCount"], submissionImageTokens=single["imageTokens"],
+                          submissionTokens=single["inputGroups"]["current"])
     return dict(
         **inspected["inputGroups"], sources=sources,
         method=inspected["method"], estimated=True,
@@ -249,6 +284,7 @@ def report(session, body, capacity, policy):
         modelWindow=window, reservedOutput=output,
         inputLimit=input_limit(capacity, window, output),
         historyThreshold=policy["threshold"],
+        **submission,
         deferred=list(getattr(body, "budget_deferred", ())),
         requestedGroups=sorted(
             group for group in getattr(core, "budget_requested_groups", ())
@@ -282,7 +318,14 @@ def block(session, role, budget, reason, limit_evidence=None, measurement=None):
     limit = budget["inputLimit"]
     usage = f"可用输入 {limit:,} token（输出预留 {budget['reservedOutput']:,}）" if limit is not None else "可用输入未知"
     note = f"{stage}。{target}。{usage}。"
-    if details:
+    if reason == "current" and "submissionImages" in budget:
+        count = budget["submissionImages"]
+        material = f"问题与 {count} 张图片" if count else "问题与所选附件资料"
+        note += f"本次发送的{material}须一起保留，估算约 {budget['submissionTokens']:,} token"
+        if count:
+            note += f"（其中图片约 {budget['submissionImageTokens']:,}）"
+        note += f"，另有固定内容约 {budget['fixed']:,} token。请减少附件、缩短问题或提高输入上限后重试。"
+    elif details:
         note += f"本地估算主要占用 {details} token。"
     if budget["requestedGroups"] and budget["sources"].get("extraTools"):
         note += f"本轮请求的工具组 {'、'.join(budget['requestedGroups'])} 计入该额度。"
@@ -298,9 +341,9 @@ def check_required(session, provider, role, body, budget, limit_evidence=None):
         return len(required_rows(body)) == len(body["messages"])
     if limit <= 0:
         block(session, role, budget, "output", limit_evidence)
-    groups, latest = layout(body)
+    groups, _ = layout(body)
     fixed = [i for i, group in enumerate(groups) if group == "fixed"]
-    minimum = subset(body, sorted(fixed if latest is None else [*fixed, latest]))
+    minimum = subset(body, required_rows(body))
     measured = history.measured(provider, minimum, limit)
     if measured["tokens"] < limit:
         return len(minimum["messages"]) == len(body["messages"])

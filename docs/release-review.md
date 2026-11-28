@@ -1,5 +1,13 @@
 # 公开预览版审查
 
+## Windows x64 预览 .14
+
+- 同一会话先后发送 A、B 时，已接收的追问按顺序各启动一次。已归档会话中的排队追问在原消息下显示未启动原因。后台 Electron 45 和 DeepSeek Flash 覆盖了两条路径。
+- 当前问题和本次选择的附件一起计入输入预算。首问与追问覆盖双图、撤权和超限提示。两张图片各自保留来源动作，便于核对实际请求。[用例](../tools/test_send_attachments_context.py)
+- 大项目文本支持分块搜索和按行只读。续查使用位置和文件版本，并重新检查权限。[用例](../tools/test_project_text.py)
+
+[Windows 发行说明与校验文件](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.14)
+
 ## Windows x64 预览 .13
 
 `.13` 发布源码快照为 `6e6fb8437c7cf9827c001ec66473aee55fee5d0d`，与验收安装包采用同一源码树。安装包通过 Windows 覆盖升级和 213 项相关回归。安装包、SHA256、许可证和对应源码随 .13 维护。[Windows 预发布](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13)

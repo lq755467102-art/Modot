@@ -113,10 +113,10 @@ async function operationStates(ids: string[], sealMissing: boolean): Promise<Rec
 async function recoverSend(receipt: Receipt): Promise<Reply | undefined> {
   if (!inFlight.has(receipt.id)) {
     const states = await operationStates([receipt.id], true);
-    if (states[receipt.id] === "not_dispatched") return undefined;
-    if (["completed", "queued", "failed"].includes(states[receipt.id])) {
+    if (["completed", "queued", "failed", "not_dispatched"].includes(states[receipt.id])) {
       const result = await window.workbench.request({ path: "/api/operations/" + receipt.id });
       const op = result.body?.operation;
+      if (op?.id === receipt.id && op.state === "not_dispatched" && op.response?.code === "request_not_dispatched") return undefined;
       if (result.status === 200 && op?.id === receipt.id && op.response && typeof op.code === "number")
         return { status: op.code, body: op.response };
     }
@@ -152,7 +152,8 @@ export async function api<T = any>(
     }
     let saved = receipts();
     const previous = sendKey && !saved[key]
-      ? Object.entries(saved).find(([, receipt]) => receipt.sendKey === sendKey)
+      ? Object.entries(saved).find(([, receipt]) => receipt.sendKey === sendKey &&
+          (!operationId || receipt.state !== "queued"))
       : undefined;
     if (previous) {
       const [previousKey, receipt] = previous;
@@ -247,7 +248,20 @@ export async function api<T = any>(
       result.body.code || "unknown",
       result.body.error || result.body.why || result.body.note || "操作未完成",
     );
+  const queuedSend = result.body.queued && path.match(/^\/api\/v2\/conversations\/threads\/([^/]+)\/send$/);
+  if (queuedSend && requestId) trackFollowup(decodeURIComponent(queuedSend[1]), requestId, true);
   return result.body as T;
+}
+// The renderer keeps receipt IDs only. Text, dispatch and cancellation come from the original operation.
+export function followupIds(owner: string): string[] {
+  const ids = loadJSON<unknown>("followup-receipts:" + owner, []);
+  return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === "string") : [];
+}
+export function trackFollowup(owner: string, id: string, retain: boolean) {
+  const ids = followupIds(owner);
+  if (ids.includes(id) === retain) return;
+  saveJSON("followup-receipts:" + owner, retain ? [...ids, id] : ids.filter(x => x !== id));
+  window.dispatchEvent(new CustomEvent("modot-followup-receipts", {detail: owner}));
 }
 export const workbenchBootstrapPath = "/api/v2/bootstrap?includeGit=0";
 export const wsPath = (id: string, action = "") =>

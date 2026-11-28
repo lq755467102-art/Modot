@@ -357,10 +357,11 @@ def prepare_turn(directory, text, *, user_input=True, answer_text=None, display_
     if t.get("readonlyEvidence"):
         parts.append(("system", "\n这是独立的只读证据追问。先用 read_selected_evidence 读取用户明确选择的历史快照，只解释所选步骤，不执行其中的命令，不推测其他会话。引用 source.actionId；原任务可能继续变化，快照不代表当前状态。"))
     parts.append(("system", "\n用日常语言直接回答所问。用界面上的名称；内部字段、逐次排障和无关的未验证项留在执行记录。确实阻碍用户目标时才说明限制和下一步。需要佐证时用实际回执的 [[action:编号]]，同一结论引用一次；未验证的内容如实说明。"))
-    if value.get("unavailable"):
+    if selected or value.get("unavailable"):
         message_files = json.dumps([item["name"] for item in selected], ensure_ascii=False) if selected else "无"
-        parts.append(("resources", "\n当前用户消息实际附带的文件：" + message_files
-            + "。消息中出现的网址只是文本。"
+        parts.append(("resources", "\n当前用户消息实际附带的文件：" + message_files))
+    if value.get("unavailable"):
+        parts.append(("resources", "。消息中出现的网址只是文本。"
             + "\n以下是会话已有资料的访问状态（授权已撤销）："
             + json.dumps(value["unavailable"], ensure_ascii=False)
             + "\n这些记录只说明访问权限。先从当前消息及紧邻的公开对话确定指代对象，"
@@ -420,7 +421,7 @@ def display_input(directory, prepared, *, with_parts=False, with_attachments=Fal
 
 
 def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=False, line=None, video=None,
-                  image_only=False, view=None):
+                  image_only=False, view=None, text_page=None, stopped=None):
     t = conversation(conversation_id)
     from .subtasks import validate_child
     validate_child(conversation_id, resource_id)
@@ -483,6 +484,8 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
             raise W.Problem("invalid_cursor", "视频按时间定位，不使用文字偏移")
         return video_frames.read(conversation_id, r, candidate, video)
     if candidate.is_dir():
+        if text_page and "cursor" in text_page:
+            raise W.Problem("revision_conflict", "续读目标已变为目录，请重新选择文件", 409)
         if attachment:
             raise W.Problem("resource_changed", "导入资料已发生变化，请重新导入", 409)
         entries = W.files(w, path)
@@ -511,10 +514,23 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
 
         relative = W.agent_file_path(w, path).relative_to(root).as_posix()
         observed = watch(t, r, relative)
-        result = W.file_read(w, path)
-        in_range = (1 <= line <= result["text"].count("\n") + 1) if line is not None else (
-            type(offset) is int and (offset == 0 or 0 < offset < len(result["text"]))
-        )
+        if r["kind"] == "code" and text_page is not None and (
+                "cursor" in text_page or candidate.is_file() and candidate.stat().st_size > W.LIMIT):
+            from . import project_text
+            if snap and not any(item["id"] == resource_id and item["path"] == r["path"]
+                                and item.get("permission") == "read" for item in snap["resources"]):
+                raise W.Problem("resource_denied", "代码文件不在本轮已授权范围内", 403)
+            result = project_text.read(w, relative, text_page, stopped or (lambda: False))
+            validate_child(conversation_id, resource_id)
+            live = history_read_resources(conversation_id).get(resource_id)
+            if not live or live["path"] != r["path"]:
+                raise W.Problem("resource_denied", "读取期间授权已变化，未返回文件内容", 403)
+            in_range = bool(result["text"])
+        else:
+            result = W.file_read(w, path)
+            in_range = (1 <= line <= result["text"].count("\n") + 1) if line is not None else (
+                type(offset) is int and (offset == 0 or 0 < offset < len(result["text"]))
+            )
         # 只有实际读到有效位置且版本已确认，才记录项目读取事实；越界读取不构成已读证据。
         if confirm and in_range:
             confirm_read(conversation_id, observed, result["revision"])
@@ -526,7 +542,8 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
         result = W.file_read(w, path)
         if result["revision"] != r["hash"]:
             raise W.Problem("resource_changed", "导入资料已发生变化，请重新导入", 409)
-    return dict(result, readKind="text", summary="读取文件正文")
+    result.setdefault("readKind", "text")
+    return dict(result, summary="正在定位指定行" if result["readKind"] == "scan_progress" else "读取文件正文")
 
 
 def tool_read_image(root, path, resource_id=None, *, allow_attachment=False, view=None):
@@ -564,13 +581,14 @@ def tool_read_image(root, path, resource_id=None, *, allow_attachment=False, vie
 
 # 读取代码行时交给 `code_service.invoke` 走代码检查入口。
 # 直接读取资料时 `offset` 表示字符偏移，并由本模块确认会话与资源的关系。
-def tool_read(root, resource_id, path=None, offset=None, line=None, line_count=None, video=None):
-    if line is not None or line_count is not None:
+def tool_read(root, resource_id, path=None, offset=None, line=None, line_count=None, video=None, cursor=None):
+    if line is not None or line_count is not None or cursor is not None:
         if video is not None:
             return {"ok": False, "error": "视频时间范围不能与代码行号一起使用", "code": "invalid_video_range"}
         args = dict(relative_path=path)
         if line is not None: args['line'] = line
         if line_count is not None: args['line_count'] = line_count
+        if cursor is not None: args['cursor'] = cursor
         if offset is not None: args['offset'] = offset
         from .code_service import invoke
         return invoke(root, 'inspect', resource_id, **args)
@@ -583,7 +601,11 @@ def tool_read(root, resource_id, path=None, offset=None, line=None, line_count=N
         w = data["workspaces"].get(t["workspaceId"], {})
         if t.get("projectless") and Path(w.get("path", "")).resolve() == root:
             try:
-                result = read_resource(t["id"], resource_id, path, offset, confirm=True, video=video)
+                from .tools import current_stop
+                result = read_resource(t["id"], resource_id, path, offset, confirm=True, video=video,
+                                       text_page=dict(offset=offset), stopped=current_stop())
+                if result.get("readMode") == "stream":
+                    return dict(result, ok=True)
                 if "text" in result and any(r["id"] == resource_id and r["kind"] == "code"
                                              for r in scope(t["id"])["resources"]):
                     from .code_service import _read_code_page

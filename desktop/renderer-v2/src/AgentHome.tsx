@@ -184,7 +184,6 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
     setExecutionOwners((old) => old[owner]===value?old:({ ...old, [owner]: value }));
   }
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [queuedNotices, setQueuedNotices] = useState<Record<string, {runId?: string; text: string}>>({});
   const [pendingMessages, setPendingMessages] = useState<Record<string, PendingUserMessage>>({});
   const pendingMessage = pendingMessages[inputOwner];
   const settleMessage = useCallback((owner: string, id: string, runId?: string) => {
@@ -665,13 +664,19 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
     scopeRevision?: string, operationId?: string, attachmentIds?: readonly string[],
     githubPage?: GitHubPageReference|null,
   ) {
-    return api<{ runId?: string; queued?: boolean; note?: string }>(
-      base + "/threads/" + encodeURIComponent(owner) + "/send", {
+    const path = base + "/threads/" + encodeURIComponent(owner) + "/send";
+    const result = await api<{ runId?: string; queued?: boolean; request_id?: string; messageText?: string }>(
+      path, {
         text, crew: "l0", expectedExecutionRevision: next.revision, expectedScopeRevision: scopeRevision,
         ...(attachmentIds?.length?{attachmentIds}:{}),
         ...(githubPage?{githubPage}:{}),
       }, false, operationId,
     );
+    if (result.queued && result.request_id) {
+      const key = ["followup-receipt", owner, result.request_id];
+      queryClient.setQueryData(key, old => old ?? {id: result.request_id, path, state: "queued", response: result});
+    }
+    return result;
   }
   // 发送前要求资料/配置读取成功且附件取消已核对；修订号交给后端检查期间发生的并发变化。
   async function send(replyText = draft) {
@@ -687,7 +692,6 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
     } else scroll.toLatest();
     setBusy(true,id);
     setError('',id);
-    setQueuedNotices(old=>{const next={...old};delete next[id];return next;});
     try {
       const route = base + "/threads/" + encodeURIComponent(id);
       // The question may arrive before the execution poll catches up. Pin
@@ -706,9 +710,8 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
         settleMessage(id,outgoing.id);
       } else {
         const next = settings?.next ?? newExecution;
-        const queued = await sendComposerMessage(id, text, next, currentScope.data?.revision, undefined, attachmentsForSend,await githubPage);
+        const queued = await sendComposerMessage(id, text, next, currentScope.data?.revision, outgoing.id, attachmentsForSend,await githubPage);
         settleMessage(id,outgoing.id,queued.runId);
-        if(queued.queued)setQueuedNotices(old=>({...old,[id]:{runId:thread?.runtime?.run_id,text:queued.note||"插话已接收，将在当前执行步结束后继续。"}}));
       }
       setWebSources(old => old[id] ? {...old,[id]:old[id].map(item =>
         text.includes("地址：" + item.url + "\n") ? {...item,sent:true} : item)} : old);
@@ -843,7 +846,6 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
             throw Error("会话工作目录待核对，消息已保存在草稿。");
           const result = await sendComposerMessage(record.id, attempt.firstMessage, next, scope.revision, attempt.id + "-first-message");
           settleMessage(record.id,outgoing.id,result.runId);
-          if (result.queued) setQueuedNotices(old => ({...old, [record.id]: {text: result.note || "首条消息已接收。"}}));
           setDrafts(old => old[record.id] === attempt.firstMessage ? {...old, [record.id]: ""} : old);
           saveJSON("conversation-drafts", draftStore.current);
         } catch (failure) {
@@ -1471,8 +1473,7 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
         runtimeReadFailed={!!conversations.error} awaitingApproval={!!pendingApproval}
         sendFeedback={sendFeedback} idleHint={sendFeedback === emptyDraftFeedback}
         error={error || history.error?.message}
-        notice={(queuedNotices[selected]?.runId===thread?.runtime?.run_id && queuedNotices[selected]?.text) ||
-          history.data?.historyNotice || (thread?.archived ? t("此对话已归档，历史与草稿保留。") : undefined)}
+        notice={history.data?.historyNotice || (thread?.archived ? t("此对话已归档，历史与草稿保留。") : undefined)}
         onLatest={historyBefore ? ()=>{latestRequested.current=true;historyState.setHistoryBefore(0);} : scroll.hasNew ? scroll.toLatest : undefined}>
         {selected && thread && !thread.projectId && !thread.subtaskOf && !thread.readonlyEvidence && !thread.archived &&
           <ConversationRecordStatus conversationId={selected} visible={conversationVisible}
@@ -1523,6 +1524,7 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
               active={!historyBefore&&!!thread?.runtime?.active&&!nativeEnd} runId={historyBefore?undefined:thread?.runtime?.run_id}
               runStatus={historyBefore?undefined:thread?.runtime?.state}
               pendingMessage={conversationVisible && !historyBefore ? pendingMessage : undefined}
+              showFollowups={conversationVisible && !historyBefore}
               onMessageSettled={settleMessage}
               onSummary={historyBefore?undefined:onHandoffPresentation}
               conversationId={selected} onReview={openCodeReview}

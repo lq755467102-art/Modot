@@ -524,9 +524,10 @@ def prepare(provider, body, should_stop=None, *, limit_evidence=None, keep_tools
             session._context_view_source.budget_projection = plan
         wire.input_budget = B.report(session, wire, capacity, history_policy)
         required_only = B.check_required(session, provider, role, wire, wire.input_budget, limit_evidence)
-        if not limit_evidence and required_only:
-            return wire
         input_limit = wire.input_budget['inputLimit']
+        if not limit_evidence and (required_only or (input_limit and B.only_submission_remains(wire)
+                and H.measured(provider, wire, capacity)['tokens'] < input_limit)):
+            return wire
         if limit_evidence and limit_evidence.get('kind') == 'api_context_limit':
             guard = input_limit if required_only else history_policy['threshold']
             if (wire.input_budget['deferred'] and input_limit is not None
@@ -574,8 +575,7 @@ def prepare(provider, body, should_stop=None, *, limit_evidence=None, keep_tools
                 compacted,handoff = compact(provider,session,role,body,should_stop,capacity,
                     policy=history_policy,overflow=limit_evidence.get('kind')=='api_context_limit',checkpoint_id=ident)
                 verified = native_receipts(session, compacted)
-                threshold = history_policy['threshold'] or capacity
-                if ((threshold and H.measured(provider, verified, capacity)['tokens'] >= threshold)
+                if (not B.fits_after_compaction(verified, H.measured(provider, verified, capacity)['tokens'], history_policy, capacity)
                         or len(json.dumps(verified, ensure_ascii=False).encode('utf8')) >= original_bytes):
                     raise HistoryCapacityBlocked('context_blocked: 整理后的历史仍超出预算或没有缩减收益')
             except HistoryCapacityBlocked as exhausted:
@@ -610,7 +610,7 @@ def prepare(provider, body, should_stop=None, *, limit_evidence=None, keep_tools
                     break
         if measured_after and capacity and measured_after['tokens']>=capacity:
             raise ContextBlocked("context_blocked: 可回取历史整理后仍超过容量；原文已保留，请缩小当前输入或调整模型窗口")
-        if working_view and history_policy['threshold'] and measured_after['tokens']>=history_policy['threshold']:
+        if working_view and not B.fits_after_compaction(compacted, measured_after['tokens'], history_policy, capacity):
             raise ContextBlocked('context_blocked: 加入历史回取信息后仍达到 DSH 触发阈值，未切换检查点')
         if len(json.dumps(compacted,ensure_ascii=False).encode('utf8'))>=original_bytes:
             raise ContextBlocked("context_blocked: 整理无回收收益，未重复请求")
@@ -805,6 +805,9 @@ def assess(body, capacity=0, *, groups=None):
             group_reserves[group] += media_by_message[index] + 16
         content = message.get("content")
         parts = getattr(body, "parts", {}).get(index, ())
+        if isinstance(content, list) and any(kind == "currentSend" for kind, _ in parts):
+            # The first block is the original prepared question, with the same task/resource spans.
+            content = next((part.get("text") for part in content if part.get("type") == "text"), "")
         for kind, start, end in content_spans(content, parts):
             span = size(content[start:end]) - 2
             remaining -= span
