@@ -42,6 +42,25 @@ module.exports = function install({
     )
       throw Error("Invalid renderer origin");
   }
+  let driverInstall;
+  ipcMain.handle("workbench:install-dokan", async event => {
+    origin(event);
+    if (!app.isPackaged || process.platform !== "win32") return "unavailable";
+    if (!driverInstall) {
+      const runtime = path.join(process.resourcesPath, "app.asar.unpacked");
+      const { execFile } = require("node:child_process");
+      // The renderer cannot choose a command, a package, or an installation path.
+      driverInstall = new Promise(resolve => {
+        execFile(path.join(runtime, "python", "python.exe"),
+          ["-I", "-B", path.join(runtime, "dokan", "dokan-component.py"), "install"],
+          { windowsHide: true }, error => {
+            const states = { 2: "cancelled", 3: "restart", 5: "busy", 6: "invalid", 7: "newer" };
+            resolve(error ? (states[error.code] || "failed") : "ready");
+          });
+      }).finally(() => { driverInstall = undefined; });
+    }
+    return driverInstall;
+  });
   ipcMain.handle('workbench:close-behavior',(event,value)=>{
     origin(event);
     return closeBehavior(value);

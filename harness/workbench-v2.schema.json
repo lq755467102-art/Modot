@@ -6310,6 +6310,11 @@
         "terminal": {
           "$ref": "#/$defs/ShellTranscript"
         },
+        "requiredComponent": {
+          "enum": [
+            "dokan2"
+          ]
+        },
         "text": {
           "type": "string"
         },

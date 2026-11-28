@@ -1,5 +1,10 @@
 # 公开预览版审查
 
+## Windows x64 预览 .16
+
+- Windows x64 安装包内置 MinGit 2.56.1 和 Dokan 2.3.1 的官方签名 MSI。断网、没有 Git 下载缓存的安装用例通过，随包 Git 能初始化仓库、暂存文件和查询状态。[组件来源及复建方法](../desktop/installer/WINDOWS-COMPONENTS.md)
+- 已安装兼容驱动时，安装器直接继续。缺驱动时可在交互安装时确认，也可稍后在会话的命令日志里补装。三档权限都验证了缺驱动时返回的提示，以及驱动就绪后项目命令的执行。首次在干净 Windows 上安装驱动仍待实机覆盖。[回归用例](../tools/test_windows_components.py) · [Windows 预发布和校验文件](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.16)
+
 ## Windows x64 预览 .15
 
 - 聊天框的权限档决定已选项目主目录和当前工作树的读写、运行授权。已有项目沿用这套规则。额外关联的目录继续使用各自的授权，撤权在操作和回写时重新检查。[权限用例](../tools/test_checkout_permissions.py)

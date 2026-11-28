@@ -6,6 +6,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld(
   "workbench",
   Object.freeze({
+    installDokan: () => ipcRenderer.invoke("workbench:install-dokan"),
     chromeTheme:theme=>ipcRenderer.invoke('workbench:chrome-theme',theme),
     interfaceZoom:percent=>ipcRenderer.invoke('workbench:interface-zoom',percent),
     closeBehavior:value=>ipcRenderer.invoke('workbench:close-behavior',value),

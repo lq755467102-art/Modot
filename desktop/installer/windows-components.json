@@ -1,0 +1,36 @@
+{
+  "mingit": {
+    "version": "2.56.1.windows.1",
+    "file": "MinGit-2.56.1-64-bit.zip",
+    "sha256": "4a92850b6e917da4fd010669b614b55dccf5b0ec333a534cc4be4700dfefdafd",
+    "url": "https://github.com/git-for-windows/git/releases/download/v2.56.1.windows.1/MinGit-2.56.1-64-bit.zip"
+  },
+  "dokan": {
+    "version": "2.3.1.1000",
+    "file": "Dokan_x64.msi",
+    "sha256": "69ff8cb37bfec3a75921c85ffd1c6370b50a9ec4ecef2cf3a009d488dcbf5465",
+    "url": "https://github.com/dokan-dev/dokany/releases/download/v2.3.1.1000/Dokan_x64.msi"
+  },
+  "dokanSources": [
+    {
+      "file": "dokany-f1d5de68.zip",
+      "sha256": "f07c0a13ef426234b8707862a52f30f177528d6d34294bb0dde1620f681d266b",
+      "url": "https://codeload.github.com/dokan-dev/dokany/zip/f1d5de68ff459af94e309cfdd171e4b8ca2af4dd"
+    },
+    {
+      "file": "spdlog-f355b3d5.zip",
+      "sha256": "320359060d04ed85c95450961c198fbe56642050cabed33d59e1449232508038",
+      "url": "https://codeload.github.com/gabime/spdlog/zip/f355b3d58f7067eee1706ff3c801c2361011f3d5"
+    },
+    {
+      "file": "GPL-3.0.txt",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.txt"
+    }
+  ],
+  "mingitBuild": {
+    "file": "git-for-windows-build-extra-d3fe4393.zip",
+    "url": "https://codeload.github.com/git-for-windows/build-extra/zip/d3fe43932de160518d345b93495ffbfc677f96a7",
+    "sha256": "3f001e19fc498a2ba03beb7ef08e05284a1694f59fff83f9cf62e3860a500aee"
+  }
+}
