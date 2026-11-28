@@ -157,10 +157,10 @@ class ExecutorCore:
         check_environments = C.adapter(self.root, 'check_environments')
         from . import project_shell
         string = dict(type='string')
-        registry.add(Tool('run_project_shell', '运行项目终端命令。查看仓库用 inspect_git_repository；克隆用 workspace 组的导入工具，以便工作间定位代码。请求批准和帮我批准都在项目内隔离执行，变更同步时保留外部编辑。访问项目外或网络时用 outside_reason 说明本条命令的用途，由所选模式审批。完全访问权限使用本机终端。SSH 身份通过聊天中的本机身份入口办理，只返回公钥。',
+        registry.add(Tool('run_project_shell', '运行项目终端命令。三档均从本轮视图读取项目，终端及子进程与编辑工具共享暂存。用已有测试验证改动；回执区分命令退出与测试结果。本轮成功结束后才写回已验证的文件。查看仓库用 inspect_git_repository，克隆用 workspace 组的导入工具。项目命令及子进程使用同一隔离范围。',
             dict(type='object', properties=dict(resource_id=dict(type='string'),
                  argv=dict(type='array',items=dict(type='string')),timeout=dict(type='integer',minimum=1,maximum=120),
-                 outside_reason=dict(type='string')),required=['resource_id','argv'],additionalProperties=False),
+                 outside_reason=dict(type='string',description='兼容原调用参数，本轮项目终端始终使用项目暂存视图。')),required=['resource_id','argv'],additionalProperties=False),
             lambda **args: project_shell.run(self.root, **args), zone='offflow', kind='exec'))
         registry.add(Tool("inspect_git_repository",
             "用内置 Git 查看已授权项目的状态、提交、分支或差异；仓库在子目录时传 directory。log 看近期记录，show 看一次提交的说明及改动文件（默认 HEAD）。diff/staged 看变更概览，传 file 看文件补丁。",

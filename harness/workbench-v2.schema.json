@@ -3991,6 +3991,24 @@
         }
       }
     },
+    "ProjectCheckoutAccess": {
+      "type": "object",
+      "required": [
+        "resourceId",
+        "permissionAt"
+      ],
+      "properties": {
+        "resourceId": {
+          "type": "string"
+        },
+        "permissionAt": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
     "ScopeSnapshot": {
       "type": "object",
       "required": [
@@ -4019,6 +4037,9 @@
           "items": {
             "$ref": "#/$defs/ResourceSnapshot"
           }
+        },
+        "checkoutAccess": {
+          "$ref": "#/$defs/ProjectCheckoutAccess"
         }
       }
     },
@@ -4051,6 +4072,9 @@
           "items": {
             "$ref": "#/$defs/ProjectResource"
           }
+        },
+        "checkoutAccess": {
+          "$ref": "#/$defs/ProjectCheckoutAccess"
         },
         "loaded": {
           "type": "boolean"
@@ -4107,7 +4131,10 @@
           ]
         },
         "revision": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },

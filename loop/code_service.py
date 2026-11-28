@@ -42,34 +42,31 @@ class RuntimeView:
         return not directory.name.startswith("_")
 
 
-# 总策略由当前代码资源的写入/执行开关汇总；具体动作仍需核对本轮资源快照，证据追问保持只读。
+# 启动策略汇总下一轮选中资源的权限，具体动作还须核对本轮快照。
 def effective_policy(ident):
     thread = projects.conversation(ident)
     if thread.get("readonlyEvidence"):
         return "readonly"
-    return (
-        "workspace"
-        if any(
-            r["kind"] == "code"
-            and r["permission"] == "read"
-            and (r.get("write") or r.get("execute"))
-            for r in projects.scope(ident)["resources"]
-        )
-        else "readonly"
+    scope = projects._scope(thread)
+    writable_or_runnable = scope.get("checkoutAccess") or any(
+        r["kind"] == "code" and r["permission"] == "read" and (r.get("write") or r.get("execute"))
+        for r in scope["resources"]
     )
+    return "workspace" if writable_or_runnable else "readonly"
 
 
 def selected_write_paths(ident):
-    if not W.registry()["threads"].get(ident, {}).get("projectless"):
+    thread = W.registry()["threads"].get(ident, {})
+    if not thread.get("projectless") or thread.get("readonlyEvidence"):
         return []
-    if effective_policy(ident) == "readonly":
-        return []
+    scope = projects.scope(ident)
+    inherited = scope.get("checkoutAccess", {}).get("resourceId")
     return [
         r["path"]
-        for r in projects.scope(ident)["resources"]
+        for r in scope["resources"]
         if r["kind"] == "code"
         and r["permission"] == "read"
-        and r.get("write")
+        and (r.get("write") or r["id"] == inherited)
     ]
 
 
@@ -85,10 +82,11 @@ def context_resource(root, resource_id, capability=None, *, register_workspace=T
     from .subtasks import validate_child
 
     child_task = validate_child(thread["id"], resource_id)
-    if capability == "write":
-        from .permissions import effective_sandbox
-        if effective_sandbox() == "read-only":
-            raise W.Problem("sandbox_read_only", "当前会话只读，不能写入项目", 403)
+    from .permissions import effective_sandbox
+
+    mode = effective_sandbox() if capability == "write" else None
+    if mode == "read-only":
+        raise W.Problem("sandbox_read_only", "当前会话只读，不能写入项目", 403)
     if (
         Path(W.workspace(thread["workspaceId"])["path"]).resolve()
         != Path(root).resolve()
@@ -96,13 +94,10 @@ def context_resource(root, resource_id, capability=None, *, register_workspace=T
         raise W.Problem("wrong_source", "代码工具不属于当前会话", 403)
     # 资源路径必须同时存在于当前范围和本轮快照；写入/执行也要求两份记录都已授权。
     # 撤权立即参与本次校验，新增授权不能自行扩大已捕获的本轮范围。
-    resource = next((item for item in projects.scope(thread["id"])["resources"] if item["id"] == resource_id), None)
+    scope = projects._scope(thread)
+    resource = next((item for item in scope["resources"] if item["id"] == resource_id), None)
     captured = next(
-        (
-            r
-            for r in thread.get("resourceSnapshot", {}).get("resources", [])
-            if r["id"] == resource_id
-        ),
+        (r for r in (scope["lastRun"] or {}).get("resources", []) if r["id"] == resource_id),
         None,
     )
     if (
@@ -111,18 +106,24 @@ def context_resource(root, resource_id, capability=None, *, register_workspace=T
         or resource["kind"] != "code"
         or resource["permission"] != "read"
         or captured.get("path") != resource["path"]
+        or projects.checkout_grant_changed(scope, resource)
     ):
         raise W.Problem("resource_denied", "代码资源不在本轮授权范围内", 403)
-    if capability and (
-        thread.get("readonlyEvidence")
-        or not resource.get(capability)
-        or not captured.get(capability)
-    ):
-        raise W.Problem(
-            "resource_denied",
-            "本轮未授权代码" + ("写入" if capability == "write" else "执行"),
-            403,
+    if capability:
+        inherit_checkout = (
+            scope.get("checkoutAccess", {}).get("resourceId") == resource_id
+            and source.get("nativeExecutor")
+            and source.get("role") == "executor"
+            and (mode or effective_sandbox()) != "read-only"
         )
+        capabilities = projects.run_code_permissions(scope, resource, captured, inherit_checkout=inherit_checkout)
+        if thread.get("readonlyEvidence") or not capabilities.get(capability):
+            raise W.Problem(
+                "resource_denied",
+                "本轮未授权代码" + ("写入" if capability == "write" else "执行"),
+                403,
+            )
+        resource = dict(resource, **capabilities)
     path = Path(resource["path"])
     if not path.is_dir() or str(path.resolve()) != resource["path"]:
         raise W.Problem("resource_moved", "代码目录已移动或链接目标变化", 409)
@@ -1308,10 +1309,14 @@ def _search_code(ws, args, stopped):
         raise W.Problem('invalid_cursor', 'cursor 使用上页的 nextCursor，不能同时提供非零 offset')
     root = Path(ws["path"])
     scope = W.agent_file_path(ws, path)
-    if not scope.exists() or baseline.hit("read", scope):
+    staged = ws.get('projectView')
+    scope_rel = scope.relative_to(root).as_posix()
+    scope_entry = staged.entries.get(scope_rel.casefold()) if staged else None
+    if (not scope.exists() and not scope_entry or scope_entry and scope_entry['kind']=='deleted'
+            or baseline.hit("read", scope)):
         raise W.Problem("resource_denied", "搜索路径不存在或受保护", 403)
-    if scope.is_file():
-        paths = [scope.relative_to(root).as_posix()]
+    if scope.is_file() or scope_entry and scope_entry['kind']=='file':
+        paths = [scope_rel]
     elif W.git_exe() and W.safe_git(ws, ["rev-parse", "--is-inside-work-tree"], check=False).returncode == 0:
         listed = W.safe_git(ws, ["--literal-pathspecs", "ls-files", "--cached", "--others",
                                  "--exclude-standard", "-z", "--", scope.relative_to(root).as_posix()])
@@ -1324,6 +1329,16 @@ def _search_code(ws, args, stopped):
                 for name in sorted(files):
                     yield (Path(folder) / name).relative_to(root).as_posix()
         paths = walk()
+    if staged:
+        names = {p.casefold():p for p in paths}
+        for key, e in staged.entries.items():
+            if not (root / e['name']).is_relative_to(scope):
+                continue
+            if e['kind'] == 'file':
+                names[key] = e['name']
+            else:
+                names.pop(key, None)
+        paths = names.values()
     paths = sorted(set(paths))
     query_key = W.digest(json.dumps([str(root), scope.relative_to(root).as_posix(), query], ensure_ascii=False).encode())
     listing_key = W.digest(json.dumps(paths, ensure_ascii=False).encode())
@@ -1410,7 +1425,7 @@ def _search_code(ws, args, stopped):
                     raise W.Problem('resource_denied', '续查文件已不在可读取范围内', 403)
                 skip('unavailable')
                 continue
-            info = candidate.lstat()
+            info = staged.info(relative) if staged else candidate.lstat()
             if (not stat.S_ISREG(info.st_mode)
                     or getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
                 if continuing:
@@ -1435,8 +1450,11 @@ def _search_code(ws, args, stopped):
                 continue
             if index == offset and stream_cursor:
                 raise W.Problem('search_cursor_stale', '续查文件大小已变化，请重新搜索', 409)
-            with candidate.open('rb') as stream:
-                raw = stream.read(W.LIMIT + 1)
+            if staged:
+                raw = staged.read(relative, 0, W.LIMIT + 1)
+            else:
+                with candidate.open('rb') as stream:
+                    raw = stream.read(W.LIMIT + 1)
             if len(raw) > W.LIMIT:
                 raise W.Problem('search_cursor_stale', '搜索期间文件大小改变，请重新搜索', 409)
             revision = W.digest(raw) if index == offset and expected_file else None
@@ -1502,11 +1520,21 @@ def _search_code(ws, args, stopped):
 
 
 def invoke(root, operation, resource_id, **args):
-    with W.git_observation.operation() as costs:
+    from . import project_task_view
+    gate = project_task_view.action_gate(resource_id) if operation in {'check','edit','write','restore','undo','branch','initialize'} else nullcontext()
+    with gate, W.git_observation.operation() as costs:
         result = _invoke(root, operation, resource_id, **args)
         if isinstance(result, dict):
             result["operationCosts"] = W.git_observation.summary(costs)
         return result
+
+
+def staged_restore_path(thread, op_id, resource, source):
+    prior = operation(thread, op_id)
+    if (prior.get('operation') != 'write' or prior.get('resourceId') != resource
+            or prior.get('source', {}).get('runId') != source.get('runId') or not prior.get('result', {}).get('staged')):
+        raise W.Problem('not_own_latest_write', '暂存编辑不属于本轮和本资源', 403)
+    return prior['result']['path']
 
 
 def _invoke(root, operation, resource_id, **args):
@@ -1526,6 +1554,7 @@ def _invoke(root, operation, resource_id, **args):
     history_id = None
     result_sources = None
     effect_started = False
+    disposable = None
     stopped = current_stop() or (lambda: False)
     started = time.monotonic()
 
@@ -1568,10 +1597,14 @@ def _invoke(root, operation, resource_id, **args):
             raise W.Problem("invalid_arguments", "整文件写入须在 text 与 parts 中选一项，局部编辑使用编辑字段")
         require_running()
         thread, resource, ws, source = context_resource(root, resource_id, capability)
+        from . import project_task_view
+        project_view = (project_task_view.for_action(root, thread, resource, ws, source, capability)
+                        if operation in {'check','write','restore'} or operation == 'inspect' and args.get('include_check_revision') else None)
         if operation == 'check':
             args['directory'] = check_directory(thread, resource_id, ws, args)
         if operation == "search":
-            result = _search_code(ws, args, stopped)
+            view = project_task_view.lookup(thread['id'], resource_id)
+            result = _search_code(dict(ws, projectView=view) if view else ws, args, stopped)
             context_resource(root, resource_id, register_workspace=False)
             return result
         if operation == "output":
@@ -1613,7 +1646,7 @@ def _invoke(root, operation, resource_id, **args):
             elif not os.path.lexists(selected / ".git"):
                 extra = {}
                 if args.get('include_check_revision'):
-                    check_state = W.check_source_state(ws)
+                    check_state = (dict(revision=project_view.revision()) if project_view else W.check_source_state(ws))
                     extra['checkRevision'] = check_state['revision']
                     if check_state.get('recordRevision'):
                         extra['recordCheckRevision'] = check_state['recordRevision']
@@ -1625,6 +1658,7 @@ def _invoke(root, operation, resource_id, **args):
                 page,
                 ok=True,
                 git=git,
+                **({'checkRevision': project_view.revision()} if project_view else {}),
                 projectRevision=git["revision"] or "non-git",
             )
         # File edits share the checkout gate, but serialize capture/write/receipt
@@ -1643,7 +1677,9 @@ def _invoke(root, operation, resource_id, **args):
             )
             isolated_check = operation == "check" and args.get("capture_changes", False) is False
             with W.git_observation.phase('preflight'):
-                if isolated_check or operation == "restore":
+                if project_view is not None and (operation == 'check' or operation == 'restore' and args.get('source_operation_id')):
+                    state = dict(W.file_workspace_state(ws), revision=project_view.revision(), folderObservation=True)
+                elif isolated_check or operation == "restore":
                     state = W.check_source_state(ws)
                     if isolated_check:
                         state['revision'] = W.selected_check_revision(state, includes_record(args))
@@ -1729,6 +1765,13 @@ def _invoke(root, operation, resource_id, **args):
                     raise W.Problem("invalid_timeout", "检查时限需为 1—120 秒")
                 # 普通检查绑定锁内观察到的当前版本；显式候选或写回必须匹配预期版本，冲突时不启动。
                 expected = args.get("expected_revision")
+                if (project_view is not None and expected and expected != state['revision']
+                        and not str(expected).startswith('stage:') and not project_view.changes()):
+                    # Existing callers may pin an observed checkout or record revision.
+                    observed = W.check_source_state(ws)
+                    if expected == W.selected_check_revision(observed, includes_record(args)):
+                        args = dict(args, include_conversation_record=includes_record(args), expected_revision=state['revision'])
+                        expected = state['revision']
                 if expected is None and not capture_changes:
                     args = dict(args, expected_revision=state["revision"])
                 elif state["revision"] != expected:
@@ -1762,13 +1805,13 @@ def _invoke(root, operation, resource_id, **args):
                 if "source_operation_id" in args:
                     if plan_id:
                         raise W.Problem("invalid_arguments", "仅提供原写入操作编号或人工批准的恢复计划之一")
-                    plan = restorations.prepare(
-                        thread["id"], args["source_operation_id"], actor="agent",
-                        own_source=source, resource_id=resource_id,
-                    )
-                    plan_id = plan["id"]
-                    args["plan_id"] = plan_id
-                restore_target = restorations.load(thread["id"], plan_id)["path"]
+                    if project_view is None:
+                        plan = restorations.prepare(thread["id"], args["source_operation_id"], actor="agent",
+                                                    own_source=source, resource_id=resource_id)
+                        plan_id = plan["id"]
+                        args["plan_id"] = plan_id
+                restore_target = (restorations.load(thread["id"], plan_id)["path"] if plan_id else
+                                  staged_restore_path(thread["id"], args["source_operation_id"], resource_id, source))
             # 先记录 running 动作，再准备基线并触发效果；中途失败仍可通过原 operationId 核对。
             op = {
                 "id": uuid.uuid4().hex,
@@ -1833,9 +1876,21 @@ def _invoke(root, operation, resource_id, **args):
                 if not allowed:
                     raise W.Problem("policy_denied", why, 403)
                 create = args.get("create") is True
-                if create and target.exists():
+                if project_view is not None:
+                    try:
+                        exists = project_view.info(path) is not None
+                    except FileNotFoundError:
+                        exists = False
+                else:
+                    exists = target.exists()
+                if create and exists:
                     raise W.Problem("revision_conflict", "文件已存在，未覆盖", 409)
-                original = None if create else W.editable_bytes(ws, path)
+                if project_view is not None and not create:
+                    original = project_view.read(path, 0, W.LIMIT + 1)
+                    if len(original) > W.LIMIT:
+                        raise W.Problem('large_file','文件超过单文件编辑上限',413)
+                else:
+                    original = None if create else W.editable_bytes(ws, path)
                 old = W._file_text(path, original) if original is not None else None
                 if old and old["revision"] != args.get("expected_revision"):
                     raise W.Problem("revision_conflict", "文件版本已变化，请重新读取后再编辑", 409)
@@ -1863,7 +1918,7 @@ def _invoke(root, operation, resource_id, **args):
                 file_effect = original, replacement
             from . import change_history as history
             history_start = time.monotonic()
-            if operation in {"branch", "write"} or operation == "check" and capture_changes:
+            if project_view is None and (operation in {"branch", "write"} or operation == "check" and capture_changes):
                 history_id = history.prepare(thread["id"], resource, ws, op, check=require_running,
                                              file_effect=file_effect)
             prepared = time.monotonic()
@@ -1875,6 +1930,15 @@ def _invoke(root, operation, resource_id, **args):
                     effect_started = True
                     W.safe_git(ws, ["switch", "-c", branch])
                 result = {"git": W.git_status(ws)}
+            elif operation == "write" and project_view is not None:
+                require_running()
+                context_resource(root, resource_id, "write", register_workspace=False)
+                project_view.edit(path, op['id'], original, replacement)
+                result = dict(path=path, revision=W.digest(replacement), previousRevision=old["revision"] if old else None,
+                              projectRevision=project_view.revision(), staged=True,
+                              summary="改动已暂存。本轮终端与检查可读取它；结束时按当前版本的测试回执写回。")
+                if result_sources:
+                    result["resultSources"] = result_sources
             elif operation == "write":
                 from .project_activity import watch
 
@@ -1905,6 +1969,8 @@ def _invoke(root, operation, resource_id, **args):
                     if W.editable_bytes(ws, path) != replacement:
                         raise W.Problem("write_unverified", "写入后读取到的字节与组装正文不同，请核对文件版本", 409)
                     result["resultSources"] = result_sources
+            elif operation == "restore" and project_view is not None and not plan_id:
+                result = project_view.undo(args['source_operation_id'])
             elif operation == "restore":
                 def retain_restoration(before, after):
                     nonlocal history_id
@@ -1920,7 +1986,7 @@ def _invoke(root, operation, resource_id, **args):
                     effect_started = True
                 result = restorations.execute(
                     thread, resource, ws, source, op, plan_id, on_write=mark_restore_write,
-                    retain_history=retain_restoration
+                    retain_history=retain_restoration if project_view is None else None, project_view=project_view
                 )
             elif operation == "check":
                 from .control import benchmark_deadline
@@ -1929,7 +1995,8 @@ def _invoke(root, operation, resource_id, **args):
                 if capture_changes:
                     watch(thread, resource, "")
                     context_resource(root, resource_id, "write")
-                    W.check_revision(ws, args.get("expected_revision"))
+                    if project_view is None:
+                        W.check_revision(ws, args.get("expected_revision"))
                 argv = args["argv"]
                 from .subtasks import command_policy
 
@@ -1984,9 +2051,13 @@ def _invoke(root, operation, resource_id, **args):
                     with W.git_observation.phase('preparation'):
                         if source.get('nativeExecutor') and not capture_changes:
                             material_hooks['separate_output'] = True
+                        if project_view is not None and writable_copy and not capture_changes:
+                            disposable = project_task_view.disposable(project_view)
                         process = W.launch(ws, argv, source=source, operation_id=op["id"],
                                            check=authorize_check, start_deadline=cutoff,
-                                           force_isolated=not capture_changes, expected_revision=state["revision"],
+                                           force_isolated=project_view is not None or not capture_changes,
+                                           project_view=disposable or project_view, expected_revision=state["revision"],
+                                           include_project_record=includes_record(args) if project_view is not None else False,
                                            working_directory=args['directory'],
                                            **material_hooks)
                     if environment_id == 'new' and process.get('environmentId'):
@@ -2039,14 +2110,14 @@ def _invoke(root, operation, resource_id, **args):
                     )
                 revision_start = time.monotonic()
                 with W.git_observation.phase('after_exit'):
-                    result["projectRevisionAfter"] = W.selected_check_revision(W.check_source_state(ws),
-                        W.record_revision(state["revision"]))
+                    result["projectRevisionAfter"] = (project_view.revision() if project_view is not None else
+                        W.selected_check_revision(W.check_source_state(ws), W.record_revision(state["revision"])))
                 process = result["process"]
                 cancelled = cancelled or bool(process.get('stopRequested')) or bool(background and background.cancel.is_set())
                 timed_out = timed_out or cutoff is not None and process.get("exitCode") == 124 and stopped()
                 # 版本变化及未确认终态优先于超时/取消和退出码；passed 是命令层事实，测试与验收另记。
                 verification = (
-                    "stale" if state["revision"] != result["projectRevisionAfter"] else
+                    "stale" if state["revision"] != result["projectRevisionAfter"] and not (project_view and capture_changes) else
                     "unknown" if process["state"] == "unknown" else
                     "timed_out" if timed_out else
                     "cancelled" if cancelled else
@@ -2121,6 +2192,13 @@ def _invoke(root, operation, resource_id, **args):
                     result['summary'] += ' .harness-check为隔离保留目录，工作区同名文件不会复制；临时探针请直接传script，或使用material指定脚本成果。'
             else:
                 raise W.Problem("invalid_operation", "未知代码操作")
+            if project_view is not None and operation == 'check' and args.get('purpose','acceptance') == 'acceptance':
+                report = result['diagnostics'].get('testReport', {})
+                if disposable and disposable.changes():
+                    result['disposableChanges'] = list(disposable.changes())[:50]
+                    report = dict(state='modified_test_copy')
+                project_task_view.note_check(project_view, process['id'], report,
+                                            passed=result['verification']['status'] == 'passed', check_key=result['checkKey'])
             finalize_start = time.monotonic()
             if history_id:
                 outcome = result.get("state", result.get("process", {}).get("state"))
@@ -2166,7 +2244,7 @@ def _invoke(root, operation, resource_id, **args):
             )
             ok = operation != "check" or result["verification"]["status"] == "passed"
             if operation == "restore":
-                ok = result.get("state") == "completed"
+                ok = result.get("state") in {"completed", "staged"}
             return dict(check_tool_result(result), ok=ok, operationId=op["id"]) if operation == "check" else dict(
                 result, ok=ok, operationId=op["id"])
     except (W.Problem, OSError, ValueError, TimeoutError, sqlite3.Error) as error:
@@ -2222,6 +2300,9 @@ def _invoke(root, operation, resource_id, **args):
                     result["state"] = "unknown"
             finish(thread["id"], op["id"], state, result)
         return result
+    finally:
+        if disposable and not disposable.record.get('mounts'):
+            disposable.discard()
 
 
 def finish(ident, oid, state, result):

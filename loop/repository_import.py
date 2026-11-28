@@ -106,11 +106,16 @@ def _project_grant(session_id, project_id):
     resource = next((r for r in scope["resources"]
                      if primary and (r.get("worktreeOf") or r["id"]) == primary and r["kind"] == "code"), None)
     captured = scope.get("lastRun") or {}
+    pinned = next((r for r in captured.get("resources", []) if resource and r["id"] == resource["id"]
+                   and r.get("path") == resource["path"] and r.get("permission") == "read"), None)
+    inherit_checkout = (
+        resource is not None and scope.get("checkoutAccess", {}).get("resourceId") == resource["id"]
+        and permissions.call_session() == session_id and permissions.effective_sandbox() != "read-only"
+    )
     if (scope["projectId"] != project_id or captured.get("projectId") != project_id or not resource
-            or resource["permission"] != "read" or not resource.get("write")
-            or not any(r["id"] == resource["id"] and r.get("path") == resource["path"]
-                       and r.get("permission") == "read" and r.get("write") for r in captured.get("resources", []))):
-        raise W.Problem("project_import_permission", "请在本会话的项目资料中选中项目目录并允许写入，再发起导入", 403)
+            or resource["permission"] != "read" or not pinned
+            or not projects.run_code_permissions(scope, resource, pinned, inherit_checkout=inherit_checkout)["write"]):
+        raise W.Problem("project_import_permission", "请确认本会话已选中项目目录，并在下一轮重试导入", 403)
     return primary, resource["id"], resource["path"], resource.get("permissionAt")
 
 

@@ -59,11 +59,13 @@ def fingerprint(root, *, source=False, projection=None, _retry=0):
                 pending.append(child)
         elif stat.S_ISREG(info.st_mode):
             total+=info.st_size
-            if total>MAX_RETAINED_BYTES:raise W.Problem('cache_capacity','准备材料超过保留容量',413)
+            if total > MAX_RETAINED_BYTES:
+                scope = "源目录版本核对" if source else "保留目录完整性核对"
+                raise W.Problem("cache_capacity", f"{scope}计入的文件总量超过 {MAX_RETAINED_BYTES / (1024 * 1024):g} MiB", 413)
             with path.open('rb') as stream:rows.append(hashlib.file_digest(stream,'sha256').hexdigest())
         else:raise W.Problem('cache_changed','准备材料不是普通文件',409)
-        if len(rows)>S.MAX_FILES*2 or total>MAX_RETAINED_BYTES:
-            raise W.Problem('cache_capacity','准备材料超过保留容量',413)
+        if len(rows) > S.MAX_FILES * 2:
+            raise W.Problem("cache_capacity", f"目录完整性核对超过 {S.MAX_FILES * 2:,} 条指纹记录", 413)
     if before is not None and before != D.generation(root) and _retry < 2:
         return fingerprint(root,source=source,projection=projection,_retry=_retry+1)
     if before is None or before != D.generation(root):

@@ -220,6 +220,12 @@ class WorkspaceChanges:
 
 
 def run(root, resource_id, argv, timeout=60, outside_reason=None):
+    from .project_task_view import action_gate
+    with action_gate(resource_id):
+        return _run(root, resource_id, argv, timeout, outside_reason)
+
+
+def _run(root, resource_id, argv, timeout, outside_reason):
     if (not isinstance(argv, list) or not argv or any(not isinstance(a,str) or "\0" in a for a in argv)
             or type(timeout) is not int or not 1 <= timeout <= 120):
         raise W.Problem("invalid_command", "请提供 argv 和 1–120 秒的超时")
@@ -228,8 +234,7 @@ def run(root, resource_id, argv, timeout=60, outside_reason=None):
             any(thread.get(k) for k in ("subtaskOf", "readonlyEvidence", "scheduledRun", "archived"))):
         raise W.Problem("shell_scope", "项目终端限当前用户会话的原生执行者", 403)
     mode = permissions.effective_sandbox()
-    captured = next((r for r in thread.get("resourceSnapshot", {}).get("resources", []) if r["id"] == resource_id), {})
-    if not resource.get("write") or not captured.get("write"):
+    if not resource.get("write"):
         mode = "read-only"
     revision = permissions.profile(thread["id"])["revision"]
     stop = current_stop()
@@ -246,6 +251,8 @@ def run(root, resource_id, argv, timeout=60, outside_reason=None):
     if not allowed:
         raise W.Problem("policy_denied", why, 403)
     grant = None
+    from . import project_task_view
+    project_view = project_task_view.for_action(root, thread, resource, ws, owner, 'execute')
     if (outside_reason is not None or mode == "danger-full-access") and argv[0].casefold() in {"git", "git.exe"}:
         executable = W.git_exe()
         if executable:
@@ -253,23 +260,31 @@ def run(root, resource_id, argv, timeout=60, outside_reason=None):
     if outside_reason is not None:
         if mode == "read-only" or not isinstance(outside_reason, str) or not 1 <= len(outside_reason.strip()) <= 1000:
             raise W.Problem("shell_scope", "只读模式不能启动沙箱外命令，跨界请求需要说明原因", 403)
-        if mode == "workspace-write":
+        if mode == "workspace-write" and project_view is None:
             grant = permissions.authorize(dict(kind="host-shell", cwd=ws["path"], argv=argv, reason=outside_reason),
                                           validate_live=live)
     live()
-    isolated = mode != "danger-full-access" and not grant
-    source = W.check_source_state(ws)
-    source_revision = W.selected_check_revision(source, False)
-    record = source.get("recordPath")
-    if ws.get("recordBinding") and "recordPath" not in source:
-        from .conversation_record import check_view
-        with check_view(ws) as (record, _, _):
-            pass
-    hidden = {str(record).casefold()} if record else set()
-    with tempfile.TemporaryDirectory(prefix="modot-shell-writes-") as folder:
-        sync = WorkspaceChanges(ws, Path(folder), hidden) if isolated and mode == "workspace-write" else None
+    isolated = project_view is not None or mode != "danger-full-access" and not grant
+    with ExitStack() as staging:
+        source_revision = None
+        sync = None
+        if isolated and project_view is None:
+            source = W.check_source_state(ws)
+            source_revision = W.selected_check_revision(source, False)
+            if source.get("folderObservation") and not source_revision:
+                raise W.Problem("folder_version_unavailable", "无法确认隔离命令的源目录版本，命令未启动", 409)
+            if mode == "workspace-write":
+                record = source.get("recordPath")
+                if ws.get("recordBinding") and "recordPath" not in source:
+                    from .conversation_record import check_view
+                    with check_view(ws) as (record, _, _):
+                        pass
+                hidden = {str(record).casefold()} if record else set()
+                folder = staging.enter_context(tempfile.TemporaryDirectory(prefix="modot-shell-writes-"))
+                sync = WorkspaceChanges(ws, Path(folder), hidden)
         process = W.launch(ws, argv, source=owner, operation_id=owner.get("actionId"), check=live,
-                           force_isolated=isolated, host_grant=grant, expected_revision=source_revision,
+                           force_isolated=isolated, host_grant=grant if project_view is None else None,
+                           expected_revision=source_revision, capture_host_revision=False, project_view=project_view,
                            readonly_source=mode == "read-only", stage_material=sync.capture_base if sync else None,
                            retain_output=sync.collect if sync else None)
         deadline = time.monotonic() + timeout
@@ -291,6 +306,15 @@ def run(root, resource_id, argv, timeout=60, outside_reason=None):
         result = dict(ok=row["state"] == "completed" and row.get("exitCode") == 0,
                       exitCode=row.get("exitCode"), processId=ident, sandboxMode=mode,
                       isolation=row.get("isolation"), output=page["text"], hasMore=page["hasMore"])
+        if project_view is not None:
+            if outside_reason is not None:
+                result['executionScope'] = 'project-overlay'
+                result['scopeNotice'] = '本次命令及子进程在所选项目的暂存视图内执行。'
+            report = C.check_diagnostics(dict(process=row)).get('testReport', {})
+            project_task_view.note_check(project_view, ident, report, passed=result['ok'] and not timed_out,
+                                         check_key=C.check_key(dict(argv=argv)))
+            result.update(projectRevision=project_view.revision(), testReport=report,
+                          stagedFiles=list(project_view.changes())[:50])
         if timed_out:
             live()
             result.update(ok=False, code="shell_timeout", error=f"命令超过 {timeout} 秒，已请求停止。", timeout=timeout,

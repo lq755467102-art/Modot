@@ -1172,7 +1172,10 @@ export function AgentHome({ onWorkbench, onOpenWorkroomFile, handoff, onHandoffH
     } catch (error) {
       setError(error instanceof Error ? error.message : String(error), owner);
     } finally {
-      await queryClient.invalidateQueries({queryKey: ["permission-requests", owner], exact:true});
+      await Promise.all([
+        queryClient.invalidateQueries({queryKey: ["permission-requests", owner], exact:true}),
+        queryClient.invalidateQueries({queryKey: ["scope", owner], exact:true}),
+      ]);
     }
   }
   // 先确定会话资料所有者，再由 AttachmentPane 导入。

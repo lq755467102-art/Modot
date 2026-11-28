@@ -2516,7 +2516,7 @@ def default_registry(repo_root: Path, python: str = "",
                     'description':'后台检查可有界等待输出或终态；省略立即查询。到时仍运行不算失败，也不停止进程。'}
             if _operation == 'check':
                 _properties['directory'] = {'type':'string',
-                    'description':'项目命令从本会话选中的子仓库启动；可传资源内相对目录，"." 为资源根。暂存脚本和材料使用资源根。'}
+                    'description':'隔离副本按整个授权资源准备。此参数只选命令在副本内的工作目录，默认本会话选中的子仓库，"." 为资源根。暂存脚本和材料使用资源根。'}
                 _properties['include_conversation_record'] = {'type':'boolean',
                     'description':'普通会话默认只检查工作文件。需要读取自动保存的会话正文时传 true，或用根目录返回的 recordCheckRevision 锁定含记录的版本。'}
                 _properties['yield_time_ms'] = {'type':'integer','minimum':0,'maximum':30000,

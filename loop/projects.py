@@ -8,6 +8,7 @@ import uuid
 import json
 import hashlib
 import os
+import stat
 from . import workbench as W
 from .filelock import read_text
 
@@ -169,7 +170,51 @@ def _scope(t):
             sort_keys=True,
         ).encode()
     )
+    if folder_id := value.get("folderResourceId"):
+        access = _checkout_access(t, value["resources"], folder_id)
+        if access:
+            value["checkoutAccess"] = access
     return value
+
+
+def _checkout_access(thread, resources, folder_id):
+    """Resolve the selected ordinary project's primary checkout for this preset."""
+    if any(thread.get(key) for key in (
+        "readonlyEvidence", "subtaskOf", "scheduledPlanId", "scheduledRun",
+        "archived", "activeDelegation",
+    )):
+        return None
+    root = next((row for row in resources
+                 if row["kind"] == "code" and row["permission"] == "read"
+                 and (row.get("worktreeOf") or row["id"]) == folder_id), None)
+    if root is None:
+        return None
+    from .permissions import profile
+
+    if profile(thread["id"])["sandboxMode"] != "read-only":
+        return dict(resourceId=root["id"], permissionAt=root.get("permissionAt"))
+    return None
+
+
+def checkout_grant_changed(scope, resource):
+    """A later grant for the same folder cannot revive an earlier run."""
+    frozen = (scope.get("lastRun") or {}).get("checkoutAccess")
+    return bool(frozen and frozen["resourceId"] == resource["id"]
+                and frozen.get("permissionAt") != resource.get("permissionAt"))
+
+
+def run_code_permissions(scope, resource, captured, *, inherit_checkout=False):
+    """Combine explicitly granted capabilities with the current, frozen preset grant."""
+    planned = scope.get("checkoutAccess")
+    frozen = (scope.get("lastRun") or {}).get("checkoutAccess")
+    if frozen and frozen["resourceId"] == resource["id"] and frozen != planned:
+        return dict(write=False, execute=False)
+    inherited = bool(inherit_checkout and planned and planned["resourceId"] == resource["id"]
+                     and frozen == planned)
+    return {
+        key: inherited or bool(resource.get(key) and captured.get(key))
+        for key in ("write", "execute")
+    }
 
 
 # 会话路由提交候选项目和资源清单。
@@ -180,7 +225,7 @@ def history_read_resources(ident):
     frozen = {r["id"]: r for r in (selected.get("lastRun") or {}).get("resources", [])}
     return {r["id"]: r for r in selected["resources"]
             if r.get("permission") == "read" and r["id"] in frozen
-            and frozen[r["id"]].get("permission") == "read"
+            and frozen[r["id"]].get("permission") == "read" and not checkout_grant_changed(selected, r)
             and r.get("path") and r["path"] == frozen[r["id"]].get("path")}
 
 
@@ -274,6 +319,7 @@ def set_scope(ident, body, sv):
 def snapshot(ident):
     thread = conversation(ident)
     selected = _scope(thread)
+    checkout_id = selected.get("checkoutAccess", {}).get("resourceId")
     resources = []
     unavailable = [
         dict(item, kind="attachment", permission="none", status="revoked")
@@ -299,8 +345,8 @@ def snapshot(ident):
                 "permission": "read",
                 "status": "available_not_loaded",
                 "path": r["path"],
-                "write": r.get("write", False),
-                "execute": r.get("execute", False),
+                "write": r["id"] == checkout_id or r.get("write", False),
+                "execute": r["id"] == checkout_id or r.get("execute", False),
                 **({"mime": r["mime"]} if "mime" in r else {}),
             }
         )
@@ -309,6 +355,7 @@ def snapshot(ident):
         "projectId": selected["projectId"],
         "resources": resources,
         "unavailable": unavailable,
+        **({"checkoutAccess": selected["checkoutAccess"]} if "checkoutAccess" in selected else {}),
     }
     from . import plugins
     value['plugins']=plugins.capture()
@@ -425,7 +472,8 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
     t = conversation(conversation_id)
     from .subtasks import validate_child
     validate_child(conversation_id, resource_id)
-    r = next((item for item in scope(conversation_id)["resources"] if item["id"] == resource_id), None)
+    selected_scope = _scope(t)
+    r = next((item for item in selected_scope["resources"] if item["id"] == resource_id), None)
     # Recheck live permission as well as the last launched scope. Revocation is immediate.
     snap = t.get("resourceSnapshot")
     ids = [i["id"] for i in snap["resources"]] if snap else t.get("resourceIds", [])
@@ -433,6 +481,7 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
         not r
         or resource_id not in ids
         or r["permission"] != "read"
+        or checkout_grant_changed(selected_scope, r)
     ):
         raise W.Problem("resource_denied", "此资料不在本轮可读取范围内", 403)
     root = Path(r["path"])
@@ -450,8 +499,19 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
     if not isinstance(path, str):
         raise W.Problem("invalid_path", "请提供文件相对路径，或用「.」列出目录")
     candidate = W.file_path(w, path) if attachment else W.agent_file_path(w, path)
-    is_image = r.get("mime", "").startswith("image/") or candidate.suffix.lower() in image_evidence.FORMATS
-    supports_view = is_image or candidate.suffix.lower() in project_image_view.GCODE_SUFFIXES
+    from . import project_task_view
+    staged = project_task_view.lookup(conversation_id, resource_id) if r['kind'] == 'code' else None
+    logical = candidate
+    if staged:
+        staged.guard()
+        rel = candidate.relative_to(root).as_posix()
+        if rel != '.':
+            staged.normalize(rel)
+            with staged.existing(rel) as (backing, _):
+                candidate = backing
+        w['projectView'] = staged
+    is_image = r.get("mime", "").startswith("image/") or logical.suffix.lower() in image_evidence.FORMATS
+    supports_view = is_image or logical.suffix.lower() in project_image_view.GCODE_SUFFIXES
     if view is not None and (not supports_view or candidate.is_dir()):
         raise W.Problem("view_invalid", "图片视图支持静态图片或 3D 打印 G-code 文件", 415)
     if image_only and view is None and (not is_image or candidate.is_dir()):
@@ -472,7 +532,7 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
         raise W.Problem("attachment_file_mismatch", "此附件引用仅允许读取原文件", 403)
     from . import baseline
 
-    hit = baseline.hit("read", candidate, scoped_app_resource=attachment)
+    hit = baseline.hit("read", logical, scoped_app_resource=attachment)
     if hit:
         raise W.Problem(
             "protected_resource",
@@ -488,8 +548,14 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
             raise W.Problem("revision_conflict", "续读目标已变为目录，请重新选择文件", 409)
         if attachment:
             raise W.Problem("resource_changed", "导入资料已发生变化，请重新导入", 409)
-        entries = W.files(w, path)
-        relative = candidate.relative_to(root).as_posix()
+        relative = logical.relative_to(root).as_posix()
+        if staged:
+            prefix = '' if relative == '.' else relative + '/'
+            entries = [dict(name=n, path=prefix+n, directory=stat.S_ISDIR(staged.info(prefix+n).st_mode))
+                       for n in staged.list(relative if prefix else '') if n not in W.IGNORE]
+            entries = sorted(entries, key=lambda item:(not item['directory'], item['name'].lower()))[:1000]
+        else:
+            entries = W.files(w, path)
         revision = W.digest(json.dumps([relative, entries], ensure_ascii=False, sort_keys=True).encode('utf8'))
         return dict(entries=entries, resourceId=resource_id, path=relative, listingRevision=revision,
                     readKind="directory", summary="列出目录")
@@ -498,9 +564,9 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
             raise W.Problem("resource_denied", "图片不在本轮读取范围内", 403)
         try:
             if view is None:
-                image = image_evidence.read(candidate, limit=2 * 1024 * 1024, expected_hash=r.get("hash"))
+                image = image_evidence.read(candidate, limit=2 * 1024 * 1024, expected_hash=r.get("hash"), logical_path=logical)
             else:
-                image = project_image_view.read(candidate, view, expected_hash=r.get("hash"))
+                image = project_image_view.read(candidate, view, expected_hash=r.get("hash"), logical_path=logical)
         except OSError as error:
             raise W.Problem("image_missing", "无法读取图片文件", 404) from error
         image["source"] = dict(resourceId=resource_id, root=r["path"])
@@ -527,7 +593,13 @@ def read_resource(conversation_id, resource_id, path=None, offset=0, *, confirm=
                 raise W.Problem("resource_denied", "读取期间授权已变化，未返回文件内容", 403)
             in_range = bool(result["text"])
         else:
-            result = W.file_read(w, path)
+            if staged:
+                raw = staged.read(relative, 0, W.LIMIT + 1)
+                if len(raw) > W.LIMIT:
+                    raise W.Problem('large_file', '请按行读取大文本', 413)
+                result = W._file_text(relative, raw)
+            else:
+                result = W.file_read(w, path)
             in_range = (1 <= line <= result["text"].count("\n") + 1) if line is not None else (
                 type(offset) is int and (offset == 0 or 0 < offset < len(result["text"]))
             )
@@ -667,8 +739,8 @@ def open_folder(raw, confirm=False, *, owned=False, publish=None, importing_sess
                 if os.path.normcase(resource['path']) == os.path.normcase(str(root)):
                     if publish is not None:
                         raise W.Problem("import_destination_exists", "已有项目绑定此目录，请选择其他名称", 409)
-                    # Selecting this folder explicitly restores only read access.
-                    # Existing write/execute settings and other resources are preserved.
+                    # Reopening the folder restores its read grant. The next ordinary
+                    # project run derives checkout capabilities from the chat preset.
                     if resource.get('permission') != 'read':
                         resource.update(permission='read', permissionAt=time.time(), permissionSource='user')
                     if not owner.get('folderResourceId'):
@@ -862,8 +934,11 @@ def route(method, parts, body, sv=None):
             raise W.Problem("confirmation", "读取资料需要明确确认")
 
         def update(data):
-            r = data["projects"][p["id"]]["resources"][parts[3]]
-            # 读权限与写入/执行分别授予；撤销读取同步关闭后两项，避免留下失去读取范围的执行能力。
+            owner = data["projects"][p["id"]]
+            r = owner["resources"][parts[3]]
+            primary = r["id"] == owner.get("folderResourceId")
+            # Older clients may still send write/execute for the primary folder.
+            # Only additional directories have independent capability switches.
             for capability in ("write", "execute"):
                 if capability in body and type(body[capability]) is not bool:
                     raise W.Problem("invalid_permission", "权限值必须是布尔值")
@@ -873,10 +948,12 @@ def route(method, parts, body, sv=None):
                     or body.get("confirm") is not True
                 ):
                     raise W.Problem("confirmation", "代码写入/执行需要单独明确授权")
-                if capability in body:
+                if capability in body and not primary:
                     r[capability] = body[capability]
                 if value == "none":
                     r[capability] = False
+            if primary and value == r.get("permission"):
+                return r
             r.update(
                 permission=value, permissionAt=time.time(), permissionSource="user"
             )

@@ -1,5 +1,11 @@
 # 公开预览版审查
 
+## Windows x64 预览 .15
+
+- 聊天框的权限档决定已选项目主目录和当前工作树的读写、运行授权。已有项目沿用这套规则。额外关联的目录继续使用各自的授权，撤权在操作和回写时重新检查。[权限用例](../tools/test_checkout_permissions.py)
+- 项目工具从原目录按需读取。编辑器、终端及子进程共享本任务写入的文件，通过测试并成功收尾时才回写。测试失败、暂存期间撤权和强退恢复均核对原文件和其他任务的暂存。[暂存与恢复用例](../tools/test_project_transaction.py) · [工具与终端用例](../tools/test_project_overlay_actions.py)
+- Windows 项目命令使用单独安装的 Dokan 2 驱动。安装包、校验文件、许可与对应源码随本版发布。[安装要求](install.md) · [Windows 预发布](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.15)
+
 ## Windows x64 预览 .14
 
 - 同一会话先后发送 A、B 时，已接收的追问按顺序各启动一次。已归档会话中的排队追问在原消息下显示未启动原因。后台 Electron 45 和 DeepSeek Flash 覆盖了两条路径。

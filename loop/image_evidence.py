@@ -43,9 +43,10 @@ def decode(data, expected, *, thumbnail=False):
             return result.getvalue()
 
 
-def read(path, *, limit, expected_hash=None):
+def read(path, *, limit, expected_hash=None, logical_path=None):
     path = Path(path)
-    format_info = FORMATS.get(path.suffix.lower())
+    logical = logical_path or path
+    format_info = FORMATS.get(logical.suffix.lower())
     if not format_info:
         raise W.Problem("image_invalid", "支持 PNG、JPEG、WebP 和静态 GIF 图片")
     with path.open("rb") as stream:
@@ -62,7 +63,7 @@ def read(path, *, limit, expected_hash=None):
         raise W.Problem("image_unavailable", "图片解码组件不可用", 503) from error
     except Exception as error:
         raise W.Problem("image_invalid", "图片损坏、格式不符或超出解码尺寸", 415) from error
-    return dict(name=path.name, path=str(path), bytes=len(data), mime=mime, format=fmt,
+    return dict(name=logical.name, path=str(logical), bytes=len(data), mime=mime, format=fmt,
                 width=width, height=height, hash=digest, data_url=data_url(data, mime))
 
 
