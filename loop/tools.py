@@ -2308,6 +2308,7 @@ def default_registry(repo_root: Path, python: str = "",
             "offset": {"type": "integer", "description": "读取正文的字符偏移，与line互斥；续读同一位置时使用 nextOffset"},
             "line": {"type": "integer", "minimum": 1},
             "line_count": {"type": "integer", "minimum": 1, "maximum": 2000},
+            "cursor": {"type": "string", "description": "大代码文件续读只传原资源、path 和返回的 nextCursor"},
             "video": {
                 "type": "object", "additionalProperties": False, "required": ["start_seconds"],
                 "description": "按相对视频起点的秒数抽帧。返回请求时刻与画面实际时间戳。",
@@ -2319,8 +2320,8 @@ def default_registry(repo_root: Path, python: str = "",
                 },
             },
         }, "required": ["resource_id"]},
-        lambda resource_id, path=None, offset=None, line=None, line_count=None, video=None, **kw:
-            read_project_resource(repo_root, resource_id, path, offset, line, line_count, video=video),
+        lambda resource_id, path=None, offset=None, line=None, line_count=None, video=None, cursor=None, **kw:
+            read_project_resource(repo_root, resource_id, path, offset, line, line_count, video=video, cursor=cursor),
         zone="offflow", readonly=True, kind="read",
     ))
     _led: dict = {} if ledger is None else ledger
@@ -2533,11 +2534,14 @@ def default_registry(repo_root: Path, python: str = "",
                 _properties['scope_reason']['description'] = '可选的短验证目标，显示为检查标签；不同命令无需理由。标签不改变证据身份，同版本同条件复用原回执'
                 _properties['purpose']['description'] = '启动前指定：临时探查用exploration，真实验收用acceptance。失败如实保留，不得事后改成探索；历史命令不会自动成为新的用户必验项。'
                 _properties['expected_revision']['description'] = '普通检查省略。仅明确指定项目候选时填写 projectRevision；不是文件 revision。'
+            if _operation == 'inspect':
+                _properties['cursor'] = {'type':'string','description':'大文件用上页 nextCursor 原样续读，只传同一资源和路径'}
+                _description += ' 超过2 MiB支持分块只读，默认20行。scan_progress表示仍在定位；truncated为真用nextCursor续读。file_stamp仅标识只读版本。'
             if _operation == 'search':
                 _properties['context_lines'] = {'type':'integer','minimum':0,'maximum':20,'description':'每个命中附前后代码，单段最多4000字符、整页约16000字符。实际范围见context，完整函数可用inspect_code按行读取。'}
                 _properties['cursor'] = {'type':'string','description':'续查直接复制上页nextCursor，可继续同文件剩余命中。保持query和relative_path相同，不与非零offset混用；基准变化时重新搜索。'}
                 _description = ('只读字面搜索已授权代码。用relative_path限定范围；truncated=true时用nextCursor续查，'
-                                '不能把未返回部分当作没有匹配。fileRevisions标明逐文件版本；不声明整仓原子快照。'
+                                '超过2 MiB的UTF-8文件分块查找。未扫完或skippedByReason列出的文件不能判为无匹配。fileRevisions标明逐文件版本。'
                                 'inspect_code可一次读取相关行段，无需运行检查命令。旧offset仅按文件位置续查。')
             reg.add(Tool(_name,_description,{'type':'object','properties':dict(_properties,resource_id={'type':'string'}),'required':['resource_id']+_required},
                 code_adapter(repo_root,_operation),

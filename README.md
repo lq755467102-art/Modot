@@ -1,10 +1,12 @@
 # Modot · Windows 编程 Agent
 
-[下载 Windows x64 预览版 .13](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [发行说明](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13) · [English](README.en.md) · [源码可用许可](LICENSE.zh-CN.md)
+**面向本地项目的轻量级 AI 编程助手，会话直连代码工作间，记忆可查看、编辑和替换。**
 
-**Modot 是一款中轻量级、可自定义的桌面 AI Agent，自带代码工作间。** 打开本地工程，用自己的模型读代码、改文件、跑检查。工作间和会话共用项目、权限与操作记录。你可以更换记忆实现，按需为专项任务选模型。
+[下载 Windows x64 预览版 .14](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.14/Modot-Preview-0.2.0-preview.14-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.14/SHA256SUMS.txt) · [发行说明](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.14) · [English](README.en.md) · [源码可用许可](LICENSE.zh-CN.md)
 
-Windows x64 `.13` 安装包约 **142 MiB**。同机同工程的单次同题实测中，Modot Preview `.1` 执行任务的进程树私有工作集为 **249.1 MiB 中位数 / 275.2 MiB 采样峰值**。[三阶段内存对照与测量口径](#安装体积与桌面内存)
+在同一条会话里定位源码、审查改动、运行测试。工作间和会话共用项目、权限与操作记录。连接自己的模型，用 Skills 和 MCP 工具扩展能力，也可以为专项任务选择其他模型。
+
+Windows x64 `.14` 安装包约 **142 MiB**。同机同工程的单次同题实测中，Modot Preview `.1` 执行任务的进程树私有工作集为 **249.1 MiB 中位数 / 275.2 MiB 采样峰值**。[三阶段内存对照与测量口径](#安装体积与桌面内存)
 
 本仓库收录已验收的发布源码、发行说明和安装包。开发与测试构建在独立开发仓库进行。
 
@@ -20,7 +22,7 @@ Windows x64 `.13` 安装包约 **142 MiB**。同机同工程的单次同题实�
 
 ## 快速开始
 
-1. **在 Windows 上启动。** 下载上方的 .13 安装包，或用 CPython 3.13 和 Node.js 24 从源码启动。[安装与源码运行](docs/install.md)
+1. **在 Windows 上启动。** 下载上方的 .14 安装包，或用 CPython 3.13 和 Node.js 24 从源码启动。[安装与源码运行](docs/install.md)
 2. **连接自己的模型。** 在「设置 → 模型」填写服务地址、模型名和 API key。模型调用走你配置的服务和账号。
 3. **打开项目并发起任务。** 新建项目，选一个已有文件夹。把下面的测试命令换成你项目里可以复现问题的命令，再发给 Agent。
 
@@ -72,7 +74,7 @@ Electron 通过受限桥接访问本机 HTTP 服务，服务负责项目、会�
 
 ### 安装体积与桌面内存
 
-初版预览的完整安装约 **597 MiB**。`.13` 随安装包提供经验证的 LGPL 视频运行时，安装时按摘要校验 MinGit。[初版预览验收](docs/benchmarks/preview-validation.json) · [当前安装流程](docs/install.md)
+初版预览的完整安装约 **597 MiB**。`.14` 随安装包提供经验证的 LGPL 视频运行时，安装时按摘要校验 MinGit。[初版预览验收](docs/benchmarks/preview-validation.json) · [当前安装流程](docs/install.md)
 
 同一台 Windows 11 上，三个桌面客户端在相同的 626 文件工程里修复同一处生成文件。独立检查确认三端均只改了预期文件，两次命令退出码都是 **1 → 0**。
 

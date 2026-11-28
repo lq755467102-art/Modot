@@ -215,6 +215,7 @@
     "loop/project_shell.py",
     "loop/project_workroom.py",
     "loop/projects.py",
+    "loop/project_text.py",
     "loop/prompt_fragments.py",
     "loop/proposals.py",
     "loop/protected_copy.py",

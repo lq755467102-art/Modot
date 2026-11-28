@@ -203,7 +203,7 @@ def run(task: str, provider, registry, verify, *,
         compact_at: int = 0, compact_cfg: dict | None = None,
         ctx_limit: int = 0, task_message=None, handoff_notice_at=None, role_coordinator=None,
         defer_outcome=False, executor_only=False, execution_core=None, system_fragments=None,
-        input_images=()) -> dict:
+        input_images=(), submission_message=None, submission_attachments=()) -> dict:
     """跑一轮。返回结果 dict，不抛异常（除非 provider 自己炸）。
 
     session（可选）
@@ -270,9 +270,16 @@ def run(task: str, provider, registry, verify, *,
         if system:
             msgs.append(Msg("system", system, context_parts=fragments.parts()))
         msgs.append(task_message if task_message is not None else Msg("user", task))
-    # Message images live only in this run's transport, outside the durable checkpoints.
+    # Keep the exact human message identity even if an agreement or runtime update follows it.
     attached_images = list(input_images)
-    image_anchor = next((msg for msg in reversed(msgs) if msg.role == "user"), None) if attached_images else None
+    attachment_send = bool(submission_attachments or attached_images)
+    if attachment_send and submission_message is None:
+        if resume_msgs:
+            # A resumed submission may already be in the checkpoint, followed by host notes.
+            submission_message = next((m for m in reversed(msgs) if m.role == "user"
+                                       and task_message is not None and m.content == task_message.content), None)
+        else:
+            submission_message = msgs[-1]
 
     actions: list[dict] = []
     trace = []
@@ -788,12 +795,16 @@ def run(task: str, provider, registry, verify, *,
                 append_updates(session, 'executor', msgs)
             from .subtasks import result_messages_for_request
             _call_msgs = result_messages_for_request(session, msgs)
-            if attached_images:
-                from .image_evidence import drop_revoked_images
+            if attachment_send:
+                from .image_evidence import drop_revoked_images, for_submission
 
-                drop_revoked_images(Path(session.dir).name, attached_images)
-                position = next((index + 1 for index, msg in enumerate(_call_msgs) if msg is image_anchor), len(_call_msgs))
-                _call_msgs = [*_call_msgs[:position], *attached_images, *_call_msgs[position:]]
+                allowed_images = list(attached_images)
+                if allowed_images:
+                    drop_revoked_images(Path(session.dir).name, allowed_images)
+                if len(allowed_images) != len(attached_images):
+                    from .context_manager import ContextBlocked
+                    raise ContextBlocked("本次发送的图片读取权限已变化。请移除不可读的附件后重新发送。")
+                _call_msgs = for_submission(_call_msgs, submission_message, allowed_images, submission_attachments)
             # ★ 把 should_stop **当参数**交给 provider，让它别把主线程闷在 socket 里。
             #   实测：不交的话，信号到达后要等这次 HTTP 读完才被处理，延迟 4.13 秒
             #   （= 卡住的剩余时间，最坏到 timeout=300 秒）⇒ "能暂停"只是"能等"。
@@ -851,10 +862,10 @@ def run(task: str, provider, registry, verify, *,
                 continue
             if public_stream:
                 public_stream.flush()
-            if any(getattr(message, "image_action", None) for message in _call_msgs):
+            if attached_images or any(getattr(message, "image_action", None) for message in _call_msgs):
                 from .image_evidence import confirm_model_images
 
-                confirm_model_images(rec, _call_msgs, [*msgs, *attached_images], "executor",
+                confirm_model_images(rec, [*_call_msgs, *attached_images], [*msgs, *attached_images], "executor",
                                      input_images=getattr(reply, "input_image_actions", None))
             audit_notes = []
             if audit_enabled:

@@ -947,9 +947,7 @@ def _queue_after(d, proc, fn, limit: float | None = 1800):
     ★ 普通排队上限 30 分钟：真卡死时不要永远挂着这个线程。
       插话传 `limit=None`：工作进度优先，等当前轮自然做完，不设时间上限。
     """
-    # ★ 同一个会话只排一个（2026-10-28）：连点两次「允许」会排进两个线程，
-    #   旧进程一结束，两条续跑**同时**跑起来 —— 两个 run-task 抢同一个会话目录，
-    #   事件交错、租约互顶。宁可直接告诉人"已经在排队了"。
+    # 每个会话只需要一个等待线程；已接收的各条输入分别保存在磁盘队列中。
     global _QUEUED
     with _QUEUE_LOCK:
         if d.name in _QUEUED:
@@ -959,7 +957,8 @@ def _queue_after(d, proc, fn, limit: float | None = 1800):
     def _go():
         try:
             # `None` 就是真的不限时（插话专用）；普通排队仍有自己的兜底上限。
-            proc.wait() if limit is None else proc.wait(timeout=limit)
+            if proc is not None:
+                proc.wait() if limit is None else proc.wait(timeout=limit)
         except Exception:
             pass
         # ★ 先放掉"排队中"再跑：跑起来之后 PROCS 里就有新进程了，
@@ -978,12 +977,12 @@ def _queue_after(d, proc, fn, limit: float | None = 1800):
     return True
 
 
-PENDING_NAME = "pending-after.json"
+PENDING_NAME = OPS.PENDING_HEAD
 PENDING_CLAIMED = "pending-after.claimed.json"
 PENDING_RESULT = "pending-after.result.json"
 
 
-def _save_pending(d: Path, kind: str, request: dict) -> bool:
+def _save_pending(d: Path, kind: str, request: dict, *, append=False) -> bool:
     """先把待办原子落盘，再允许停止当前任务。已有待办时不覆盖人的上一句。"""
     p = d / PENDING_NAME
     rec = {"version": 1, "kind": kind, "state": "waiting",
@@ -992,9 +991,17 @@ def _save_pending(d: Path, kind: str, request: dict) -> bool:
     # HTTP 是多线程的：检查“有没有待办”和落盘必须在同一小段锁里，
     # 否则两句同时到时可能互相覆盖，后一句把前一句悄悄冲掉。
     with _QUEUE_LOCK, FileLock(d / "pending.lock"):
-        if p.exists() or ((d / PENDING_CLAIMED).exists() and not (d / PENDING_RESULT).exists()):
+        if (d / PENDING_CLAIMED).exists() and not (d / PENDING_RESULT).exists():
+            return False
+        waiting = OPS.waiting_inputs(d)
+        if waiting and not append:
             return False
         try:
+            if waiting:
+                tail = d / OPS.PENDING_TAIL
+                tail.mkdir(exist_ok=True)
+                sequence = int(waiting[-1].stem) + 1 if waiting[-1].parent == tail else 1
+                p = tail / f"{sequence:020d}.json"
             atomic_json(p, rec)
             return True
         except OSError:
@@ -1004,30 +1011,75 @@ def _save_pending(d: Path, kind: str, request: dict) -> bool:
 def _claim_pending(d: Path) -> dict | None:
     """原子认领：只有改名成功的一方可以执行，重启不会盲目重放 claimed。"""
     with FileLock(d / "pending.lock"):
-        src = d / PENDING_NAME
-        if not src.exists():
+        waiting = OPS.waiting_inputs(d)
+        claimed, result = d / PENDING_CLAIMED, d / PENDING_RESULT
+        if not waiting or (claimed.exists() and not result.exists()):
             return None
+        src = waiting[0]
         try:
             rec = json.loads(src.read_text(encoding="utf-8"))
-            (d / PENDING_RESULT).unlink(missing_ok=True)
+            if claimed.exists():
+                # The previous receipt must survive slot reuse, including a restart
+                # between writing its result file and committing the operation.
+                previous, outcome = _read_json(claimed, {}), _read_json(result, {})
+                if not previous or not outcome:
+                    return None
+                _publish_pending(previous, outcome)
+                claimed.unlink()
+            result.unlink(missing_ok=True)
             rec["claimed_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
             rec["dispatcher"] = {"pid": os.getpid(), "identity": RT.identity(os.getpid())}
             atomic_json(src, rec)
-            os.replace(str(src), str(d / PENDING_CLAIMED))
+            os.replace(src, claimed)
+            if len(waiting) > 1:
+                os.replace(waiting[1], d / PENDING_NAME)
             return rec
         except (OSError, ValueError):
             return None
 
 
 # 领取一次已保存的续接请求后启动；结果关联原记录，应由回执核对。
+def _publish_pending(rec, result):
+    request = rec.get("request") or {}
+    if result.get("reconciled"):
+        state = "unknown"
+    elif (result.get("out") or {}).get("code") == "archived_conversation":
+        state = "not_dispatched"
+    else:
+        state = "completed" if result.get("ok") else "failed"
+    response = OPS.followup_receipt(request, result)
+    OPS.finish(ROOT, request.get("_request_id"), result.get("code", 409 if state == "unknown" else 500), response, state)
+
+
 def _run_pending(d: Path) -> None:
-    rec = _claim_pending(d)
-    if not rec:
+    from loop import workbench
+    if not OPS.waiting_inputs(d):
         return
+    with workbench.launch_admission(d, wait_for_launch=True) as admitted:
+        if not admitted:
+            _recover_one(d)
+            return
+        if not OPS.waiting_inputs(d):
+            return
+        proc = _active_proc(d)
+        if proc is None:
+            rec = _claim_pending(d)
+            if rec is None:
+                return
+            _dispatch_pending(d, rec)
+            if not OPS.waiting_inputs(d):
+                return
+            proc = _active_proc(d)
+        _queue_after(d, proc, lambda: _run_pending(d), limit=None)
+
+
+def _dispatch_pending(d, rec):
     kind = str(rec.get("kind") or "")
     req = rec.get("request") or {}
     try:
-        if kind == "pause":
+        if rec.get("cancelled"):
+            code, out = 409, OPS.ARCHIVED_INPUT
+        elif kind == "pause":
             _write_interrupt(d, str(req.get("note") or ""))
             code, out = 200, {"ok": True, "paused": True}
         elif kind in ("interrupt", "say"):
@@ -1040,7 +1092,7 @@ def _run_pending(d: Path) -> None:
                     d, text, req.get("min_reads"), req.get("min_chars"),
                     req.get("max_turns"), images=req.get("images"), ctx=req.get("ctx"),
                     policy=req.get("policy"), execution_config=req.get("execution_config"),
-                    user_input=not req.get("internal_grant_resume"), steering=kind == "interrupt",
+                    user_input=not req.get("internal_grant_resume"), steering=kind == "interrupt", from_pending=True,
                     attachment_ids=req.get("attachment_ids"), github_context=req.get("github_context"))
         else:
             code, out = 400, {"error": "不认识的待办类型：%s" % kind}
@@ -1050,8 +1102,7 @@ def _run_pending(d: Path) -> None:
         result = {"ok": False, "error": "%s: %s" % (type(e).__name__, e),
                   "finished_at": time.strftime("%Y-%m-%d %H:%M:%S")}
     atomic_json(d / PENDING_RESULT, result)
-    OPS.finish(ROOT, req.get("_request_id"), result.get("code", 500), result,
-               "completed" if result.get("ok") else "failed")
+    _publish_pending(rec, result)
 
 
 def _acknowledge_pending(d: Path, *, wait_for_launch=True) -> tuple[int, dict]:
@@ -1090,21 +1141,19 @@ def _acknowledge_pending(d: Path, *, wait_for_launch=True) -> tuple[int, dict]:
         atomic_json(archive, {"claimed": rec, "acknowledgement": result})
         atomic_json(d / PENDING_RESULT, result)
         OPS.finish(ROOT, (rec.get("request") or {}).get("_request_id"), 409, result, "unknown")
+        if OPS.waiting_inputs(d):
+            _recover_one(d)
         return 200, {"ok": True, "reconciled": True, "outcome": "unknown"}
 
 
 # 从持久待续接记录安排后续启动，事件流仍可独立读取。
 def _queue_pending(d: Path, proc, kind: str, request: dict) -> bool:
-    if not _save_pending(d, kind, request):
+    append = kind in ("say", "interrupt") and not request.get("internal_grant_resume")
+    if not _save_pending(d, kind, request, append=append):
         return False
-    ok = _queue_after(d, proc, lambda: _run_pending(d), limit=None)
-    if not ok:
-        # 还没发停止请求，不能把一份永远不会被执行的待办留在盘上。
-        try:
-            (d / PENDING_NAME).unlink()
-        except OSError:
-            pass
-    return ok
+    # Another waiter for this session will drain the same durable FIFO.
+    _queue_after(d, proc, lambda: _run_pending(d), limit=None)
+    return True
 
 
 def _recover_one(d: Path) -> bool:
@@ -1134,11 +1183,9 @@ def _recover_pending() -> None:
     """只恢复 waiting；claimed 是已认领未确认，自动重放可能重复起任务。"""
     try:
         dirs = [d for d in RUNS.iterdir()
-                if d.is_dir() and (d / PENDING_NAME).exists()]
+                if d.is_dir() and OPS.waiting_inputs(d)]
     except OSError:
         dirs = []
-    for d in dirs:
-        _recover_one(d)
     # Claimed without a result is ambiguous: dispatch may already have happened.
     for d in RUNS.iterdir() if RUNS.is_dir() else []:
         claimed = d / PENDING_CLAIMED
@@ -1146,11 +1193,18 @@ def _recover_pending() -> None:
             rec = _read_json(claimed, {}) or {}
             ident = (rec.get("request") or {}).get("_request_id")
             result = _read_json(d / PENDING_RESULT, {}) or {}
+            if not result and rec.get("cancelled"):
+                # Archive cancelled this input before it was claimed. A restart in
+                # the middle of draining it cannot turn that fact into an unknown launch.
+                result = {"ok": False, "code": 409, "out": OPS.ARCHIVED_INPUT}
+                atomic_json(d / PENDING_RESULT, result)
             if result:
-                state = "unknown" if result.get("reconciled") else "completed" if result.get("ok") else "failed"
-                OPS.finish(ROOT, ident, result.get("code", 409 if result.get("reconciled") else 500), result, state)
+                _publish_pending(rec, result)
             else:
                 OPS.finish(ROOT, ident, 202, {"error": "服务中断时请求已认领，结果未确认；请核对后处理"}, "unknown")
+
+    for d in dirs:
+        _recover_one(d)
 
 
 def _write_interrupt(d: Path, note: str) -> None:
@@ -1217,12 +1271,17 @@ def _spawn_conversation(d, args, policy, launch_intent):
 # 普通发送、转向和委派续接都核对原会话与工作区占用后，才走对应启动路径。
 def _continue(d: Path, text: str, min_reads=None, min_chars=None,
               max_turns=None, images=None, ctx=None, crew: str = "l0", policy=None, execution_config=None, *,
-              user_input=True, steering=False, worker_wake=None, scheduled_start=False, wait_for_launch=True,
+              user_input=True, steering=False, worker_wake=None, scheduled_start=False, wait_for_launch=True, from_pending=False,
               attachment_ids=None, github_context=None):
+    from contextlib import nullcontext
     from loop import execution_policy, workbench
-    with workbench.launch_admission(d, wait_for_launch=wait_for_launch) as admitted:
+    # The FIFO worker holds the same admission gate across claim, spawn and receipt.
+    gate = nullcontext(True) if from_pending else workbench.launch_admission(d, wait_for_launch=wait_for_launch)
+    with gate as admitted:
         if not admitted:
             return workbench.launch_busy()
+        if not from_pending and OPS.waiting_inputs(d):
+            return 409, {"error": "会话已有排队消息，请等待按序派发。", "code": "input_queued"}
         if _active_proc(d):
             return 409, {"error": "当前运行尚未结束或状态待核对"}
         if worker_wake is not None:

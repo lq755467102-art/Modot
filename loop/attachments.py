@@ -53,6 +53,22 @@ def message_images(ident, selected, run_id):
     return images
 
 
+def check_submission_access(body):
+    """Recheck one send at dispatch, including after a potentially long auxiliary summary."""
+    ids = [rid for parts in getattr(body, "parts", {}).values()
+           for kind, rid in parts if kind == "submissionAttachment"]
+    if ids:
+        from .context_inspection import active_request
+        from .context_manager import ContextBlocked
+        owner = active_request.get()
+        if owner is None:
+            raise ContextBlocked("无法核对本次发送的附件所属会话。")
+        try:
+            message_attachments(Path(owner[0].dir).name, ids)
+        except W.Problem as error:
+            raise ContextBlocked("本次发送的附件已不可读取。请移除不可读的附件后重新发送。") from error
+
+
 # 附件上限从宿主配置读取，解析失败沿用内置上限。
 def limit(name, default):
     try:

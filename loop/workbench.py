@@ -380,7 +380,21 @@ def workspace_file_page(w, path, revision, after, view):
     offset = int(after)
     if offset and revision is None:
         raise Problem("invalid_cursor", "继续读取时需要文件版本")
+    with text_file_snapshot(w, path) as (stream, current, size):
+        if revision is not None and revision != current:
+            raise Problem("revision_conflict", "文件已更新，请从头重新读取", 409)
+        if offset > size:
+            raise Problem("invalid_cursor", "分页游标超出文件范围")
+        contents = _page_contents(stream, offset, size, view)
+    return dict(path=path, revision=current, sizeBytes=size, **contents)
+
+
+@contextmanager
+def text_file_snapshot(w, path, *, expected_path=None):
+    """Pin the open file and verify that the registered path still names it after a bounded read."""
     p = file_path(w, path)
+    if expected_path is not None and p != expected_path:
+        raise Problem("resource_denied", "文件路径在读取前已改变，请重新选择", 403)
     try:
         info = p.stat()
     except FileNotFoundError as error:
@@ -396,17 +410,12 @@ def workspace_file_page(w, path, revision, after, view):
             if stamp[:4] != identity:
                 raise changed
             current = digest(repr((str(p), stamp)).encode("utf-8"))
-            if revision is not None and revision != current:
-                raise changed
-            if offset > size:
-                raise Problem("invalid_cursor", "分页游标超出文件范围")
-            contents = _page_contents(stream, offset, size, view)
+            yield stream, current, size
             if (file_text_stamp(stream) != stamp or file_path(w, path) != p
                     or _page_file_identity(p.stat()) != identity):
                 raise changed
     except FileNotFoundError as error:
         raise changed from error
-    return dict(path=path, revision=current, sizeBytes=size, **contents)
 
 
 # 将保留的文件字节解码为界面文本，编码或大小异常用受控错误记录。
@@ -1730,6 +1739,9 @@ def guard_continuation(directory, policy, sv):
                 exclude_thread=Path(directory).name,
             )
         return policy
+    from . import operations
+    if thread.get("archived"):
+        raise Problem(operations.ARCHIVED_INPUT["code"], operations.ARCHIVED_INPUT["error"], 409)
     w = workspace(thread["workspaceId"])
     session = read(Path(directory) / "session.json")
     recorded = session.get("cwd")
@@ -2694,6 +2706,7 @@ def route(method, path, q, b, sv, _conversation=False, *, scheduled_start=False)
 
             return 200, change_registry(accept)
         if parts[-1] == "archive":
+            from . import operations
             if RT.status(d)["active"]:
                 raise Problem("active_run", "运行中的任务不能归档", 409)
             if thread.get("projectless") and b.get("archived", True):
@@ -2703,11 +2716,12 @@ def route(method, path, q, b, sv, _conversation=False, *, scheduled_start=False)
                 from .subtasks import cancel_all
 
                 cancel_all(thread["id"], sv,code='archived',reason='父会话已归档')
-            change_registry(
-                lambda data: data["threads"][thread["id"]].update(
-                    archived=bool(b.get("archived", True))
-                )
-            )
+            archived = bool(b.get("archived", True))
+            if thread.get("archived") and not archived:
+                operations.cancel_waiting_inputs(P.data_root(), d)
+            change_registry(lambda data: data["threads"][thread["id"]].update(archived=archived))
+            if archived:
+                operations.cancel_waiting_inputs(P.data_root(), d)
             return 200, {"ok": True}
         if parts[-1] == "resolve":
             if b.get("confirm") is not True:
@@ -2778,11 +2792,12 @@ def route(method, path, q, b, sv, _conversation=False, *, scheduled_start=False)
                 options["github_context"] = b["githubPage"]
         if scheduled_start:
             options["scheduled_start"] = True
+        from . import operations
         proc = sv._active_proc(d) if hasattr(sv, "_active_proc") else None
-        if proc is not None:
+        if proc is not None or operations.waiting_inputs(d):
             if scheduled_start:
                 raise Problem("active_run", "定时会话仍有运行正在执行", 409)
-            if _conversation and text in {'继续','继续。','continue','resume'} and not (b.get('images') or b.get('attachmentIds')):
+            if proc is not None and _conversation and text in {'继续','继续。','continue','resume'} and not (b.get('images') or b.get('attachmentIds')):
                 from .subtasks import listing
                 active_id=RT.read(d).get('run_id')
                 if active_id and any((r.get('worker',{}).get('wakeClaim') or {}).get('runId')==active_id for r in listing(thread['id'])):
@@ -2802,16 +2817,16 @@ def route(method, path, q, b, sv, _conversation=False, *, scheduled_start=False)
             }
             if not sv._queue_pending(d, proc, kind, request):
                 raise Problem("queue_full", "已有待办，当前输入尚未接收", 409)
-            if kind == "interrupt":
+            if kind == "interrupt" and proc is not None:
                 from . import control
 
                 control.request_stop(d, why="工作台用户调整要求", after_turn=True)
-            return 200, {
+            return 200, operations.followup_receipt(request, {
                 "queued": True,
                 "note": "已持久保存；将在执行步边界调整"
-                if kind == "interrupt"
-                else "已持久排队，当前运行结束后继续",
-            }
+                if kind == "interrupt" and proc is not None
+                else "已持久排队，前面的运行结束后继续",
+            })
         if not readonly:
             status = git_status(w)
             if status.get("protected"):

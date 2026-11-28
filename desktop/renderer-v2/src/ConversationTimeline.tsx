@@ -21,6 +21,7 @@ import { ConversationImageCard } from "./ConversationImageCard";
 import { MessageArtifacts, type OpenArtifact } from "./MessageArtifact";
 import {StepDisclosure} from "./StepDisclosure";
 import {MessageAttachments} from "./ComposerInputs";
+import {QueuedFollowups} from "./QueuedFollowups";
 import {InputBudgetDetails} from "./InputBudgetDetails";
 
 // 思考正文由运行投影传入；跟随其局部滚动，展开期间保留读者的位置。
@@ -220,7 +221,7 @@ export function PendingMessageBubble({message,conversationId}: {message:PendingU
   </article>;
 }
 
-export function ConversationTimeline({ events, nativeRuns, importRecovery, onEvidence, onDiscuss, active,runId,runStatus,conversationId,onReview,onSummary,onSources,onArtifact,pendingMessage,onMessageSettled }: {
+export function ConversationTimeline({ events, nativeRuns, importRecovery, onEvidence, onDiscuss, active,runId,runStatus,conversationId,onReview,onSummary,onSources,onArtifact,pendingMessage,onMessageSettled,showFollowups }: {
   events: EventRow[];
   nativeRuns: ReadonlySet<string>;
   importRecovery?: {runId: string; actionId: string; panel: ReactNode};
@@ -235,6 +236,7 @@ export function ConversationTimeline({ events, nativeRuns, importRecovery, onEvi
   onSources?:(run:string)=>void;
   onArtifact?:OpenArtifact;
   pendingMessage?: PendingUserMessage;
+  showFollowups?: boolean;
   onMessageSettled?: (owner: string, messageId: string) => void;
 }) {
   const { t } = useUiLanguage();
@@ -599,6 +601,7 @@ export function ConversationTimeline({ events, nativeRuns, importRecovery, onEvi
   return <AnswerCitations conversationId={conversationId} accessVersion={scope.error?undefined:scope.data?.revision}>
     <MessageArtifacts conversationId={conversationId} open={onArtifact}><div className="conversation-timeline">
     {segments.map(renderSegment)}
+    {showFollowups && conversationId && <QueuedFollowups key={conversationId} owner={conversationId} items={visible}/>}
     {pendingMessage && !published && !settled &&
       <PendingMessageBubble key={pendingMessage.id} message={pendingMessage} conversationId={conversationId}/>}
   </div></MessageArtifacts></AnswerCitations>;

@@ -758,6 +758,15 @@
         },
         "decisionMethod": {
           "type": "string"
+        },
+        "submissionImages": {
+          "type": "number"
+        },
+        "submissionImageTokens": {
+          "type": "number"
+        },
+        "submissionTokens": {
+          "type": "number"
         }
       }
     },

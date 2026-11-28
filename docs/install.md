@@ -2,14 +2,14 @@
 
 ## Windows x64
 
-[Download Preview .13](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256SUMS.txt](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [Source and license attachments](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13)
+[Download Preview .14](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.14/Modot-Preview-0.2.0-preview.14-x64-Setup.exe) · [SHA256SUMS.txt](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.14/SHA256SUMS.txt) · [Source and license attachments](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.14)
 
 Download `Modot-Preview-<version>-x64-Setup.exe` and `SHA256SUMS.txt` from the same release. The corresponding video source and notice archive is supplied alongside the installer. The installer is per-user. Close Modot Preview before running setup to upgrade it in place and keep your projects, conversations and settings. Preview has its own application identity and can coexist with the Pilot edition. You supply the model endpoint, model name and API key in **Settings → Models**. Start a chat or open a folder as a project. A normal folder works without Git.
 
-The Windows x64 .13 installer is **unsigned**. For a public signed build, compare the publisher in the Windows signature properties with the publisher announced for the release. The installer and installed application should both have a valid signature and a timestamp. A SHA-256 digest checks the download against the listed bytes. An attacker with access to the download page could replace both a file and an unsigned digest.
+The Windows x64 .14 installer is **unsigned**. For a public signed build, compare the publisher in the Windows signature properties with the publisher announced for the release. The installer and installed application should both have a valid signature and a timestamp. A SHA-256 digest checks the download against the listed bytes. An attacker with access to the download page could replace both a file and an unsigned digest.
 
 ```powershell
-$setup = Get-Item .\Modot-Preview-0.2.0-preview.13-x64-Setup.exe
+$setup = Get-Item .\Modot-Preview-0.2.0-preview.14-x64-Setup.exe
 Get-FileHash -Algorithm SHA256 -LiteralPath $setup.FullName
 Get-AuthenticodeSignature -LiteralPath $setup.FullName |
     Select-Object Status, SignerCertificate, TimeStamperCertificate

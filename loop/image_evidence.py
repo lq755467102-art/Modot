@@ -133,6 +133,30 @@ def model_message(image, action, run):
                image_action=dict(id=action, run=run, bytes=image.get("bytes"), hash=image.get("hash"), source=image.get("source")))
 
 
+def for_submission(messages, question, images, attachment_ids=()):
+    """Create a request-only user item. The canonical question and per-file receipts keep their identities."""
+    from copy import copy
+    from .context_manager import ContextBlocked
+
+    if question is None or question.role != "user" or question not in messages:
+        raise ContextBlocked("无法核对附件所属的本轮问题，请重新选择附件后发送。")
+    index = messages.index(question)
+    current = copy(question)
+    # The empty host annotation carries identity only and is never serialized to the provider.
+    current.context_parts = (*question.context_parts, ("currentSend", ""),
+                             *(("submissionAttachment", rid) for rid in attachment_ids))
+    if images:
+        content = question.content
+        blocks = [dict(type="text", text=content)] if isinstance(content, str) else list(content)
+        # Keep the source actions on the merged wire row for the local receipt ledger.
+        current.context_parts += tuple(("imageAction", image.image_action["id"])
+                                       for image in images if image.image_action)
+        for image in images:
+            blocks.extend(image.content)
+        current.content = blocks
+    return [*messages[:index], current, *messages[index + 1:]]
+
+
 def _part_url(part):
     if isinstance(part, dict) and part.get("type") == "image_url":
         image = part.get("image_url")

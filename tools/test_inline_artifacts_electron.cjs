@@ -51,7 +51,7 @@ async function run() {
       HARNESS_GIT: process.env.HARNESS_GIT,
       HARNESS_SANDBOX_PYTHON_ROOT: process.env.HARNESS_SANDBOX_PYTHON_ROOT,
       HARNESS_BASE_URL: "http://127.0.0.1:" + provider.address().port + "/v1",
-      HARNESS_API_KEY: "inline-fixture-key",
+      HARNESS_API_KEY: "local-mock-placeholder",
       HARNESS_MODEL: "inline-fixture",
       MODOT_INLINE_GUARD: guard,
       PYTHONUTF8: "1",

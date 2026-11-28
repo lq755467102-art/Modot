@@ -11,9 +11,46 @@ import sqlite3
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from .filelock import FileLock
+from .filelock import FileLock, atomic_json, read_text
 
 STATES = ('processing', 'queued', 'completed', 'failed', 'unknown', 'not_dispatched')
+
+# The original waiting file remains the FIFO head for sessions saved by older versions.
+PENDING_HEAD = 'pending-after.json'
+PENDING_TAIL = 'pending-followups'
+ARCHIVED_INPUT = {'code': 'archived_conversation', 'error': '会话已归档，这条排队消息未启动。'}
+
+
+def followup_receipt(request, result):
+    """Retain accepted input until it has a canonical message in a launched run."""
+    response = dict(result)
+    if request.get("text") and not result.get("ok"):
+        response["messageText"] = request["text"]
+    outcome = response.get("out") or {}
+    if outcome.get("error"):
+        response["error"] = outcome["error"]
+    if outcome.get("runId"):
+        response["runId"] = outcome["runId"]
+    return response
+
+
+def waiting_inputs(directory):
+    head = directory / PENDING_HEAD
+    tail = directory / PENDING_TAIL
+    return ([head] if head.is_file() else []) + (sorted(tail.glob('[0-9]*.json')) if tail.is_dir() else [])
+
+
+def cancel_waiting_inputs(root, directory):
+    """Persist cancellation before a restore can make this thread runnable again."""
+    with FileLock(directory / 'pending.lock'):
+        for path in waiting_inputs(directory):
+            record = json.loads(read_text(path))
+            record['cancelled'] = True
+            atomic_json(path, record)
+            result = {'ok': False, 'code': 409, 'out': ARCHIVED_INPUT}
+            request = record.get('request') or {}
+            finish(root, request.get('_request_id'), 409, followup_receipt(request, result), 'not_dispatched')
+
 
 @contextmanager
 def database(root):

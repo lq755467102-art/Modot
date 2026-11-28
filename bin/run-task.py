@@ -1311,6 +1311,8 @@ def main(argv=None) -> int:
                 from loop.attachments import message_images
 
                 image_input["input_images"] = message_images(_sess.dir.name, _message_attachments, _sess.run_id)
+                image_input["submission_message"] = _followup_msg
+                image_input["submission_attachments"] = [item["id"] for item in _message_attachments]
             # 从已选执行入口发起主循环，给模型、工具、预算和运行日志传入同一上下文。
             def run_execution(messages, max_turns=a.max_turns):
                 return _entry.run(task, prov, reg, verify, max_turns=max_turns,

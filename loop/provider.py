@@ -755,6 +755,8 @@ class OpenAICompatProvider(Provider):
         return body
 
     def _request(self, body: dict) -> urllib.request.Request:
+        from .attachments import check_submission_access
+        check_submission_access(body)
         guard = getattr(self, "request_guard", None)
         if guard is not None:
             guard()

@@ -1,10 +1,12 @@
 # Modot — Windows Coding Agent
 
-[Download Windows x64 Preview .13](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/Modot-Preview-0.2.0-preview.13-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.13/SHA256SUMS.txt) · [Release notes](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.13) · [简体中文](README.md) · [Source-available license](LICENSE)
+**A lightweight AI coding assistant for local projects, with chat-linked workrooms and memory you can inspect, edit and replace.**
 
-**Modot is a lightweight, customizable desktop AI agent with a built-in code workroom.** Open a local project and bring your own model to read code, edit files and run checks. Workrooms and chats share project scope, permissions and action receipts. Choose a memory provider and pick a specialist model when a task needs one.
+[Download Windows x64 Preview .14](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.14/Modot-Preview-0.2.0-preview.14-x64-Setup.exe) · [SHA256](https://github.com/lq755467102-art/Modot/releases/download/v0.2.0-preview.14/SHA256SUMS.txt) · [Release notes](https://github.com/lq755467102-art/Modot/releases/tag/v0.2.0-preview.14) · [简体中文](README.md) · [Source-available license](LICENSE)
 
-The Windows x64 `.13` installer is about **142 MiB**. In one matched desktop test, Modot Preview `.1` ran the task with a **249.1 MiB median** and **275.2 MiB sampled peak** private working set across its process tree. [Three-phase comparison and measurement method](#install-size-and-desktop-memory)
+Open source files, review changes and run tests from the same conversation. The workroom and chat share the project, permissions and action receipts. Bring your own model, extend it with Agent Skills and Model Context Protocol (MCP) tools, or choose a specialist model for a task.
+
+The Windows x64 `.14` installer is about **142 MiB**. In one matched desktop test, Modot Preview `.1` ran the task with a **249.1 MiB median** and **275.2 MiB sampled peak** private working set across its process tree. [Three-phase comparison and measurement method](#install-size-and-desktop-memory)
 
 This repository contains validated release source, release notes and installers. Development and test builds use a separate repository.
 
@@ -20,7 +22,7 @@ This repository contains validated release source, release notes and installers.
 
 ## Quickstart
 
-1. **Start Modot on Windows.** Download the .13 installer above or launch a source checkout with CPython 3.13 and Node.js 24. [Install or run from source](docs/install.md)
+1. **Start Modot on Windows.** Download the .14 installer above or launch a source checkout with CPython 3.13 and Node.js 24. [Install or run from source](docs/install.md)
 2. **Connect your model.** In **Settings → Models**, enter the provider endpoint, model name and API key. Requests use the service and account you configure.
 3. **Open a project and give it a task.** Create a project from an existing folder. Replace the test command below with one that reproduces a failure in your project, then send it in chat.
 
@@ -72,7 +74,7 @@ Electron uses a restricted bridge to a local HTTP service that owns projects, co
 
 ### Install size and desktop memory
 
-The first preview occupied about **597 MiB** after a full install. Preview `.13` bundles the verified LGPL video runtime, and setup checks the pinned MinGit digest. [First preview validation](docs/benchmarks/preview-validation.json) · [Current installation process](docs/install.md)
+The first preview occupied about **597 MiB** after a full install. Preview `.14` bundles the verified LGPL video runtime, and setup checks the pinned MinGit digest. [First preview validation](docs/benchmarks/preview-validation.json) · [Current installation process](docs/install.md)
 
 On one Windows 11 machine, three desktop clients fixed the same generated file in identical copies of a 626-file project. An independent check confirmed the same single-file fix and command exits of **1 → 0** for all three.
 
