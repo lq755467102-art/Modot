@@ -1,5 +1,15 @@
 // Source messages are the Simplified Chinese UI; only product-owned copy is looked up.
 export const english = {
+  "安装或检查 Dokan 2 驱动": "Install or check the Dokan 2 driver",
+  "正在检查或安装 Dokan 2…": "Checking or installing Dokan 2…",
+  "驱动已就绪，可以重新运行项目命令。": "The driver is ready. You can run the project command again.",
+  "已取消驱动安装。": "Driver installation was cancelled.",
+  "请重新启动 Windows 后再运行项目命令。": "Restart Windows before running project commands.",
+  "Windows 正在安装其他软件，请稍后重试。": "Windows is installing other software. Try again later.",
+  "驱动安装包校验失败，请重新安装 Modot。": "The driver package failed verification. Reinstall Modot.",
+  "驱动尚未就绪，请在 Windows 设置中检查 Dokan 2。": "The driver is not ready. Check Dokan 2 in Windows Settings.",
+  "检测到较新的 Dokan，请在 Windows 设置中修复并启动驱动。": "A newer Dokan is present. Repair and start it in Windows Settings.",
+  "源码模式请安装官方 Dokan 2 x64 驱动。": "For source builds, install the official Dokan 2 x64 driver.",
   "全部":"All",
   "个人":"Personal",
   "来自插件":"From plugins",

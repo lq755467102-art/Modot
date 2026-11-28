@@ -755,9 +755,13 @@ def output(ident, aid, after, sv, *, readable=False, live=False):
         if isinstance(original, dict) and isinstance(original.get("image"), dict):
             data = json.dumps({key: item for key, item in original.items() if key != "image"}, ensure_ascii=False).encode("utf-8")
     notice = None
+    required_component = None
     if readable:
         result = json.loads(data)
         if isinstance(result, dict):
+            if (value.get("tool") in {"run_project_shell", "run_project_check", "read_check_output"}
+                    and result.get("ok") is False and result.get("code") == "project_driver_missing"):
+                required_component = "dokan2"
             logs = [(key, result[key]) for key in ("text", "stdout", "stderr", "output")
                     if isinstance(result.get(key), str) and result[key]]
             if shell is not None:
@@ -781,6 +785,8 @@ def output(ident, aid, after, sv, *, readable=False, live=False):
         elif len(data) <= 16000:
             data = json.dumps(result, ensure_ascii=False, indent=2).encode("utf-8")
     metadata = {"reason": notice} if notice else {}
+    if required_component:
+        metadata["requiredComponent"] = required_component
     if shell is not None:
         metadata["terminal"] = shell
     return _output_page(data, after, value, complete=not notice, hash=meta["hash"], **metadata)

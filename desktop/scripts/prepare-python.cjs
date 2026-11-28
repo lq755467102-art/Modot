@@ -205,6 +205,15 @@ function prepare(sandboxRuntimeOnly = false, releaseOutput) {
   )
     throw Error("内嵌依赖自检失败: " + check.stderr);
   if (sandboxRuntimeOnly) return runtime;
+  const componentAssets = process.env.MODOT_WINDOWS_COMPONENTS;
+  if (!componentAssets) throw Error("Set MODOT_WINDOWS_COMPONENTS to the verified Windows component inputs.");
+  const componentArgs = ["-I", "-B", path.join(__dirname, "stage-windows-components.py"),
+    path.resolve(componentAssets), stage];
+  const sourceBundle = "Modot-" + require("../package.json").version + "-Windows-Component-Sources.zip";
+  if (releaseOutput) componentArgs.push("--source-bundle", path.join(releaseOutput, sourceBundle));
+  const componentsResult = spawnSync(path.join(runtime, "python.exe"), componentArgs, { encoding: "utf8", windowsHide: true });
+  if (componentsResult.error) throw componentsResult.error;
+  if (componentsResult.status !== 0) throw Error("Windows component staging failed: " + componentsResult.stderr);
   const sourceManifest = JSON.parse(
     fs.readFileSync(path.join(desktop, "release-files.json"), "utf8"),
   );
@@ -285,8 +294,11 @@ function prepare(sandboxRuntimeOnly = false, releaseOutput) {
     format: 1,
     created: new Date().toISOString(),
     python: py.version,
-    installTimeComponents: require("../installer/runtime-assets.json"),
-    bundledComponents: [{ ...videoRuntime, sources: { ...videoRuntime.sources, file: videoSourcesName } }],
+    installTimeComponents: [],
+    bundledComponents: [
+      { ...videoRuntime, sources: { ...videoRuntime.sources, file: videoSourcesName } },
+      ...["mingit", "dokan"].map(id => ({ id, ...require("../installer/windows-components.json")[id], sources: sourceBundle })),
+    ],
     dependencies: pins.map((p) => p[1]),
     files: {},
   };

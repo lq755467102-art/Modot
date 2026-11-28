@@ -22,7 +22,7 @@ This repository contains validated release source, release notes and installers.
 
 ## Quickstart
 
-1. **Start Modot on Windows.** Download the .15 installer above or launch a source checkout with CPython 3.13 and Node.js 24. Install the Dokan 2 filesystem driver to run project commands. [Install or run from source](docs/install.md)
+1. **Start Modot on Windows.** Download the .15 installer above or launch a source checkout with CPython 3.13 and Node.js 24. The published .15 installer requires a separate Dokan 2 installation for project commands. The .16 candidate bundles both MinGit and the Dokan offline installer. [Install or run from source](docs/install.md)
 2. **Connect your model.** In **Settings → Models**, enter the provider endpoint, model name and API key. Requests use the service and account you configure.
 3. **Open a project and give it a task.** Create a project from an existing folder. Replace the test command below with one that reproduces a failure in your project, then send it in chat.
 

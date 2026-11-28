@@ -6,6 +6,7 @@ import type { LinkedWorkroomFile } from "./generated";
 declare global {
   interface Window {
     workbench: {
+      installDokan: () => Promise<"ready" | "cancelled" | "restart" | "busy" | "invalid" | "failed" | "newer" | "unavailable">;
       chromeTheme:(theme:string)=>Promise<{theme:string}>;
       interfaceZoom:(percent?:number)=>Promise<import("./InterfaceZoom").InterfaceZoomSetting>;
       closeBehavior:(value?:"background"|"quit")=>Promise<"background"|"quit">;

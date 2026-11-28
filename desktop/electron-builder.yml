@@ -18,6 +18,7 @@ asarUnpack:
   - python/**/*
   - backend/**/*
   - git/**/*
+  - dokan/**/*
   - typescript-language-worker.cjs
   - workroom-typescript-libs/**/*
 win:

@@ -79,6 +79,28 @@ function CallDetails({open, onToggle, title, status, running, evidence, onEviden
   </StepDisclosure>;
 }
 
+function DokanInstall() {
+  const { t } = useUiLanguage();
+  const [state, setState] = useState<"idle" | "pending" | Awaited<ReturnType<typeof window.workbench.installDokan>>>("idle");
+  const message = ({
+    idle: "", pending: "正在检查或安装 Dokan 2…", ready: "驱动已就绪，可以重新运行项目命令。",
+    cancelled: "已取消驱动安装。", restart: "请重新启动 Windows 后再运行项目命令。",
+    busy: "Windows 正在安装其他软件，请稍后重试。", invalid: "驱动安装包校验失败，请重新安装 Modot。",
+    failed: "驱动尚未就绪，请在 Windows 设置中检查 Dokan 2。",
+    newer: "检测到较新的 Dokan，请在 Windows 设置中修复并启动驱动。",
+    unavailable: "源码模式请安装官方 Dokan 2 x64 驱动。",
+  } as const)[state];
+  async function install() {
+    setState("pending");
+    try { setState(await window.workbench.installDokan()); }
+    catch { setState("failed"); }
+  }
+  return <div>
+    <button type="button" disabled={state === "pending" || state === "ready"} onClick={install}>{t("安装或检查 Dokan 2 驱动")}</button>
+    {message && <small role="status">{t(message)}</small>}
+  </div>;
+}
+
 // 按会话、动作和当前读取范围加载工具原输出；轮询及滚动跟随与实际运行态绑定。
 function ToolCallLog({conversationId, actionId, accessVersion, running, tail}: {
   conversationId: string; actionId: string; accessVersion: string; running: boolean; tail: HTMLSpanElement | null;
@@ -150,6 +172,7 @@ function ToolCallLog({conversationId, actionId, accessVersion, running, tail}: {
       onScroll={updatePosition}>{text}</pre>}
     {page && !page.complete && <small>{running && !text ? t("执行中，等待可读取的输出。") : page.reason}</small>}
     {page?.complete && !text && <small>{t("工具没有文本输出。")}</small>}
+    {page?.requiredComponent === "dokan2" && <DokanInstall/>}
     {terminal&&<footer><span>{terminal.timedOut ? t("已超时") : terminal.error}</span>
       <span>{typeof terminal.exitCode==="number" ? t("退出码 {n}",{n:terminal.exitCode}) : running ? t("执行中") : t("未记录退出码")}</span></footer>}
     {pages && output.hasNextPage && <button disabled={output.isFetchingNextPage} onClick={() => output.fetchNextPage()}>{t("加载更多输出")}</button>}

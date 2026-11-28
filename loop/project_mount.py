@@ -1,4 +1,4 @@
-"""Windows Dokan 2 adapter for the task's copy-on-write view. No driver is bundled."""
+"""Windows Dokan 2 adapter for the task's copy-on-write view. The system driver supplies the mount."""
 
 import ctypes as C
 from ctypes import wintypes as T
@@ -54,7 +54,7 @@ def _driver():
         lib.DokanInit()
         return lib
     except (OSError, AttributeError) as e:
-        raise W.Problem('project_driver_missing', '项目命令需要安装并启动 Dokan 2 文件系统驱动', 503) from e
+        raise W.Problem('project_driver_missing', '项目命令需要安装并启动 Dokan 2 文件系统驱动。可在调用日志中安装驱动。', 503) from e
 
 
 @lru_cache(maxsize=1)
@@ -221,6 +221,8 @@ class Mount:
         self.counter = 0
         self._callbacks()
         result = self.lib.DokanCreateFileSystem(C.byref(self.options), C.byref(self.ops), C.byref(self.handle))
+        if result in {-3, -4, -7}:  # driver unavailable, failed to start, or incompatible
+            raise W.Problem("project_driver_missing", f"项目命令需要可用的 Dokan 2 驱动（Dokan {result}）。可在调用日志中安装或检查驱动。", 503)
         if result:
             raise W.Problem('project_mount_unavailable', f'未能挂载本轮文件级暂存（Dokan {result}）', 503)
         from .project_transaction import _key

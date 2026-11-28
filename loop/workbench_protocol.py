@@ -715,6 +715,7 @@ obj(
     "EvidenceOutput",
     "text next hasMore complete",
     terminal=ref("ShellTranscript"),
+    requiredComponent={"enum": ["dokan2"]},
     text=S,
     next=N,
     hasMore=B,
