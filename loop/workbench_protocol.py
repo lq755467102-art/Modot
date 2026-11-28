@@ -264,12 +264,19 @@ obj(
     status=S,
 )
 obj(
+    "ProjectCheckoutAccess",
+    "resourceId permissionAt",
+    resourceId=S,
+    permissionAt={"type": ["number", "null"]},
+)
+obj(
     "ScopeSnapshot",
     "at projectId resources",
     at=N,
     projectId=NULL_S,
     resources=array(ref("ResourceSnapshot")),
     unavailable=array(ref("ResourceSnapshot")),
+    checkoutAccess=ref("ProjectCheckoutAccess"),
 )
 obj(
     "ConversationScope",
@@ -278,6 +285,7 @@ obj(
     folderResourceId=S,
     resources=array(ref("ProjectResource")),
     historicCode=array(ref("ProjectResource")),
+    checkoutAccess=ref("ProjectCheckoutAccess"),
     loaded=B,
     revision=S,
     lastRun={"anyOf": [ref("ScopeSnapshot"), {"type": "null"}]},
@@ -291,7 +299,7 @@ obj(
     argv=array(S),
     state=S,
     exitCode={"type": ["number", "null"]},
-    revision=S,
+    revision=NULL_S,
 )
 obj(
     "Attachment",

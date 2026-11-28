@@ -395,6 +395,16 @@ def text_file_snapshot(w, path, *, expected_path=None):
     p = file_path(w, path)
     if expected_path is not None and p != expected_path:
         raise Problem("resource_denied", "文件路径在读取前已改变，请重新选择", 403)
+    staged = w.get('projectView')
+    if staged is not None:
+        with staged.lock, staged.existing(staged.normalize(str(path))) as (backing, info), backing.open('rb') as stream:
+            stamp = file_text_stamp(stream)
+            revision = digest(repr((str(p), stamp)).encode('utf8'))
+            yield stream, revision, info.st_size
+            if file_text_stamp(stream) != stamp:
+                raise Problem("revision_conflict", "文件已更新，请从头重新读取", 409)
+            staged.guard()
+        return
     try:
         info = p.stat()
     except FileNotFoundError as error:
@@ -965,12 +975,13 @@ def require_host_transport(kind, mode):
         raise Problem("sandbox_transport", reason, 503)
 
 
-# 从已登记的检出目录启动对应检查或终端，先把源动作和原版本绑定到进程记录。
+# 在已登记的检出目录启动进程并关联源动作。需要核对项目版本的检查同时记录该版本。
 def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
            source=None, operation_id=None, check=None, start_deadline=None, force_isolated=False,
            expected_revision=None, pinned_revision=None, stage_material=None, retain_output=None,
            populate_workspace=None, workspace_scope=None, environment_id=None, readonly_source=False,
-           separate_output=False, host_grant=None, working_directory='.'):
+           separate_output=False, host_grant=None, working_directory='.', capture_host_revision=True, project_view=None,
+           include_project_record=False):
     if (
         not isinstance(argv, list)
         or not argv
@@ -985,7 +996,6 @@ def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
     ident = uuid.uuid4().hex
     if pinned_revision is not None and (not force_isolated or kind != "check" or check is None):
         raise Problem("invalid_scope", "固定候选只能用于受控隔离检查", 403)
-    revision = pinned_revision or expected_revision or current_revision(w)
     directory = home() / "processes"
     directory.mkdir(exist_ok=True)
     env, _ = NG.for_child()
@@ -1002,6 +1012,14 @@ def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
     require_host_transport(kind, mode)
     # 强制隔离优先于全访问偏好；只有显式宿主路径才可直接执行，准备环境也必须属于隔离检查。
     managed = force_isolated or (mode != "danger-full-access" and host_grant is None)
+    # A live terminal has a process receipt, but no frozen project version.
+    revision = pinned_revision or expected_revision
+    if project_view is not None:
+        if not managed or project_view.project != Path(w['path']).resolve():
+            raise Problem('invalid_scope', '项目暂存必须用对应的隔离执行环境', 403)
+        revision = expected_revision or project_view.revision()
+    if not revision and (managed or capture_host_revision):
+        revision = current_revision(w)
     if not managed and source and source.get("tool") == "run_project_shell" and git_exe():
         env["PATH"] = str(Path(git_exe()).resolve().parent) + os.pathsep + env.get("PATH", "")
     if separate_output and (not managed or kind != 'check'):
@@ -1044,7 +1062,7 @@ def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
     elif managed:
         # 在启动前的实际边界调用上层活性检查，取消请求不应留下迟到进程。
         def validate():
-            if pinned_revision is None:
+            if pinned_revision is None and project_view is None:
                 if force_isolated and str(revision).startswith("folder:"):
                     if selected_check_revision(check_source_state(w), record_revision(revision)) != revision:
                         raise Problem("revision_conflict", "检查准备期间目录已变化，请重新核对", 409)
@@ -1054,9 +1072,9 @@ def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
                 check()
 
         material_hooks = {"verify_copy": stage_material} if stage_material else {}
-        if force_isolated and str(revision).startswith('folder:') and w.get('recordBinding'):
+        if force_isolated and (project_view is not None or str(revision).startswith('folder:')) and w.get('recordBinding'):
             from .conversation_record import check_view
-            material_hooks.update(record_view=lambda: check_view(w), include_record=record_revision(revision))
+            material_hooks.update(record_view=lambda: check_view(w), include_record=include_project_record if project_view is not None else record_revision(revision))
         if workspace_scope is None and kind == "check" and source and source.get("sessionId") and source.get("runId"):
             workspace_scope = (source["sessionId"], source["runId"], str(Path(w["path"]).resolve()))
         # Named environments retain one explicit task identity across source
@@ -1071,6 +1089,7 @@ def launch(w, argv, kind="check", rows=24, cols=100, on_finished=None, *,
                                 source_guard=(lambda: FileLock(writer_lock_path(w["path"]), check=check))
                                     if pinned_revision is None and force_isolated else None,
                                  working_directory=working_directory,
+                                 **({'project_view': project_view} if project_view is not None else {}),
                                  **(safe_executor.check_options() if kind == 'check' else {}),
                                 **material_hooks)
     else:
@@ -1622,7 +1641,7 @@ def guard_workspace_writer(
     # be running. Recovered/unknown identities fail closed until reconciled.
     for file in (home() / "processes").glob("*.json"):
         process = read(file)
-        if process.get("kind") == "check" and process.get("isolation") == "appcontainer-task-copy":
+        if process.get("kind") == "check" and process.get("isolation") in {"appcontainer-task-copy", "appcontainer-project-overlay"}:
             continue  # The supervised process cannot write back to the source checkout.
         if process.get("kind") == "debug":
             debugger = _debuggers.get(process.get("id"))

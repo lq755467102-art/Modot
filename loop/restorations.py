@@ -352,7 +352,7 @@ def approve(ident, plan_id, body):
         return value
 
 
-def execute(thread, selected, ws, source, operation, plan_id, on_write=None, *, retain_history=None):
+def execute(thread, selected, ws, source, operation, plan_id, on_write=None, *, retain_history=None, project_view=None):
     path = plan_path(plan_id)
     with FileLock(path.with_suffix(".lock")):
         value = load(thread["id"], plan_id)
@@ -385,6 +385,20 @@ def execute(thread, selected, ws, source, operation, plan_id, on_write=None, *, 
         replaced = W.file_path(ws, relative).read_bytes()
         if W.digest(replaced) != current["revision"]:
             raise W.Problem("external_edit", "核对期间文件已变化", 409)
+        if project_view is not None:
+            if project_view.read(relative, 0, W.LIMIT + 1) != replaced:
+                raise W.Problem('revision_conflict', '暂存还有后续编辑，不能套用旧恢复计划', 409)
+            if on_write:
+                on_write()
+            project_view.replace(relative, raw)
+            result = dict(state='staged',staged=True,path=relative,revision=W.digest(raw),
+                          restoresOperationId=old['id'],restorationPlanId=plan_id,
+                          projectRevision=project_view.revision())
+            value.update(state='applying',source=source,operationId=operation['id'],result=result)
+            atomic_json(path, value)
+            project_view.record.setdefault('restores', []).append(plan_id)
+            project_view.save()
+            return result
         if retain_history is not None:
             retain_history(replaced, raw)
             verify_project(ws, value)

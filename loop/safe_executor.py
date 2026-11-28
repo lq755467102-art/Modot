@@ -279,8 +279,10 @@ def _copy(source, destination, *, runtime=False, trusted=False, public_data=Fals
                 if not stat.S_ISREG(info.st_mode) or not trusted and not path.resolve().is_relative_to(source):
                     raise W.Problem("unsafe_file", "执行资料不是普通文件，未运行", 403)
                 count, total = count+1, total+info.st_size
-                if count > MAX_FILES or total > MAX_BYTES:
-                    raise W.Problem("sandbox_capacity", "执行副本超过容量限制，未退回宿主运行", 413)
+                if count > MAX_FILES:
+                    raise W.Problem("sandbox_capacity", f"准备执行副本的文件数超过 {MAX_FILES:,} 个", 413)
+                if total > MAX_BYTES:
+                    raise W.Problem("sandbox_capacity", f"准备执行副本的文件总量超过 {MAX_BYTES / (1024 * 1024):g} MiB", 413)
                 output = target / item.name
                 if output.is_dir():
                     shutil.rmtree(output)
@@ -564,7 +566,7 @@ class Output:
 # `workspace_lease` 管理验证目录复用，`retained_output` 只记录收集结果，退出与清理分别确认。
 class Process:
     def __init__(self, native, family, base, name, out, err, time_limit=120, stdin=None, *, defer_cleanup=False,
-                 retain_output=None, workspace_lease=None):
+                 retain_output=None, workspace_lease=None, project_mount=None):
         self.native, self.family, self.base, self.name = native, family, base, name
         self.pid, self.stdin = native.pid, stdin
         self.stdout, self.stderr = Output(out,self), Output(err,self)
@@ -578,6 +580,7 @@ class Process:
         self.retain_output = retain_output
         self.retained_output = None
         self.workspace_lease = workspace_lease
+        self.project_mount = project_mount
         self.started = time.monotonic()
         self.exited = None
         self.cleaned = None
@@ -585,7 +588,7 @@ class Process:
         self._deadline = threading.Timer(time_limit, self.kill)
         self._deadline.daemon = True
         self._deadline.start()
-        self.isolation = "appcontainer-task-copy"
+        self.isolation = "appcontainer-project-overlay" if project_mount else "appcontainer-task-copy"
 
     def poll(self):
         with self._lock:
@@ -630,13 +633,22 @@ class Process:
             self.exited = time.monotonic()
             if self.retain_output is not None and (self.returncode == 0 or getattr(self.retain_output, 'collect_on_failure', False)):
                 try:
-                    self.retained_output = self.retain_output(self.base / "workspace")
+                    result_root = (self.project_mount.material.root if self.project_mount and self.project_mount.material
+                                   else self.base / "workspace")
+                    self.retained_output = self.retain_output(result_root)
                 except Exception as error:
                     self.retained_output = {"error": str(error)[:300]}
 
+            if self.project_mount is not None:
+                try:
+                    self.project_mount.close()
+                except (OSError, ValueError, W.Problem) as error:
+                    self.cleanup_error = str(error)
         # 原生进程族和句柄先关闭，再释放或删除执行目录；退出事实与目录清理完成分别对外观察。
         def cleanup():
             try:
+                if self.cleanup_error:
+                    return
                 if self.workspace_lease:
                     from .verification_workspace import release
                     release(self.workspace_lease)
@@ -876,7 +888,7 @@ def _prepare_source(root, target, lease, *, source_revision, readonly_source, tr
     return direct
 
 
-def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024*1024*1024, processes=32, time_limit=120, minimal_runtime=False, duplex=False, verify_copy=lambda _path:None, dsh_probe=False, defer_cleanup=False, trusted_source=False, retain_output=None, populate_workspace=None, workspace_scope=None, source_guard=None, environment_id=None, readonly_source=False, source_revision=None, python_utf8=False, record_view=None, include_record=False, working_directory='.'):
+def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024*1024*1024, processes=32, time_limit=120, minimal_runtime=False, duplex=False, verify_copy=lambda _path:None, dsh_probe=False, defer_cleanup=False, trusted_source=False, retain_output=None, populate_workspace=None, workspace_scope=None, source_guard=None, environment_id=None, readonly_source=False, source_revision=None, python_utf8=False, record_view=None, include_record=False, working_directory='.', project_view=None):
     """Start an actual Windows AppContainer or fail before any user code runs."""
     if os.name != "nt":
         raise W.Problem("sandbox_unavailable", "此平台尚无已验证隔离执行器，未降级执行", 503)
@@ -893,7 +905,8 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
     from . import verification_workspace as pool
     if environment_id is not None and (workspace_scope is None or not defer_cleanup):
         raise W.Problem("invalid_scope", "准备环境只能用于有明确任务范围的隔离检查")
-    pooled = workspace_scope is not None and defer_cleanup
+    pooled = workspace_scope is not None and defer_cleanup and (project_view is None or environment_id is not None)
+    mount = None
     runtime_preparation = ExitStack()
     try:
         if pooled:
@@ -925,6 +938,13 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
         if lease and lease["reused"]:
             pool.reset_scratch(lease)
             _acl(scratch, sid, "M")
+            if project_view is not None:
+                if os.path.lexists(target):
+                    if target.is_junction() or target.is_symlink() or any(target.iterdir()):
+                        raise W.Problem('cache_changed','上一次的挂载目录未释放',409)
+                else:
+                    target.mkdir()
+                _acl(target, sid, 'RX' if readonly_source else 'M', recursive=False)
         else:
             _acl(base, sid, "RX")
             target.mkdir()
@@ -966,11 +986,20 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
         # source writer gate. Only copy the selected source under that gate.
         with record_view() if record_view else nullcontext((None, None, None)) as (record, _, stage):
             excluded = frozenset(name for name in (stage, None if include_record else record) if name)
-            source_reused = _prepare_source(root, target, lease, source_revision=source_revision,
-                readonly_source=readonly_source, trusted_source=trusted_source,
-                populate_workspace=populate_workspace, source_guard=source_guard,
-                validate=validate, verify_copy=verify_copy, sid=sid, excluded=excluded,
-                conversation_folder=record_view is not None)
+            if project_view is None:
+                source_reused = _prepare_source(root, target, lease, source_revision=source_revision,
+                    readonly_source=readonly_source, trusted_source=trusted_source,
+                    populate_workspace=populate_workspace, source_guard=source_guard,
+                    validate=validate, verify_copy=verify_copy, sid=sid, excluded=excluded,
+                    conversation_folder=record_view is not None)
+            else:
+                from .project_mount import Mount
+                validate()
+                if project_view.project != root or populate_workspace:
+                    raise W.Problem('unsupported_project_view', '该执行环境不能复用当前项目暂存', 409)
+                mount = Mount(project_view, target, sid, readonly_source, scratch=scratch, excluded=excluded)
+                verify_copy(target)
+                source_reused = False
         copied = time.monotonic()
         if not Path(command[0]).is_relative_to(target):
             command = _powershell_workspace(command)
@@ -979,8 +1008,14 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
         safe["SystemRoot"] = os.environ.get("SystemRoot", "C:/Windows")
         safe["WINDIR"] = safe["SystemRoot"]
         safe["PATHEXT"] = ".COM;.EXE;.BAT;.CMD"
-        execution_cwd = W.file_path_from_root(target.resolve(), working_directory)
-        if not execution_cwd.is_dir():
+        if mount is None:
+            execution_cwd = W.file_path_from_root(target.resolve(), working_directory)
+            valid_cwd = execution_cwd.is_dir()
+        else:
+            relative = '' if working_directory == '.' else project_view.normalize(working_directory)
+            execution_cwd = target / relative
+            valid_cwd = stat.S_ISDIR(project_view.info(relative).st_mode)
+        if not valid_cwd:
             raise W.Problem('invalid_directory', '所选目录不存在于本次隔离副本', 409)
         staged_node = base/'node-runtime' in runtime_paths
         if staged_node:
@@ -1024,9 +1059,9 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
             lease.update(childPid=native.pid, childIdentity=child_identity, lastCommand=argv)
             pool.record(lease)
         result = Process(native, family, base, name, out, err, time_limit, launched[4] if duplex else None,
-                         defer_cleanup=defer_cleanup, retain_output=retain_output, workspace_lease=lease)
+                         defer_cleanup=defer_cleanup, retain_output=retain_output, workspace_lease=lease, project_mount=mount)
         result.execution_environment = dict(cwd=str(execution_cwd), workingDirectory=working_directory, temporaryDirectory=str(scratch),
-            sourceMode='readonly' if readonly_source else 'writable_copy',
+            sourceMode=('readonly_overlay' if readonly_source else 'project_overlay') if mount else ('readonly' if readonly_source else 'writable_copy'),
             memoryLimitBytes=applied_memory,
             writableDirectories=[str(scratch), str(target/'.harness-check')] if readonly_source else [str(scratch), str(target)])
         if staged_node:
@@ -1047,7 +1082,7 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
                                       validationAndSpawn=round((time.monotonic()-copied)*1000))
         result.startup_timings.update(sourceDirectReused=source_reused, workspaceReused=bool(lease and lease["reused"]),
                                      runtimeReused=bool(lease and lease.get('runtimeReused')),
-                                     sourceMode="protected" if readonly_source else "writable_copy",
+                                     sourceMode=result.execution_environment['sourceMode'] if mount else ("protected" if readonly_source else "writable_copy"),
                                      candidateDirect=bool(populate_workspace),
                                      sourceReuseReason=lease.get('sourceReuseReason') if lease else 'unpooled')
         result.startup_timings.update(lease.get('sourceTimings', {}) if lease else {})
@@ -1064,8 +1099,9 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
                     protected = bool(lease and lease.get('preparedSource'))
                     total = lease.get('protectedBytes', 0) if protected else 0
                     count = lease.get('protectedFiles', 0) if protected else 0
-                    pending = [target / '.harness-check' if protected else target, scratch,
-                               *([preparation] if preparation is not None else [])]
+                    pending = [scratch, *([preparation] if preparation is not None else [])]
+                    if mount is None:
+                        pending.append(target / '.harness-check' if protected else target)
                     while pending and result.poll() is None:
                         try:
                             with os.scandir(pending.pop()) as entries:
@@ -1104,6 +1140,8 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
                 native._k_close()
                 for stream in launched[2:]:
                     if stream is not None:stream.close()
+        if mount is not None:
+            mount.close()
         if lease:
             pool.discard(lease)
             # 仅自动选取的旧环境、且尚未尝试创建进程时可重建；指定环境或可能已启动的命令不能悄悄重跑。
@@ -1115,7 +1153,7 @@ def start(argv, *, cwd, env=None, merge=False, validate=lambda:None, memory=1024
                     trusted_source=trusted_source, retain_output=retain_output, populate_workspace=populate_workspace,
                     workspace_scope=workspace_scope, source_guard=source_guard, readonly_source=readonly_source,
                     source_revision=source_revision, python_utf8=python_utf8, record_view=record_view,
-                    include_record=include_record, working_directory=working_directory)
+                    include_record=include_record, working_directory=working_directory, project_view=project_view)
                 result.startup_timings["reuseFallback"] = getattr(error, "code", "reset_failed")
                 return result
             raise

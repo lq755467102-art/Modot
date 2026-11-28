@@ -1240,7 +1240,7 @@ function WorkbenchApp({ onHandoff, visible, initialWorkspaceId,binding,context,c
           <section className={'bottom-panel'+(bottomOpen?'':' is-collapsed')} aria-label={t("运行与输出")}>
             <div className="workroom-run-bar">
               <button type="button" aria-label={t(bottomOpen?'收起运行区':'展开运行区')} aria-expanded={bottomOpen} onClick={()=>setBottomOpen(!bottomOpen)}><UiIcon name="terminal"/>{t("运行与输出")} <span aria-hidden="true">{bottomOpen?'⌄':'⌃'}</span></button>
-              <span className={'run-result'+(currentRun?.state==='running'||currentRun?.exitCode?' run-attention':'')} role="status">{currentRun?((({running:'运行中',completed:'已结束',failed:'未成功',stopped:'已停止',cancelled:'已取消',timed_out:'已超时'} as Record<string,string>)[currentRun.state]||currentRun.state)+(currentRun.exitCode!==null?' · 退出 '+currentRun.exitCode:'')+(git?.revision&&currentRun.revision!==git.revision?' · 历史版本':'')):t(checks.data?.processes.some(run=>run.state==='running')?'有进程运行中，可展开选择记录':'尚无选中的运行记录')}</span>
+              <span className={'run-result'+(currentRun?.state==='running'||currentRun?.exitCode?' run-attention':'')} role="status">{currentRun?((({running:'运行中',completed:'已结束',failed:'未成功',stopped:'已停止',cancelled:'已取消',timed_out:'已超时'} as Record<string,string>)[currentRun.state]||currentRun.state)+(currentRun.exitCode!==null?' · 退出 '+currentRun.exitCode:'')+(currentRun.revision&&git?.revision&&currentRun.revision!==git.revision?' · 历史版本':'')):t(checks.data?.processes.some(run=>run.state==='running')?'有进程运行中，可展开选择记录':'尚无选中的运行记录')}</span>
               {bottomOpen&&<button type="button" onClick={()=>{setConfigOpen(!(configOpen&&bottom==='checks'));setBottom('checks');}} aria-expanded={configOpen&&bottom==='checks'}>{t("配置")}</button>}
               {runPending&&<small role="status">正在提交运行…</small>}{argvError&&<small>命令配置有误</small>}
             </div>
@@ -1248,7 +1248,7 @@ function WorkbenchApp({ onHandoff, visible, initialWorkspaceId,binding,context,c
             <div className="workroom-run-controls">
               <select aria-label="运行面板" value={bottom} onChange={event=>setBottom(event.target.value)}>{[['checks','输出'],['problems','问题位置'],['evidence','历史证据'],['terminal','交互终端'],['debug','Python 调试'],['jobs','旧任务记录']].map(([id,label])=><option key={id} value={id}>{label}</option>)}</select>
               <WorkroomPresetSelect presets={presets.data?.presets} current={presetName} dirty={configDirty} onChoose={choosePreset}/>
-              <select className="run-record" aria-label="选择运行" value={currentRun?.id||''} onChange={event=>setSelectedRun(selectedChecks.find(run=>run.id===event.target.value)||null)}><option value="">选择运行记录</option>{selectedChecks.map(run=><option key={run.id} value={run.id}>{run.argv.join(' ')} · {run.state}{git?.revision&&run.revision!==git.revision?' · 历史版本':''}</option>)}</select>
+              <select className="run-record" aria-label="选择运行" value={currentRun?.id||''} onChange={event=>setSelectedRun(selectedChecks.find(run=>run.id===event.target.value)||null)}><option value="">选择运行记录</option>{selectedChecks.map(run=><option key={run.id} value={run.id}>{run.argv.join(' ')} · {run.state}{run.revision&&git?.revision&&run.revision!==git.revision?' · 历史版本':''}</option>)}</select>
             </div>
             {commandStatus&&<p className="command-feedback" role="status">{commandStatus}</p>}
             {presets.error&&<p className="command-feedback" role="alert">运行预设读取失败。<button type="button" onClick={()=>void presets.refetch()}>重试预设</button></p>}
@@ -1386,8 +1386,8 @@ function WorkbenchApp({ onHandoff, visible, initialWorkspaceId,binding,context,c
                       setBottom(c.kind === "terminal" ? "terminal" : "checks");
                     }}
                   >
-                    {c.state} · {c.argv.join(" ")} ·{" "}
-                    {revisionLabel(c.revision)}
+                    {c.state} · {c.argv.join(" ")}
+                    {c.revision && <> · {revisionLabel(c.revision)}</>}
                   </button>
                 ))}
                 {history.data?.events

@@ -25,6 +25,28 @@ _lock = threading.Lock()
 _waiters_lock = threading.Lock()
 _waiters = {}
 ACTIVE = {'starting', 'running', 'stopping', 'finalizing'}
+TASK_CHECKS = {'check-start', 'check-output', 'check-stop', 'check-join'}
+
+
+def task_owns_check(operation, context, args):
+    from . import project_task_view
+    if operation not in TASK_CHECKS:
+        return False
+    resource = args.get('resource_id')
+    if operation in {'check-start', 'check-join'}:
+        return isinstance(resource, str) and project_task_view.lookup(context['sessionId'], resource) is not None
+    # The durable reservation keeps retries on the same owner after its job completes.
+    oid, pid = args.get('operation_id'), args.get('process_id')
+    try:
+        if oid is None and isinstance(pid, str) and len(pid) == 32:
+            oid = W.process_record(pid).get('operationId')
+        if not isinstance(oid, str) or len(oid) != 32:
+            return False
+        op = C.operation(context['sessionId'], oid)
+        return (op.get('backgroundCheck') and op.get('resourceId') == resource
+                and op.get('ownerPid') == os.getpid() and op.get('ownerIdentity') == W.RT.identity(os.getpid()))
+    except W.Problem:
+        return False
 
 
 def pending(value):
@@ -147,6 +169,10 @@ def _preparation_key(root, context, args, binding=None):
     try:
         thread, resource, ws, _ = binding or C.context_resource(
             root, args['resource_id'], 'execute', register_workspace=False)
+        from . import project_task_view
+        if project_task_view.lookup(thread['id'], resource['id']) is not None:
+            # The checkout watcher only sees original files. Never join a test of a different staged revision.
+            return None
         if 'script_operation_id' in args:
             reference = args['script_operation_id']
             if not isinstance(reference,str):
@@ -361,7 +387,9 @@ class Job:
             remaining = remaining_time(self.context)
             if remaining is not None and type(requested) is int and 1 <= requested <= 120:
                 args['timeout'] = min(requested, max(1, math.ceil(remaining)))
-            self.result = C.invoke(self.root, 'check', rid, **args)
+            from . import project_task_view
+            with project_task_view.check_scope(ident, rid):
+                self.result = C.invoke(self.root, 'check', rid, **args)
             if self.op is None:
                 self.finish_preparation()
         except W.Problem as error:
@@ -448,7 +476,10 @@ def settle_review(root, context, args, directory, validate_live=lambda: None):
                        ('sessionId', 'logicalTaskId', 'demandRevision', 'role'))):
             raise W.Problem('wrong_source', '检查不属于本次复核的资源和轮次', 403)
         if op['state'] == 'running':
-            return dict(reference, status='running' if job else 'unknown')
+            owner = op.get('ownerIdentity')
+            live_owner = (owner and owner != 'unknown' and op.get('ownerPid')
+                          and W.RT.identity(op['ownerPid']) == owner)
+            return dict(reference, status='running' if job or live_owner else 'unknown')
         if op.get('backgroundYielded') and not op.get('backgroundPublished') and time.monotonic() < deadline:
             # The existing finalizer is idempotent even if its worker is also publishing.
             publish_result(parent, oid, directory)
@@ -574,7 +605,9 @@ def start(root, context, args, directory, validate_live=lambda: None):
                         _jobs[registry_key] = job = candidate
             if job is candidate:
                 try:
-                    threading.Thread(target=job.run, name='owned-check', daemon=True).start()
+                    from . import project_task_view
+                    stage = project_task_view.lookup(context['sessionId'], args.get('resource_id'))
+                    threading.Thread(target=job.run, name='owned-check', daemon=stage is None).start()
                 except RuntimeError:
                     with _lock:
                         del _jobs[registry_key]

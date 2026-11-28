@@ -48,8 +48,9 @@ def _parameters(value, gcode):
     return plane, layer, layer_index, align, object_id, rotation, mirror, crop
 
 
-def read(path, view, *, expected_hash=None):
-    is_gcode = path.suffix.lower() in GCODE_SUFFIXES
+def read(path, view, *, expected_hash=None, logical_path=None):
+    logical = logical_path or path
+    is_gcode = logical.suffix.lower() in GCODE_SUFFIXES
     try:
         from PIL import Image, ImageOps
 
@@ -65,7 +66,7 @@ def read(path, view, *, expected_hash=None):
             image, geometry = gcode_preview.render(raw, plane, object_id, layer, layer_index, align)
             geometry.update(plane=plane, object_id=object_id, layer=layer, layer_index=layer_index, align=align)
         else:
-            source = image_evidence.read(path, limit=2 * 1024 * 1024, expected_hash=expected_hash)
+            source = image_evidence.read(path, limit=2 * 1024 * 1024, expected_hash=expected_hash, logical_path=logical)
             source_hash = source["hash"]
             with Image.open(BytesIO(base64.b64decode(source["data_url"].split(",", 1)[1]))) as original:
                 image = ImageOps.exif_transpose(original).convert("RGBA")
@@ -100,6 +101,6 @@ def read(path, view, *, expected_hash=None):
         raise W.Problem("view_invalid", "无法生成静态图片视图：" + str(error), 415) from error
 
     geometry.update(rotation=rotation, mirror=mirror, crop=crop)
-    return dict(name=path.stem + "-view.png", path=str(path), bytes=len(data), width=image.width,
+    return dict(name=logical.stem + "-view.png", path=str(logical), bytes=len(data), width=image.width,
                 height=image.height, mime="image/png", format="PNG", hash=W.digest(data),
                 data_url=image_evidence.data_url(data, "image/png"), sourceHash=source_hash, view=geometry)

@@ -79,6 +79,18 @@ class NativeEntry:
         return dict(status='paused', turns=0, final='', why=str(error), actions=[])
 
     def settle(self, result):
+        from . import project_task_view
+        updates = project_task_view.settle(self.session.dir.name, self.session.run_id, result['status'])
+        if updates:
+            self.session.save(projectWriteback=updates)
+            self.session.emit('project_writeback', results=updates)
+            held = [row for row in updates if row['state'] != 'published']
+            if held:
+                note = '项目暂存未写回。' + '；'.join(row['reason'] for row in held)
+                result['final'] = str(result.get('final') or '') + '\n\n' + note
+                if result['status'] == 'success':
+                    result.update(status='error', why=note)
+                self.session.save(final=result['final'])
         if self.core and self.session.load().get('status') != result['status']:
             self.core.finish(result['status'], result.get('verify'), result.get('why', ''))
             self.session.save(status=result['status'], why=result.get('why', ''))

@@ -58,7 +58,7 @@ export function ProjectScope({
   return (
     <section className="project-scope" aria-label="项目与资料范围">
       <h2>项目与资料范围</h2>
-      <p>{t("项目会话使用主目录。子文件夹沿用上层权限，其他目录可以按会话选用。")}</p>
+      <p>{t("项目主目录或当前工作树随会话权限档授权。额外关联的目录可单独选择和授权。")}</p>
       {(projects.error || scope.error) && (
         <p role="alert">{projects.error?.message || scope.error?.message}</p>
       )}
@@ -115,8 +115,11 @@ export function ProjectScope({
           >
             关联目录
           </button>
-          {Object.values(project.resources).map((r) => (
-            <div key={r.id}>
+          {Object.values(project.resources).map((r) => {
+            const active = scope.data?.resources.find(item => (item.worktreeOf || item.id) === r.id);
+            const primary = r.id === project.folderResourceId;
+            const inherits = !!active && scope.data?.checkoutAccess?.resourceId === active.id;
+            return <div key={r.id}>
               <label>
                 <input
                   type="checkbox"
@@ -138,11 +141,12 @@ export function ProjectScope({
                   }
                 />
                 {t("在本会话使用 {name}", {name: r.name})} · {t(r.kind === "code" ? "代码" : "资料")} ·{" "}
-                {r.permission !== "read" ? t("尚未授权") : t(r.write && r.execute ? "目录允许读取、修改和运行" :
-                  r.write ? "目录允许读取和修改" : r.execute ? "目录允许读取和运行" : "目录仅允许读取")}
+                {inherits ? t("读写和运行随会话权限档") :
+                  r.permission !== "read" ? t("尚未授权") : primary && !active ? t("尚未选入本会话") : t(r.write && r.execute ? "目录允许读取、修改和运行" :
+                    r.write ? "目录允许读取和修改" : r.execute ? "目录允许读取和运行" : "目录仅允许读取")}
               </label>
-              <small>{r.path}</small>
-              {r.kind === "code" && r.permission === "read" && (
+              <small>{active?.path || r.path}</small>
+              {r.kind === "code" && r.permission === "read" && !primary && (
                 <details><summary>{t("目录权限")}</summary>
                   <label>
                     <input
@@ -185,7 +189,7 @@ export function ProjectScope({
                     {t("允许运行项目命令")}
                   </label>
                   <small>
-                    {t("命令遵循当前权限模式。新增权限从下一轮生效，撤销立即生效。")}
+                    {t("此目录设置适用于项目中选择它的会话。新增权限从下一轮生效，撤销立即生效。")}
                   </small>
                 </details>
               )}
@@ -207,10 +211,12 @@ export function ProjectScope({
                   )
                 }
               >
-                {r.permission === "read" ? "撤销读取" : "允许读取此目录"}
+                {primary
+                  ? t(r.permission === "read" ? "撤销项目访问" : "按会话权限档允许访问项目")
+                  : t(r.permission === "read" ? "撤销读取" : "允许读取此目录")}
               </button>
-            </div>
-          ))}
+            </div>;
+          })}
         </>
       )}
       <p>

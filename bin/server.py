@@ -2814,6 +2814,9 @@ def main(argv=None) -> int:
     threading.Thread(target=subtasks.recover,args=(sys.modules[__name__],),daemon=True).start()
     threading.Thread(target=conversation_record.recover, args=(_resolve_sid,), daemon=True).start()
     threading.Thread(target=repository_staging.recover, name="repository-staging-recovery", daemon=True).start()
+    from loop import project_task_view, project_transaction
+    threading.Thread(target=project_transaction.recover, args=(project_task_view.store(),),
+                     name="project-write-staging-recovery", daemon=True).start()
     from loop import sandbox_lifecycle
     sandbox_lifecycle.start_recovery(P.data_root())
     print("harness 接口：http://127.0.0.1:%d/api/health" % a.port)

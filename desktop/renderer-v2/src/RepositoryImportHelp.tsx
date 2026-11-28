@@ -15,7 +15,7 @@ const folderErrors = new Set(["destination_not_authorized", "import_destination_
 const messages: Partial<Record<string, readonly [UiMessage, UiMessage]>> = {
   destination_not_authorized: ["先选择工作总目录", "请选择 Modot 和现有 Git 检出目录之外的本地文件夹。导入会在这里新建项目文件夹，并单独请求批准。"],
   import_destination_changed: ["导入位置已变化", "请核对工作总目录，再发起新的导入请求。"],
-  project_import_permission: ["当前项目目录需要写入权限", "在项目资料中选中项目目录并允许写入，再重试导入。"],
+  project_import_permission: ["当前项目目录需要写入权限", "确认本会话已选中项目目录，在下一轮重试导入。"],
   project_import_location: ["当前项目目录无法用于导入", "请在项目资料中选择可写的本地项目根目录。"],
   ssh_access_denied: ["SSH 身份验证失败", "请选择已有身份，或在本机创建密钥并到托管平台登记公钥。"],
   ssh_host_untrusted: ["SSH 主机身份待核对", "请在本机 SSH 客户端核对托管方公布的主机指纹，然后重试。"],
@@ -99,7 +99,8 @@ function ImportActions({ issue, active, hasDraft, projectId, sessionId, scope, o
   const useProject = needsFolder && !!projectId;
   const checking = useProject && (!scope || scope.projectId !== projectId);
   const root = useProject && scope?.projectId === projectId ? scope?.resources.find(r =>
-    (r.worktreeOf || r.id) === scope.folderResourceId && r.kind === "code" && r.permission === "read" && r.write) : undefined;
+    (r.worktreeOf || r.id) === scope.folderResourceId && r.kind === "code" && r.permission === "read" &&
+    (scope.checkoutAccess?.resourceId === r.id || r.write)) : undefined;
   const folders = useQuery({ ...workFolderQuery, enabled: useWorkFolder });
   const query = useQueryClient();
   const [busy, setBusy] = useState(false);

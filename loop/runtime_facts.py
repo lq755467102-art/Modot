@@ -179,7 +179,7 @@ def refresh(core,messages):
         sandbox = permissions._sandbox_ceiling(frozen, live)
         return dict(mode=permissions._ceiling(frozen,live),revision=live['revision'],
             stopped=bool(frozen.get('stopped')), sandboxMode=sandbox,
-            projectShell='host' if sandbox == 'danger-full-access' else 'appcontainer-task-copy',
+            projectShell='appcontainer-project-overlay',
             projectChecks=dict(defaultSourceMode='readonly',automaticWriteback=False))
     registry.register('host.workspace',lambda:resources,source='projects.scope')
     registry.register('host.permissions',permission,source='permissions')
